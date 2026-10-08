@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FIT BID · Leilões e venda direta de equipamentos profissionais</title>
-<meta name="description" content="Leilões, compra imediata e ofertas de equipamentos profissionais de academia. Venda direta FIT BID.">
+<title>FIT BID · Venda por lances de equipamentos profissionais</title>
+<meta name="description" content="Venda por lances, compra imediata e ofertas de equipamentos profissionais de academia. Venda direta FIT BID.">
 <meta name="theme-color" content="#0B0B0C">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23E1251B'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='900'>FB</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -402,12 +402,24 @@ footer.ft button{background:none;border:0;color:var(--on-dark-muted);padding:0 0
 <body>
 <header class="top" id="hdr"></header>
 <main id="app"></main>
-<footer class="ft"><div class="wrap"><div><b>FIT BID</b><br>Leilões e venda direta de equipamentos profissionais.<br>Pagamento e entrega combinados pelo WhatsApp.</div><div>Lances são compromissos de compra. Preços de referência são indicativos.<br><button onclick="go('how')">Como funciona</button><button onclick="adminLogin()">Área do administrador</button></div></div></footer>
+<footer class="ft"><div class="wrap"><div><b>FIT BID</b><br>Venda por lances e preço fixo de equipamentos profissionais.<br>Pagamento e entrega combinados pelo WhatsApp.</div><div>Lances são compromissos de compra. Preços de referência são indicativos.<br><button onclick="go('how')">Como funciona</button><button onclick="adminLogin()">Área do administrador</button></div></div></footer>
 <div class="scrim" id="scrim" onclick="if(event.target===this)closeModal()"></div>
 <div class="drawer" id="drawer"></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script>window.FITBID_CONFIG={supabaseUrl:"https://akvytzbynpxnslsuijub.supabase.co",supabaseAnonKey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrdnl0emJ5bnB4bnNsc3VpanViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTUwNjYsImV4cCI6MjEwNjk5MTA2Nn0.706Ly7UlvMJTOEa6cYQx73iL1Px6SjW-O6ni6T4z3kk",whatsapp:"5522997322604",nomeLoja:"FIT BID"};</script>
+<script>// =============================================================
+// FIT BID · configuração
+// Preencha os dois primeiros campos com os dados do seu projeto
+// Supabase (Project Settings > API). Não coloque aqui a chave
+// "service_role": use somente a chave "anon public".
+// =============================================================
+window.FITBID_CONFIG = {
+  supabaseUrl: "https://akvytzbynpxnslsuijub.supabase.co",
+  supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrdnl0emJ5bnB4bnNsc3VpanViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTUwNjYsImV4cCI6MjEwNjk5MTA2Nn0.706Ly7UlvMJTOEa6cYQx73iL1Px6SjW-O6ni6T4z3kk",
+  whatsapp: "5522997322604",          // número que recebe os pedidos (55 + DDD + número)
+  nomeLoja: "FIT BID"
+};
+</script>
 <script>
 /* FIT BID · versão operacional (venda direta) */
 const CFG=window.FITBID_CONFIG||{};
@@ -428,7 +440,7 @@ const ILL={
 const CATS=[["Musculação","M8 12h8M4 9v6M20 9v6M6 7v10M18 7v10","legpress"],["Cardio","M3 12h4l3-6 4 12 3-6h4","treadmill"],["Esteiras","M4 18h14l2-2H6zM18 16 20 6","treadmill"],["Bikes","M7 17a4 4 0 1 0 0-.01M17 17a4 4 0 1 0 0-.01M7 17l5-8 5 8M12 9l-1-3","bike"],["Bancos","M3 11h18M6 11v7M18 11v7","bench"],["Racks","M6 20V4M18 20V4M6 4h12M4 12h16","rack"],["Anilhas","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6z","dumbbell"],["Halteres","M3 12h18M6 8v8M18 8v8M3 10v4M21 10v4","dumbbell"],["Equipamentos funcionais","M12 4a3 3 0 0 1 3 3H9a3 3 0 0 1 3-3zM7 7h10l-1 13H8z","dumbbell"],["Academias completas","M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6","gym"],["Seminovos","M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4","legpress"],["Lotes empresariais","M4 7h16v13H4zM9 7V4h6v3M4 12h16","gym"]];
 const MAIN_CATS=CATS.map(c=>c[0]).filter(c=>c!=="Seminovos"&&c!=="Lotes empresariais");
 const UF="AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO".split(" ");
-const typeLabel={auction:"Leilão",auction_buy:"Leilão + Comprar agora",buy:"Comprar agora",offer:"Fazer oferta"};
+const typeLabel={auction:"Venda por lances",auction_buy:"Lances + Comprar agora",buy:"Comprar agora",offer:"Fazer oferta"};
 const SHIP={retirada:"Retirada no local",transportadora:"Transportadora",montagem:"Frete dedicado com montagem"};
 const ORDER_ST=["aguardando contato","pagamento combinado","pago","enviado","entregue","concluido","cancelado"];
 
@@ -472,7 +484,7 @@ const cats=l=>[l.category,...(["Esteiras","Bikes"].includes(l.category)?["Cardio
 function status(l){
  if(l.status==="hidden"||l.status==="draft")return["OCULTO","b-soft"];
  if(l.status==="sold")return["VENDIDO","b-green"];
- if(isAuction(l)){if(!started(l))return["EM BREVE","b-amber"];if(ended(l))return won(l)?["ARREMATADO","b-green"]:["ENCERRADO","b-soft"];return["EM LEILÃO","b-red"]}
+ if(isAuction(l)){if(!started(l))return["EM BREVE","b-amber"];if(ended(l))return won(l)?["VENDIDO","b-green"]:["ENCERRADO","b-soft"];return["LANCES ABERTOS","b-red"]}
  return l.type==="offer"?["ACEITA OFERTAS","b-dark"]:["COMPRE AGORA","b-dark"];
 }
 const saving=l=>num(l.ref_price)&&price(l)<num(l.ref_price)?Math.round((1-price(l)/num(l.ref_price))*100):0;
@@ -480,7 +492,7 @@ function catMatch(l,c){if(!c)return true;if(c==="Seminovos")return l.condition==
 function illKey(l){const c=CATS.find(x=>x[0]===l.category);return c?c[2]:"legpress"}
 function media(l,cls="",i=0){const p=(l.photos||[])[i];if(p)return `<img src="${esc(p)}" alt="${esc(l.title)}" class="${cls}" loading="lazy">`;return `<div class="ill-wrap ${cls}" role="img" aria-label="${esc(l.title)}">${ILL[illKey(l)]}<span class="il">FOTO EM BREVE</span></div>`}
 function waLink(text,to){return `https://wa.me/${onlyDigits(to||CFG.whatsapp)}?text=${encodeURIComponent(text)}`}
-function errMsg(e){const m=(e&&(e.message||e.error_description))||"Algo deu errado. Tente novamente.";return /JWT|fetch|Failed|network/i.test(m)?"Sem conexão com o servidor. Tente novamente.":m}
+function errMsg(e){const m=((e&&(e.message||e.error_description))||"Algo deu errado. Tente novamente.").replace(/Este leilão/g,"Esta disputa").replace(/leilão/g,"disputa").replace("já foi encerrado","já foi encerrada");return /JWT|fetch|Failed|network/i.test(m)?"Sem conexão com o servidor. Tente novamente.":m}
 /* ===== dados ===== */
 async function loadAll(){
  try{const {data}=await sb.rpc("server_time");if(data)SKEW=new Date(data).getTime()-Date.now()}catch(e){}
@@ -534,7 +546,7 @@ async function saveProfile(){
 }
 
 /* ===== header ===== */
-const NAVI=[["auctions","Leilões"],["buynow","Comprar agora"],["categories","Categorias"],["how","Como funciona"]];
+const NAVI=[["auctions","Venda por lances"],["buynow","Comprar agora"],["categories","Categorias"],["how","Como funciona"]];
 function curNav(k){return V.view==="browse"&&V.mode===k||V.view===k}
 function renderHeader(){
  const unread=S.notifs.filter(n=>!n.read).length;
@@ -591,10 +603,10 @@ function renderHome(){
  const pics=act.filter(l=>(l.photos||[]).length).slice(0,3);
  const desmob=act.find(l=>l.category==="Academias completas");
  return `<section class="hero"><div class="wrap" ${pics.length?"":'style="grid-template-columns:1fr"'}>
-  <div><div class="eyebrow">Leilões e venda direta ${esc(LOJA)}</div>
+  <div><div class="eyebrow">Venda por lances e preço fixo · ${esc(LOJA)}</div>
    <h1>Equipamentos profissionais.<br><span>Novas oportunidades.</span></h1>
-   <p>Compre equipamentos profissionais em leilão, com preço fixo ou fazendo sua oferta. Estoque, showroom, seminovos e lotes completos, vendidos diretamente pela ${esc(LOJA)}.</p>
-   <div class="ctas"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LEILÕES</button><button class="btn on-dark" onclick="go('browse',{mode:'buynow'})">COMPRAR AGORA</button></div>
+   <p>Compre equipamentos profissionais dando lances, pelo preço fixo ou fazendo sua oferta. Estoque, showroom, seminovos e lotes completos, vendidos diretamente pela ${esc(LOJA)}.</p>
+   <div class="ctas"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LANCES ABERTOS</button><button class="btn on-dark" onclick="go('browse',{mode:'buynow'})">COMPRAR AGORA</button></div>
    <p style="font-size:14px;margin:22px 0 0">Pagamento e entrega combinados diretamente pelo WhatsApp.</p></div>
   ${pics.length?`<div class="collage" aria-hidden="true">${pics.map((l,i)=>`<div class="t"><img src="${esc(l.photos[0])}" alt=""><span class="cap">Lote #${esc(code(l))}${i===0?` · <b data-cur="${l.id}">${brl(price(l))}</b>`:""}</span></div>`).join("")}</div>`:""}</div></section>
  <div class="wrap">
@@ -604,13 +616,13 @@ function renderHome(){
   ${!act.length?`<section class="blk"><div class="empty"><h2 style="font-size:26px;margin-bottom:8px">Novos lotes em breve</h2>Estamos preparando os próximos equipamentos. Fale com a gente pelo WhatsApp para saber em primeira mão.<br><a class="btn" style="margin-top:14px" href="${waLink("Olá! Quero ser avisado dos próximos lotes da "+LOJA+".")}" target="_blank" rel="noopener">AVISE-ME PELO WHATSAPP</a></div></section>`:""}
   ${act.length?`<section class="blk"><div class="sh"><div><h2>Categorias</h2></div><button class="link" onclick="go('categories')">Ver todas ›</button></div>
    <div class="cats">${CATS.filter(c=>vis.some(l=>catMatch(l,c[0]))).map(catBtn).join("")}</div></section>`:""}
-  ${featured.length?`<section class="blk"><div class="sh"><div><h2>Leilões em destaque</h2><p>Lotes selecionados e verificados pela ${esc(LOJA)}.</p></div><button class="link" onclick="go('browse',{mode:'auctions'})">Ver todos ›</button></div><div class="grid big">${featured.map(card).join("")}</div></section>`:""}
+  ${featured.length?`<section class="blk"><div class="sh"><div><h2>Em destaque</h2><p>Lotes selecionados e verificados pela ${esc(LOJA)}.</p></div><button class="link" onclick="go('browse',{mode:'auctions'})">Ver todos ›</button></div><div class="grid big">${featured.map(card).join("")}</div></section>`:""}
   ${soon.length?`<section class="blk"><div class="sh"><div><h2>⏰ Encerrando em breve</h2><p>Lances nos 2 minutos finais estendem o prazo em 2 minutos.</p></div></div><div class="grid">${soon.map(card).join("")}</div></section>`:""}
   ${desmob?`<section class="blk"><div class="desmob"><div class="l"><span class="badge b-red" style="align-self:flex-start">DESMOBILIZAÇÃO DE ACADEMIA</span><h2>${esc(desmob.title)}</h2><p style="color:var(--on-dark-muted);margin:0">${num(desmob.qty)>1?desmob.qty+" equipamentos · ":""}${esc(desmob.city||"")}${desmob.uf?"/"+esc(desmob.uf):""}</p>
    <div class="nums">${num(desmob.ref_price)?`<div><small>Valor estimado</small><b>${brl(desmob.ref_price)}</b></div>`:""}<div><small>${isAuction(desmob)?"Lance atual":"Preço"}</small><b data-cur="${desmob.id}">${brl(price(desmob))}</b></div></div>
    <div><button class="btn" onclick="go('lot',{lot:${desmob.id}})">VER LOTE COMPLETO</button></div></div><div class="r">${media(desmob,"ill")}</div></div></section>`:""}
   ${buys.length?`<section class="blk"><div class="sh"><div><h2>Compre agora</h2><p>Preço fixo ou faça sua oferta.</p></div><button class="link" onclick="go('browse',{mode:'buynow'})">Ver todos ›</button></div><div class="grid">${buys.map(card).join("")}</div></section>`:""}
-  <section class="blk"><div class="trust"><div><h2>Compre com segurança.</h2><p class="muted">Leilão, preço fixo ou oferta, direto com a ${esc(LOJA)}.</p></div>
+  <section class="blk"><div class="trust"><div><h2>Compre com segurança.</h2><p class="muted">Lances, preço fixo ou oferta, direto com a ${esc(LOJA)}.</p></div>
    <ul>${["Venda direta, sem intermediários","Equipamentos verificados","Lotes detalhados","Histórico de lances","Nota fiscal quando informada","Entrega para todo o Brasil","Atendimento pelo WhatsApp"].map(x=>`<li><i>✓</i>${x}</li>`).join("")}</ul></div></section>
  </div>`;
 }
@@ -627,7 +639,7 @@ function filtered(){
  return r;
 }
 function renderBrowse(){
- const t=V.mode==="auctions"?["Leilões","Lances ao vivo, com cronômetro e histórico transparente."]:V.mode==="buynow"?["Comprar agora","Preço fixo ou faça uma oferta."]:["Resultados",""];
+ const t=V.mode==="auctions"?["Venda por lances","Lances ao vivo, com cronômetro e histórico transparente."]:V.mode==="buynow"?["Comprar agora","Preço fixo ou faça uma oferta."]:["Resultados",""];
  const f=V.f,brands=[...new Set(visible().map(l=>l.brand).filter(Boolean))].sort();
  const ck=(arr,v,lbl)=>`<label class="ck"><input type="checkbox" ${f[arr].includes(v)?"checked":""} onchange="togF('${arr}','${esc(v)}',this.checked)">${esc(lbl||v)}</label>`;
  return `<div class="wrap"><div class="page-h"><h1>${t[0]}</h1>${t[1]?`<p>${t[1]}</p>`:""}</div>
@@ -656,7 +668,7 @@ function renderLot(){
  const auc=isAuction(l),[st,sc]=status(l),sv=saving(l),photos=l.photos||[];
  const specs=[["Marca",l.brand],["Condição",l.condition],["Localização",l.city?`${l.city}/${l.uf||""}`:""],["Nota fiscal",l.nf?"Sim":"Não"],["Garantia",l.warranty],["Número do lote","#"+code(l)],["Quantidade",num(l.qty)>1?l.qty+" unidades":"1 unidade"],["Ano",l.year],["Tipo de venda",typeLabel[l.type]],["Peso estimado",l.kg?`${num(l.kg).toLocaleString("pt-BR")} kg`:""]].filter(x=>x[1]);
  const cur=photos[V.img]||photos[0];
- return `<div class="wrap"><div class="crumbs"><button onclick="go('home')">Início</button> / <button onclick="go('browse',{mode:'${auc?"auctions":"buynow"}'})">${auc?"Leilões":"Comprar agora"}</button> / <span>Lote #${esc(code(l))}</span></div>
+ return `<div class="wrap"><div class="crumbs"><button onclick="go('home')">Início</button> / <button onclick="go('browse',{mode:'${auc?"auctions":"buynow"}'})">${auc?"Venda por lances":"Comprar agora"}</button> / <span>Lote #${esc(code(l))}</span></div>
  <div class="lotpage"><div>
   <div class="gal"><div class="main">${cur?`<img src="${esc(cur)}" alt="${esc(l.title)}">`:media(l)}${heart(l)}</div>
    ${photos.length>1?`<div class="thumbs">${photos.map((p,i)=>`<button aria-label="Foto ${i+1}" aria-pressed="${(V.img||0)===i}" onclick="V.img=${i};render(true)"><img src="${esc(p)}" alt=""></button>`).join("")}</div>`:""}</div>
@@ -675,7 +687,7 @@ function renderLot(){
 function histRows(l){const b=S.bids[l.id];if(!b)return '<tr><td colspan="3" class="muted">Carregando…</td></tr>';return b.map(x=>`<tr class="${x.user_id===meId()?"me":""}"><td class="num">${hhmm(x.created_at)}</td><td>${x.user_id===meId()?"Você (Comprador #"+x.alias+")":"Comprador #"+esc(x.alias)}${x.auto?' <span class="muted" style="font-size:12px">(auto)</span>':""}</td><td class="num">${brl(x.amount)}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">Nenhum lance ainda. Seja o primeiro.</td></tr>'}
 function bidPanel(l){
  const lv=live(l),mn=minBid(l),auto=S.autos[l.id],ord=S.orders.find(o=>o.lot_id===l.id);
- const pos=iBid(l)||iLead(l)?(iLead(l)?(lv?`<div class="pos win">Você está na frente.</div>`:won(l)?`<div class="pos win">Você venceu este lote!</div>`:`<div class="pos lose">Leilão encerrado sem atingir o valor mínimo de venda.</div>`):(lv?`<div class="pos lose">Você foi superado. Dê um novo lance.</div>`:`<div class="pos lose">Leilão encerrado. Outro comprador venceu.</div>`)):"";
+ const pos=iBid(l)||iLead(l)?(iLead(l)?(lv?`<div class="pos win">Você está na frente.</div>`:won(l)?`<div class="pos win">Você venceu este lote!</div>`:`<div class="pos lose">Disputa encerrada sem atingir o valor mínimo de venda.</div>`):(lv?`<div class="pos lose">Você foi superado. Dê um novo lance.</div>`:`<div class="pos lose">Disputa encerrada. Outro comprador venceu.</div>`)):"";
  let body="";
  if(l.status==="sold")body=iLead(l)||ord?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:`<p style="margin:0;font-weight:700">Equipamento vendido.</p>`;
  else if(lv)body=`<div class="minrow"><span>${l.bids_count?"Próximo lance mínimo":"Lance inicial"}</span><b class="num" data-min="${l.id}">${brl2(mn)}</b></div>
@@ -684,9 +696,9 @@ function bidPanel(l){
   ${l.type==="auction_buy"&&l.buy_price?`<button class="btn block dark" onclick="buyNow(${l.id})">COMPRAR AGORA POR ${brl(l.buy_price)}</button>`:""}
   <div class="autob"><h4>Definir lance máximo</h4><p>Informe o valor máximo que você aceita pagar. A plataforma cobre outros lances por você, sempre com o mínimo necessário, até esse limite.</p>
   ${auto?`<div class="auto-on"><div><small class="muted">Lance automático até</small><div style="font-family:var(--display);font-weight:900;font-size:22px">${brl(auto)}</div></div><button class="btn sm line" onclick="cancelAuto(${l.id})">CANCELAR</button></div>`:`<div class="money"><span>R$</span><input id="autov" class="num" inputmode="decimal" placeholder="______" aria-label="Lance máximo"></div><button class="btn block line" onclick="askAuto(${l.id})">DEFINIR AUTO-LANCE</button>`}</div>
-  <p class="muted" style="font-size:12px;margin:0">Lances são compromissos de compra. Lances nos 2 minutos finais estendem o leilão em 2 minutos.</p>`;
- else if(!started(l))body=`<p class="muted" style="margin:0">Este leilão começa em ${new Date(l.starts_at).toLocaleString("pt-BR")}.</p>`;
- else body=`<p style="margin:0;font-weight:700">Leilão encerrado.</p>${iLead(l)&&won(l)?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:""}<button class="btn block line" onclick="go('browse',{mode:'auctions'})">VER OUTROS LEILÕES</button>`;
+  <p class="muted" style="font-size:12px;margin:0">Lances são compromissos de compra. Lances nos 2 minutos finais estendem a disputa em 2 minutos.</p>`;
+ else if(!started(l))body=`<p class="muted" style="margin:0">Os lances começam em ${new Date(l.starts_at).toLocaleString("pt-BR")}.</p>`;
+ else body=`<p style="margin:0;font-weight:700">Disputa encerrada.</p>${iLead(l)&&won(l)?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:""}<button class="btn block line" onclick="go('browse',{mode:'auctions'})">VER OUTROS LOTES</button>`;
  return `<div class="bidpanel"><div class="bp-top"><div><small>${l.bids_count?"Lance atual":"Lance inicial"}</small><div class="cur num" data-cur2="${l.id}">${brl2(l.bids_count?l.current_price:l.start_price)}</div><small style="margin-top:6px" data-nb2="${l.id}">${l.bids_count} lances</small></div><div style="text-align:right"><small>${lv?"Encerra em":"Status"}</small>${timerEl(l)}</div></div><div class="bp-body">${pos}${body}</div></div>`;
 }
 function buyPanel(l){
@@ -709,7 +721,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeD
 function busyBtn(b,on){if(!b)return;b.disabled=on;if(on){b.dataset.t=b.textContent;b.textContent="AGUARDE…"}else if(b.dataset.t)b.textContent=b.dataset.t}
 
 async function askBid(id){const l=getLot(id);const inp=$("#bidv");const typed=parseMoney(inp&&inp.value);if(!await ensureBuyer())return;const mn=minBid(l);const v=typed||mn;
- if(!live(l)){toast("Este leilão está encerrado.","red");return}if(v<mn){toast(`O lance mínimo é ${brl2(mn)}.`,"red");return}
+ if(!live(l)){toast("Esta disputa está encerrada.","red");return}if(v<mn){toast(`O lance mínimo é ${brl2(mn)}.`,"red");return}
  openModal(`<h2>Confirmar lance</h2><p style="margin:0;font-size:17px">Você está oferecendo <b class="num">${brl2(v)}</b> neste lote.</p><div class="sumrow"><span>Lote</span><span>#${esc(code(l))}</span><span>Equipamento</span><span style="text-align:right">${esc(l.title)}</span></div><p class="muted" style="font-size:13px;margin:0">O lance é um compromisso de compra caso você vença.</p><div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn" id="cb" onclick="placeBid(${id},${v})">CONFIRMAR LANCE</button></div>`)}
 async function placeBid(id,v){const b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("place_bid",{p_lot:id,p_amount:v});busyBtn(b,false);
  if(error){toast(errMsg(error),"red");return}closeModal();mergeLot(data);S.myBidLots.add(id);await loadBids(id);toast(iLead(getLot(id))?"✓ Lance registrado. Você está na frente.":"Lance registrado, mas outro comprador tinha lance automático maior.",iLead(getLot(id))?"green":"red");render(true)}
@@ -730,7 +742,7 @@ async function finishWA(id){const l=getLot(id);if(!await ensureBuyer())return;co
  openModal(`<h2>Finalizar compra</h2><p style="margin:0">${esc(l.title)} · Lote #${esc(code(l))}</p>${shipFields(l)}<div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn green" id="cb" onclick="confirmClaim(${id})">CONTINUAR</button></div>`)}
 async function confirmClaim(id){const ship=readShip(),b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("claim_order",{p_lot:id,p_shipping:ship});busyBtn(b,false);if(error){toast(errMsg(error),"red");return}await loadMine();await loadLots();const o=S.orders.find(x=>x.id===data)||{kind:"leilao",amount:getLot(id).current_price};waDone(getLot(id),o.kind,o.amount,ship,data)}
 function waDone(l,kind,amount,ship,orderId){
- const k={leilao:"leilão (arrematado)",compra:"compra imediata",oferta:"oferta aceita"}[kind]||kind;
+ const k={leilao:"venda por lances (oferta vencedora)",compra:"compra imediata",oferta:"oferta aceita"}[kind]||kind;
  const msg=`Olá! Sou ${S.profile.name} (Comprador #${S.profile.alias}).\nQuero finalizar a compra:\n• Lote #${code(l)} – ${l.title}\n• Valor: ${brl2(amount)}\n• Modalidade: ${k}\n• Entrega: ${ship}\n• Pedido nº ${orderId}`;
  openModal(`<div class="success"><div class="ok">✓</div><h2 style="padding:0">Pedido nº ${orderId} registrado</h2><p class="muted" style="margin:0">Agora é só abrir o WhatsApp e enviar a mensagem pronta para combinar pagamento e entrega.</p><a class="btn green block" href="${waLink(msg)}" target="_blank" rel="noopener">ABRIR WHATSAPP</a><button class="btn line" onclick="closeModal()">FECHAR</button></div>`);render(true)}
 
@@ -754,16 +766,16 @@ function calcShip(){const a=onlyDigits($("#c1").value),b=onlyDigits($("#c2").val
  $("#shipr").innerHTML=`<div class="sumrow" style="margin-top:4px"><span>Distância aproximada</span><span class="num">${Math.round(d)} km</span><span>Transportadora</span><b class="num">${brl(base)} · ${days}–${days+3} dias</b><span>Frete dedicado com montagem</span><b class="num">${brl(base*1.6+400)}</b></div><p class="muted" style="font-size:13px;margin:8px 0 0">Valor estimado. A cotação final é confirmada pelo WhatsApp.</p>`}
 /* ===== minha conta ===== */
 function miniLot(l){if(!l)return "—";return `<div class="mini"><div class="th">${media(l)}</div><div><button class="link" style="color:var(--ink);text-align:left" onclick="go('lot',{lot:${l.id}})">${esc(l.title)}</button><div class="muted" style="font-size:12px">Lote #${esc(code(l))}</div></div></div>`}
-function sideMenu(title,sub,items,view){return `<aside class="side"><div class="who"><b>${title}</b><small>${sub}</small></div>${items.map(([k,t,c])=>`<button aria-current="${V.tab===k}" onclick="go('${view}',{tab:'${k}'})">${t}${c!=null?`<span>${c}</span>`:""}</button>`).join("")}</aside>`}
+function sideMenu(title,sub,items,view){return `<aside class="side"><div class="who"><b>${title}</b><small>${sub}</small></div>${items.map(([k,t,c])=>`<button aria-current="${V.tab===k}" onclick="go('${view}',{tab:'${k}'})">${t}${c!=null?`<span style="margin-left:8px;opacity:.7">${c}</span>`:""}</button>`).join("")}</aside>`}
 const empty=(t,b,a)=>`<div class="empty">${t}${b?`<br><button class="btn sm" style="margin-top:12px" onclick="${a}">${b}</button>`:""}</div>`;
 const T=(h,rows)=>`<div class="tblw"><table class="tbl"><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
 function renderAccount(){
  const tab=V.tab||"bids";const favs=S.favs.map(getLot).filter(Boolean);
- if(!S.user||!S.profile){if(tab==="favs")return `<div class="wrap"><div class="page-h"><h1>Meus favoritos</h1></div>${favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.","VER LEILÕES","go('browse',{mode:'auctions'})")}</div>`;
+ if(!S.user||!S.profile){if(tab==="favs")return `<div class="wrap"><div class="page-h"><h1>Meus favoritos</h1></div>${favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.","VER LOTES","go('browse',{mode:'auctions'})")}</div>`;
   return `<div class="wrap" style="max-width:640px"><div class="box" style="margin-top:30px;text-align:center"><h1 style="font-size:28px;font-weight:900">Minha conta</h1><p class="muted">Identifique-se com nome e WhatsApp para dar lances, comprar e acompanhar seus pedidos.</p><button class="btn" onclick="ensureBuyer().then(ok=>ok&&render())">ENTRAR / IDENTIFICAR-ME</button><p class="muted" style="font-size:13px;margin:14px 0 0">Seu acesso fica salvo neste aparelho. Se trocar de celular ou limpar o navegador, fale com a gente pelo WhatsApp.</p></div></div>`}
  const bids=S.lots.filter(l=>S.myBidLots.has(l.id));const out=bids.filter(l=>live(l)&&!iLead(l));
  let body="";
- if(tab==="bids")body=bids.length?T(["Lote","Lance atual","Situação","Tempo",""],bids.map(l=>{const s=ended(l)||l.status==="sold"?(iLead(l)&&(won(l)||l.status==="sold")?["ARREMATADO","b-green"]:["ENCERRADO","b-soft"]):(iLead(l)?["NA FRENTE","b-green"]:["SUPERADO","b-red"]);return [miniLot(l),`<span class="num" data-cur="${l.id}">${brl(price(l))}</span>`,`<span class="badge ${s[1]}">${s[0]}</span>`,isAuction(l)?timerEl(l):"—",s[0]==="ARREMATADO"?`<button class="btn sm green" onclick="finishWA(${l.id})">FINALIZAR</button>`:`<button class="btn sm line" onclick="go('lot',{lot:${l.id}})">VER</button>`]})):empty("Você ainda não deu lances.","VER LEILÕES","go('browse',{mode:'auctions'})");
+ if(tab==="bids")body=bids.length?T(["Lote","Lance atual","Situação","Tempo",""],bids.map(l=>{const s=ended(l)||l.status==="sold"?(iLead(l)&&(won(l)||l.status==="sold")?["VOCÊ VENCEU","b-green"]:["ENCERRADO","b-soft"]):(iLead(l)?["NA FRENTE","b-green"]:["SUPERADO","b-red"]);return [miniLot(l),`<span class="num" data-cur="${l.id}">${brl(price(l))}</span>`,`<span class="badge ${s[1]}">${s[0]}</span>`,isAuction(l)?timerEl(l):"—",s[0]==="VOCÊ VENCEU"?`<button class="btn sm green" onclick="finishWA(${l.id})">FINALIZAR</button>`:`<button class="btn sm line" onclick="go('lot',{lot:${l.id}})">VER</button>`]})):empty("Você ainda não deu lances.","VER LOTES","go('browse',{mode:'auctions'})");
  if(tab==="autos"){const a=Object.entries(S.autos).map(([id,v])=>[getLot(id),v]).filter(x=>x[0]);body=a.length?T(["Lote","Seu limite","Lance atual","Tempo",""],a.map(([l,v])=>[miniLot(l),brl(v),`<span data-cur="${l.id}">${brl(price(l))}</span>`,timerEl(l),live(l)?`<button class="btn sm line" onclick="cancelAuto(${l.id})">CANCELAR</button>`:""])):empty("Nenhum lance automático ativo.")}
  if(tab==="favs")body=favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.");
  if(tab==="offers")body=S.offers.length?T(["Equipamento","Sua oferta","Status",""],S.offers.map(o=>{const l=getLot(o.lot_id);return [miniLot(l),brl(o.amount),`<span class="badge ${o.status==="aceita"?"b-green":o.status==="contraproposta"?"b-amber":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.status==="contraproposta"?": "+brl(o.counter):""}</span>`,["aceita","contraproposta"].includes(o.status)&&l&&l.status==="active"?`<button class="btn sm green" onclick="finishWA(${o.lot_id})">FECHAR PELO WHATSAPP</button>`:""]})):empty("Nenhuma oferta enviada.","COMPRAR AGORA","go('browse',{mode:'buynow'})");
@@ -783,19 +795,19 @@ function renderAdmin(){
  const act=S.lots.filter(l=>l.status==="active"),winners=S.lots.filter(l=>isAuction(l)&&ended(l)&&l.bids_count>0&&l.status!=="hidden");
  let body="";
  if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l),`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button><button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
- if(tab==="winners")body=winners.length?T(["Lote","Equipamento","Valor final","Vencedor","Valor mínimo","Contato"],winners.map(l=>{const p=P(l.leader);return ["#"+esc(code(l)),miniLot(l),brl(l.current_price),p?`${esc(p.name)}<div class="muted" style="font-size:12px">Comprador #${p.alias}</div>`:"Comprador #"+l.leader_alias,l.reserve_met?'<span class="badge b-green">ATINGIDO</span>':'<span class="badge b-amber">NÃO ATINGIDO</span>',wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}. Você venceu o lote #${code(l)} – ${l.title} por ${brl2(l.current_price)}. Vamos combinar pagamento e entrega?`)]})):empty("Nenhum leilão encerrado com lances ainda.");
- if(tab==="orders")body=S.adm.orders.length?T(["Pedido","Equipamento","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.");
+ if(tab==="winners")body=winners.length?T(["Lote","Equipamento","Valor final","Vencedor","Valor mínimo","Contato"],winners.map(l=>{const p=P(l.leader);return ["#"+esc(code(l)),miniLot(l),brl(l.current_price),p?`${esc(p.name)}<div class="muted" style="font-size:12px">Comprador #${p.alias}</div>`:"Comprador #"+l.leader_alias,l.reserve_met?'<span class="badge b-green">ATINGIDO</span>':'<span class="badge b-amber">NÃO ATINGIDO</span>',wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}. Você venceu o lote #${code(l)} – ${l.title} por ${brl2(l.current_price)}. Vamos combinar pagamento e entrega?`)]})):empty("Nenhuma disputa encerrada com lances ainda.");
+ if(tab==="orders")body=S.adm.orders.length?T(["Pedido","Equipamento","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${({leilao:"por lances",compra:"compra direta",oferta:"oferta"})[o.kind]||o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.");
  if(tab==="offers")body=S.adm.offers.length?T(["Equipamento","Cliente","Oferta","Preço","Status","Ações"],S.adm.offers.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return [miniLot(l)+(o.message?`<div class="muted" style="font-size:12px;margin-top:4px">“${esc(o.message)}”</div>`:""),p?esc(p.name):"—",`<b>${brl(o.amount)}</b>`,l?brl(l.buy_price):"—",`<span class="badge ${o.status==="aceita"?"b-green":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.counter?": "+brl(o.counter):""}</span>`,o.status==="pendente"?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm green" onclick="respOffer(${o.id},'aceita')">ACEITAR</button><button class="btn sm line" onclick="counterOffer(${o.id})">CONTRAPROPOSTA</button><button class="btn sm line" onclick="respOffer(${o.id},'recusada')">RECUSAR</button></div>`:wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre sua oferta no lote #${l?code(l):""}.`)]})):empty("Nenhuma oferta recebida.");
  if(tab==="clients"){const ps=Object.values(S.adm.profiles);body=ps.length?T(["Comprador","Nome","WhatsApp","Cidade","Desde",""],ps.map(p=>["#"+p.alias,esc(p.name),esc(p.whatsapp),esc(p.city||"—"),new Date(p.created_at).toLocaleDateString("pt-BR"),`<button class="btn sm line" onclick="toggleBlock('${p.id}')">${p.blocked?"DESBLOQUEAR":"BLOQUEAR"}</button>`])):empty("Nenhum cliente cadastrado ainda.")}
  const vol=S.adm.orders.filter(o=>o.status!=="cancelado").reduce((s,o)=>s+num(o.amount),0);
  return `<div class="wrap"><div class="panel">${admSide()}<div><div class="ph-h"><h1>Gestão da loja</h1><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div>
- <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Leilões ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div></div>
+ <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Disputas ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div></div>
  <div class="box">${body}</div></div></div></div>`;
 }
 function admSide(){return sideMenu(LOJA,"Administrador",[["lots","Lotes",S.lots.length],["edit","Cadastrar lote"],["winners","Vencedores"],["orders","Pedidos",S.adm.orders.filter(o=>o.status==="aguardando contato").length],["offers","Ofertas",S.adm.offers.filter(o=>o.status==="pendente").length],["clients","Clientes"]],"admin")}
 async function admUpdate(id,patch,msg){const {data,error}=await sb.from("lots").update(patch).eq("id",id).select().single();if(error){toast(errMsg(error),"red");return}mergeLot(data);if(msg)toast(msg,"green");render(true)}
 function toggleHide(id){const l=getLot(id);admUpdate(id,{status:l.status==="hidden"?(l.sold_to?"sold":"active"):"hidden"},l.status==="hidden"?"Lote publicado.":"Lote ocultado.")}
-function endNow(id){if(confirm("Encerrar este leilão agora?"))admUpdate(id,{ends_at:new Date(now()).toISOString()},"Leilão encerrado.")}
+function endNow(id){if(confirm("Encerrar esta disputa agora?"))admUpdate(id,{ends_at:new Date(now()).toISOString()},"Disputa encerrada.")}
 async function delLot(id){if(!confirm("Excluir este lote definitivamente? Lances e pedidos dele também serão apagados."))return;const {error}=await sb.from("lots").delete().eq("id",id);if(error){toast(errMsg(error),"red");return}S.lots=S.lots.filter(l=>l.id!==id);toast("Lote excluído.");render(true)}
 async function setOrder(id,st){const {error}=await sb.from("orders").update({status:st}).eq("id",id);if(error){toast(errMsg(error),"red");return}const o=S.adm.orders.find(x=>x.id===id);if(o)o.status=st;toast("Pedido atualizado.","green")}
 async function respOffer(id,st,counter){const patch={status:st};if(counter)patch.counter=counter;const {error}=await sb.from("offers").update(patch).eq("id",id);if(error){toast(errMsg(error),"red");return}Object.assign(S.adm.offers.find(o=>o.id===id),patch);toast("Oferta atualizada. Avise o cliente pelo WhatsApp.","green");render(true)}
@@ -820,7 +832,7 @@ function lotForm(){const e=V.edit;if(!e)return empty("Nenhum lote em edição.")
   ${i("year","Ano",'type="number" min="1990" max="2030"')}${i("kg","Peso estimado (kg)",'type="number" min="1"')}
   ${i("city","Cidade")}${sel("uf","UF",UF)}
   ${m("ref_price","Preço de referência","Mostra a economia potencial. Opcional.")}
-  ${auc?m("start_price","Lance inicial *")+m("increment","Incremento mínimo *")+m("reserve","Valor mínimo de venda","Oculto para o público. Abaixo dele o leilão não fecha venda."):""}
+  ${auc?m("start_price","Lance inicial *")+m("increment","Incremento mínimo *")+m("reserve","Valor mínimo de venda","Oculto para o público. Abaixo dele a disputa encerra sem venda."):""}
   ${buy?m("buy_price",e.type==="offer"?"Preço anunciado *":"Preço comprar agora *"):""}
   ${auc?`<div class="field"><label for="e_s">Início (opcional)</label><input id="e_s" type="datetime-local" value="${e.starts_at?dtl(ts(e.starts_at)):""}" onchange="V.edit.starts_at=this.value?new Date(this.value).toISOString():null"></div>
   <div class="field"><label for="e_e">Encerramento *</label><input id="e_e" type="datetime-local" value="${e.ends_at?dtl(ts(e.ends_at)):""}" onchange="V.edit.ends_at=this.value?new Date(this.value).toISOString():null"><div class="quick">${[["+1 dia",D],["+3 dias",3*D],["+7 dias",7*D]].map(([t,ms])=>`<button type="button" onclick="V.edit.ends_at=new Date(now()+${ms}).toISOString();render(true)">${t}</button>`).join("")}</div></div>`:""}
@@ -856,9 +868,9 @@ async function saveLot(){const e=V.edit,auc=e.type.startsWith("auction");
 /* ===== como funciona ===== */
 function renderHow(){const st=(n,t,p)=>`<div class="box" style="margin:0"><span class="n">${n}</span><h3>${t}</h3><p>${p}</p></div>`;
  return `<div class="wrap"><div class="page-h"><h1>Como funciona</h1><p>Todos os equipamentos são selecionados e vendidos diretamente pela ${esc(LOJA)}.</p></div>
- <div class="how">${st(1,"Identifique-se","Informe nome e WhatsApp uma única vez. Nos lances você aparece só como “Comprador #número”.")}${st(2,"Escolha como comprar","Dê lances no leilão, compre pelo preço fixo ou faça uma oferta.")}${st(3,"Venceu ou comprou?","Toque em “Finalizar pelo WhatsApp”: a mensagem já vai pronta com lote, valor e entrega.")}${st(4,"Pagamento e entrega","Combinados diretamente com a ${esc(LOJA)}: retirada, transportadora ou frete com montagem.")}</div>
- <div class="box" style="margin-top:20px"><h3>Regras dos lances</h3><ul style="margin:0;padding-left:20px;color:var(--muted)"><li>Cada lance precisa superar o atual pelo incremento mínimo do lote.</li><li>O lance automático cobre outras ofertas por você até o limite escolhido.</li><li>Lances nos 2 minutos finais estendem o leilão em 2 minutos.</li><li>Alguns lotes têm valor mínimo de venda; se não for atingido, o leilão encerra sem venda.</li><li>Lances são compromissos de compra. Desistências podem levar ao bloqueio da conta.</li></ul></div>
- <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LEILÕES</button><a class="btn line" href="${waLink("Olá! Tenho uma dúvida sobre como comprar na "+LOJA+".")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a></div></div>`}
+ <div class="how">${st(1,"Identifique-se","Informe nome e WhatsApp uma única vez. Nos lances você aparece só como “Comprador #número”.")}${st(2,"Escolha como comprar","Dê lances, compre pelo preço fixo ou faça uma oferta.")}${st(3,"Venceu ou comprou?","Toque em “Finalizar pelo WhatsApp”: a mensagem já vai pronta com lote, valor e entrega.")}${st(4,"Pagamento e entrega","Combinados diretamente com a ${esc(LOJA)}: retirada, transportadora ou frete com montagem.")}</div>
+ <div class="box" style="margin-top:20px"><h3>Regras dos lances</h3><ul style="margin:0;padding-left:20px;color:var(--muted)"><li>Cada lance precisa superar o atual pelo incremento mínimo do lote.</li><li>O lance automático cobre outras ofertas por você até o limite escolhido.</li><li>Lances nos 2 minutos finais estendem a disputa em 2 minutos.</li><li>Alguns lotes têm valor mínimo de venda; se não for atingido, a disputa encerra sem venda.</li><li>Lances são compromissos de compra. Desistências podem levar ao bloqueio da conta.</li></ul></div>
+ <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LOTES</button><a class="btn line" href="${waLink("Olá! Tenho uma dúvida sobre como comprar na "+LOJA+".")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a></div></div>`}
 
 /* ===== notificações, favoritos, toasts ===== */
 function notify(text,lotId,quiet){S.notifs.unshift({text,lotId,t:Date.now(),read:false});S.notifs=S.notifs.slice(0,40);renderHeader()}
