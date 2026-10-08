@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FIT BID · Leilões e venda direta de equipamentos profissionais</title>
+<meta name="description" content="Leilões, compra imediata e ofertas de equipamentos profissionais de academia. Venda direta FIT BID.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23E1251B'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='900'>FB</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#F3F3F1;--surface:#FFFFFF;--surface-2:#F0F0EE;--ink:#0E0F11;--muted:#5E6470;--line:#E2E3E0;
+ --black:#0B0B0C;--graphite:#1C1F24;--graphite-2:#2A2E35;--on-dark:#F4F4F2;--on-dark-muted:#A3A9B3;
+ --red:#E1251B;--red-hover:#C81E15;--red-soft:rgba(225,37,27,.09);--green:#15803D;--green-soft:rgba(21,128,61,.11);
+ --amber:#B45309;--amber-soft:rgba(180,83,9,.12);
+ --photo:#FFFFFF;--ill-bg:#ECEDEA;--ill:#2A2E35;
+ --shadow:0 1px 2px rgba(0,0,0,.05),0 10px 28px rgba(0,0,0,.06);
+ --display:"Archivo","Helvetica Neue",Arial,sans-serif;--body:"Archivo","Segoe UI",Roboto,Arial,sans-serif;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0D0E10;--surface:#16181C;--surface-2:#1E2126;--ink:#F2F2F0;--muted:#9BA1AB;--line:#2A2D33;--photo:#F4F4F2;--ill-bg:#23262B;--ill:#C9CDD3;--green:#22C55E;--green-soft:rgba(34,197,94,.14);--red-soft:rgba(225,37,27,.16);--amber:#F59E0B;--shadow:0 1px 2px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{--bg:#0D0E10;--surface:#16181C;--surface-2:#1E2126;--ink:#F2F2F0;--muted:#9BA1AB;--line:#2A2D33;--photo:#F4F4F2;--ill-bg:#23262B;--ill:#C9CDD3;--green:#22C55E;--green-soft:rgba(34,197,94,.14);--red-soft:rgba(225,37,27,.16);--amber:#F59E0B;--shadow:0 1px 2px rgba(0,0,0,.4)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--display);margin:0;line-height:1.05;letter-spacing:-.01em}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+.muted{color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* demo strip + header */
+.demo-strip{background:var(--graphite);color:var(--on-dark-muted);font-size:12px;text-align:center;padding:5px 12px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--black);color:var(--on-dark);border-bottom:1px solid #1f2125}
+.top .wrap{display:flex;align-items:center;gap:16px;height:66px}
+.logo{display:flex;align-items:center;gap:10px;background:none;border:0;color:var(--on-dark);padding:0}
+.logo{flex:none;white-space:nowrap}.logo .mk{flex:none}
+.money input{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:11px 12px 11px 38px;width:100%}
+aside>.box,aside>.bidpanel+.box{margin-top:16px}
+.logo .wm{font-family:var(--display);font-weight:900;font-size:26px;letter-spacing:.02em;font-stretch:115%}
+.logo .wm b{color:var(--red)}
+.logo .mk{width:30px;height:30px;border-radius:7px;background:var(--red);display:grid;place-items:center}
+nav.main{display:flex;gap:2px}
+nav.main button{background:none;border:0;color:var(--on-dark-muted);font-weight:600;font-size:13.5px;padding:8px 7px;border-radius:7px;white-space:nowrap}
+nav.main button:hover,nav.main button[aria-current="true"]{color:#fff;background:#1d1f23}
+.top .right{margin-left:auto;display:flex;align-items:center;gap:4px}
+.icon-btn{position:relative;background:none;border:0;color:var(--on-dark);width:40px;height:40px;border-radius:9px;display:grid;place-items:center}
+.icon-btn:hover{background:#1d1f23}
+.icon-btn .cnt{position:absolute;top:3px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.txt-btn{background:none;border:0;color:var(--on-dark);font-weight:600;font-size:14px;padding:8px 10px;border-radius:8px;white-space:nowrap}
+.txt-btn:hover{background:#1d1f23}
+.burger{display:none}
+.top .btn{letter-spacing:.01em;padding:9px 11px}
+.top .txt-btn{padding:8px 8px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 18px;font-weight:800;font-size:14px;letter-spacing:.03em;background:var(--red);color:#fff;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--red-hover)}
+.btn:disabled{opacity:.4;cursor:not-allowed;background:var(--red)}
+.btn.dark{background:var(--ink);color:var(--bg)}
+.btn.dark:hover{opacity:.88}
+.btn.line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.line:hover{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn.on-dark{background:transparent;color:#fff;box-shadow:inset 0 0 0 1.5px #3a3e46}
+.btn.on-dark:hover{box-shadow:inset 0 0 0 1.5px #fff}
+.btn.green{background:var(--green)}
+.btn.sm{padding:8px 12px;font-size:12px;border-radius:8px}
+.btn.block{width:100%}
+.link{background:none;border:0;padding:0;color:var(--red);font-weight:700}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;letter-spacing:.06em;padding:4px 8px;border-radius:6px;text-transform:uppercase;white-space:nowrap}
+.b-red{background:var(--red);color:#fff}
+.b-dark{background:var(--ink);color:var(--bg)}
+.b-green{background:var(--green-soft);color:var(--green)}
+.b-soft{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.b-amber{background:var(--amber-soft);color:var(--amber)}
+.b-ver{background:var(--green-soft);color:var(--green)}
+.demo{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;padding:2px 6px;border-radius:4px;border:1px dashed var(--muted);color:var(--muted);text-transform:uppercase}
+
+/* hero */
+.hero{background:var(--black);color:var(--on-dark);position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center;padding-top:56px;padding-bottom:64px}
+.hero .eyebrow{color:var(--red);font-weight:800;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+.hero h1{font-size:clamp(40px,5.4vw,70px);font-weight:900;font-stretch:108%;margin:14px 0 18px;letter-spacing:-.02em}
+.hero h1 span{color:var(--on-dark-muted)}
+.hero p{color:var(--on-dark-muted);font-size:18px;max-width:52ch;margin:0 0 26px}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+.collage{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:1fr 1fr;gap:12px;height:430px}
+.collage .t{background:var(--photo);border-radius:14px;display:grid;place-items:center;overflow:hidden;position:relative}
+.collage .t:first-child{grid-row:span 2;background:#16181c}
+.collage .t img{max-height:92%;max-width:92%;object-fit:contain}
+.collage .t:first-child img{max-height:100%;max-width:100%;object-fit:cover;width:100%;height:100%}
+.collage .cap{position:absolute;left:10px;bottom:10px;background:rgba(11,11,12,.85);color:#fff;font-size:12px;font-weight:700;padding:5px 9px;border-radius:7px}
+.collage .cap b{color:var(--red)}
+
+/* search */
+.searchbox{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-top:-34px;position:relative;z-index:2;border:1px solid var(--line)}
+.searchbox form{display:flex;gap:10px;position:relative}
+.searchbox input{flex:1;min-width:0;height:54px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface-2);padding:0 18px 0 46px;font-size:17px}
+.searchbox .ico{position:absolute;left:16px;top:17px;color:var(--muted);z-index:1;pointer-events:none}
+.searchbox .ex{font-size:13px;color:var(--muted);margin:10px 4px 0}
+.searchbox .ex button{background:none;border:0;padding:0 2px;color:var(--ink);font-weight:600;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+
+/* sections */
+section.blk{padding:46px 0 10px}
+.sh{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.sh h2{font-size:clamp(26px,3vw,36px);font-weight:900}
+.sh p{margin:6px 0 0;color:var(--muted)}
+.cats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.cat{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 14px;text-align:left;display:flex;flex-direction:column;gap:12px;min-height:118px;transition:border-color .15s,transform .15s}
+.cat:hover{border-color:var(--ink);transform:translateY(-2px)}
+.cat svg{color:var(--red)}
+.cat b{font-family:var(--display);font-size:16px;line-height:1.15}
+.cat span{font-size:12px;color:var(--muted);margin-top:auto}
+
+/* lot cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:18px}
+.grid.big{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))}
+.lc{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.lc:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.lc .md{position:relative;aspect-ratio:4/3;background:var(--photo);display:grid;place-items:center}
+.lc .md img{max-width:86%;max-height:86%;object-fit:contain}
+.lc .md .ill{width:100%;height:100%}
+.lc .tl{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap;max-width:75%}
+.heart{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.92);display:grid;place-items:center;color:#1C1F24;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.heart[aria-pressed="true"]{color:var(--red)}
+.heart[aria-pressed="true"] path{fill:currentColor}
+.timer{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;color:var(--red);font-variant-numeric:tabular-nums;white-space:nowrap}
+.timer.ended{color:var(--muted)}
+.timer.soon::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.2}}
+.lc .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.lc .lotno{font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.lc h3{font-size:19px;font-weight:800;line-height:1.15}
+.lc .meta{font-size:13px;color:var(--muted)}
+.lc .pr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:6px}
+.lc .pr small{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.lc .pr b{font-family:var(--display);font-size:24px;font-weight:900}
+.lc .ft{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+.lc .ft .acts{display:flex;gap:6px}
+.big .lc h3{font-size:22px}
+.big .lc .pr b{font-size:28px}
+.ill-wrap{width:100%;height:100%;background:var(--ill-bg);display:grid;place-items:center;position:relative}
+.ill-wrap svg{width:70%;height:70%;color:var(--ill)}
+.ill-wrap .il{position:absolute;right:10px;bottom:8px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+
+/* desmobilizacao */
+.desmob{background:var(--black);color:var(--on-dark);border-radius:20px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.desmob .l{padding:36px;display:flex;flex-direction:column;gap:14px}
+.desmob h2{font-size:clamp(28px,3.4vw,44px);font-weight:900}
+.desmob .nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.desmob .nums div{border:1px solid #2a2d33;border-radius:12px;padding:12px}
+.desmob .nums small{display:block;color:var(--on-dark-muted);font-size:12px}
+.desmob .nums b{font-family:var(--display);font-size:22px}
+.desmob .r{background:var(--ill-bg);min-height:300px}
+
+/* trust */
+.trust{display:grid;grid-template-columns:1fr 1.3fr;gap:30px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:32px}
+.trust h2{font-size:clamp(26px,3vw,38px);font-weight:900}
+.trust ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.trust li{display:flex;gap:10px;align-items:center;font-weight:600;padding:12px 14px;border-radius:12px;background:var(--surface-2)}
+.trust li i{font-style:normal;color:var(--green);font-weight:900}
+.brands-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.bcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;text-align:left}
+.bcard .bn{font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.06em;font-stretch:112%}
+.bcard small{color:var(--muted)}
+.sellcta{background:var(--red);color:#fff;border-radius:20px;padding:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.sellcta h2{font-size:clamp(26px,3.2vw,40px);font-weight:900}
+.sellcta p{margin:8px 0 0;opacity:.9}
+.sellcta .btn{background:#fff;color:var(--red)}
+footer.ft{margin-top:60px;background:var(--black);color:var(--on-dark-muted);padding:34px 0 calc(34px + env(safe-area-inset-bottom,0px));font-size:14px}
+footer.ft .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+footer.ft b{color:#fff}
+footer.ft button{background:none;border:0;color:var(--on-dark-muted);padding:0 0 0 14px;text-decoration:underline}
+
+/* browse */
+.page-h{padding:30px 0 18px}
+.page-h h1{font-size:clamp(30px,4vw,48px);font-weight:900}
+.page-h p{color:var(--muted);margin:8px 0 0;max-width:70ch}
+.browse{display:grid;grid-template-columns:270px 1fr;gap:24px;align-items:start}
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 82px);max-height:calc(100vh - 100px);overflow:auto;display:flex;flex-direction:column;gap:16px}
+.filters h4{font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.fg label.ck{display:flex;align-items:center;gap:8px;font-size:14px;padding:3px 0}
+.fg select,.fg input[type=text],.fg input[type=number]{width:100%;border:1px solid var(--line);background:var(--surface-2);border-radius:9px;padding:9px 10px;font-size:14px}
+.fg .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.toolbar select{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 10px}
+.fbtn{display:none}
+.empty{grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:16px}
+
+/* lot page */
+.crumbs{font-size:13px;color:var(--muted);padding:18px 0 10px;display:flex;gap:6px;flex-wrap:wrap}
+.crumbs button{background:none;border:0;padding:0;color:var(--muted);text-decoration:underline}
+.lotpage{display:grid;grid-template-columns:1.35fr 1fr;gap:26px;align-items:start}
+.gal{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.gal .main{aspect-ratio:4/3;background:var(--photo);display:grid;place-items:center;overflow:hidden;position:relative}
+.gal .main img{max-width:88%;max-height:88%;object-fit:contain;transition:transform .3s}
+.gal .thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;border-top:1px solid var(--line)}
+.gal .thumbs button{aspect-ratio:1;border:2px solid transparent;border-radius:10px;background:var(--photo);overflow:hidden;padding:0;display:grid;place-items:center}
+.gal .thumbs button[aria-pressed="true"]{border-color:var(--red)}
+.gal .thumbs img{max-width:90%;max-height:90%;object-fit:contain}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+.box+.box{margin-top:16px}
+.box h3{font-size:20px;font-weight:800;margin-bottom:12px}
+.lt h1{font-size:clamp(26px,3vw,38px);font-weight:900;margin:10px 0 8px}
+.vers{display:flex;gap:6px;flex-wrap:wrap}
+.specs{display:grid;grid-template-columns:repeat(2,1fr);gap:0;margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.specs div{padding:11px 14px;border-bottom:1px solid var(--line)}
+.specs div:nth-child(odd){border-right:1px solid var(--line)}
+.specs dt{font-size:12px;color:var(--muted);font-weight:600}
+.specs dd{margin:2px 0 0;font-weight:700}
+.opp{border:2px solid var(--red);border-radius:16px;padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;position:relative}
+.opp .tag{position:absolute;top:-12px;left:16px}
+.opp small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.opp b{font-family:var(--display);font-size:22px;font-weight:900}
+.opp .sv b{color:var(--red)}
+.bidpanel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 82px);background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.bp-top{background:var(--black);color:var(--on-dark);padding:20px 22px;display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
+.bp-top small{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--on-dark-muted);text-transform:uppercase}
+.bp-top .cur{font-family:var(--display);font-weight:900;font-size:clamp(30px,3.4vw,40px);line-height:1}
+.bp-top .timer{font-size:20px;color:#FF4A40}
+.bp-top .timer.ended{color:var(--on-dark-muted)}
+.bp-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.minrow{display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.minrow b{font-family:var(--display);font-size:20px}
+.flash{background:var(--green-soft);color:var(--green);font-weight:700;padding:10px 12px;border-radius:10px}
+.pos{font-weight:700;padding:10px 12px;border-radius:10px}
+.pos.win{background:var(--green-soft);color:var(--green)}
+.pos.lose{background:var(--red-soft);color:var(--red)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:700}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:11px 12px;width:100%}
+.field .hint{font-size:12px;color:var(--muted)}
+.money{position:relative}
+.money span{position:absolute;left:12px;top:11px;color:var(--muted);font-weight:600}
+.money input{padding-left:38px}
+.autob{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.autob h4{font-size:16px}
+.autob p{margin:0;font-size:13px;color:var(--muted)}
+.auto-on{border:1.5px solid var(--ink);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.tbl tr.me td{font-weight:700}
+.tblw{overflow-x:auto}
+.logi{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.comp{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.comp div{background:var(--surface-2);border-radius:10px;padding:10px 12px}
+.comp b{font-family:var(--display);font-size:22px;display:block}
+.mbar{display:none}
+
+/* panels */
+.panel{display:grid;grid-template-columns:240px 1fr;gap:24px;align-items:start;padding-top:24px}
+.side{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 82px)}
+.side .who{padding:12px;border-bottom:1px solid var(--line);margin-bottom:6px}
+.side .who b{display:block;font-family:var(--display)}
+.side .who small{color:var(--muted)}
+.side button{display:flex;width:100%;text-align:left;background:none;border:0;padding:10px 12px;border-radius:9px;font-weight:600;color:var(--muted);justify-content:space-between}
+.side button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+.side button:hover:not([aria-current="true"]){background:var(--surface-2);color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.kpi small{display:block;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.kpi b{font-family:var(--display);font-size:28px;font-weight:900;display:block;margin-top:4px}
+.alert{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--red-soft);border:1px solid var(--red);color:var(--ink);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-weight:700}
+.ph-h{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.ph-h h1{font-size:clamp(26px,3vw,36px);font-weight:900}
+.mini{display:flex;align-items:center;gap:12px}
+.mini .th{width:52px;height:52px;border-radius:9px;background:var(--photo);display:grid;place-items:center;overflow:hidden;flex:none;border:1px solid var(--line)}
+.mini .th img{max-width:90%;max-height:90%;object-fit:contain}
+.mini .th .ill-wrap svg{width:80%;height:80%}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:8px 14px;font-weight:700;font-size:14px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.calc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+.calc div{background:var(--surface-2);border-radius:12px;padding:16px}
+.calc small{color:var(--muted);font-weight:700;font-size:12px}
+.calc b{font-family:var(--display);font-size:28px;display:block}
+
+/* sell */
+.ways{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.way{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.way b{font-family:var(--display);font-size:15px;letter-spacing:.06em}
+.way span{font-size:14px;color:var(--muted)}
+.way i{font-style:normal;width:34px;height:34px;border-radius:9px;background:var(--red-soft);color:var(--red);display:grid;place-items:center;font-weight:900}
+.form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.form .full{grid-column:1/-1}
+.types{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.types label{border:1.5px solid var(--line);border-radius:10px;padding:12px;font-weight:700;font-size:14px;display:flex;gap:8px;align-items:center;cursor:pointer;background:var(--surface)}
+.types label:has(input:checked){border-color:var(--red);background:var(--red-soft)}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:24px;text-align:center;color:var(--muted);background:var(--surface-2);cursor:pointer;display:block}
+.thumbsup{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:8px;margin-top:10px}
+.thumbsup img{aspect-ratio:1;object-fit:cover;border-radius:8px;width:100%}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.quick button{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:5px 9px;font-size:12px;font-weight:700}
+.success{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.success .ok{width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:32px;font-weight:900}
+
+/* steps */
+.how{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.how .box{position:relative;padding-top:56px}
+.how .n{position:absolute;top:16px;left:22px;font-family:var(--display);font-weight:900;font-size:30px;color:var(--red)}
+.how h3{font-size:18px;margin-bottom:6px}
+.how p{margin:0;color:var(--muted);font-size:14px}
+.track{list-style:none;margin:0;padding:0}
+.track li{position:relative;padding:0 0 20px 40px;color:var(--muted)}
+.track li::before{content:"";position:absolute;left:12px;top:26px;bottom:0;width:2px;background:var(--line)}
+.track li:last-child::before{display:none}
+.track .d{position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:12px;font-weight:900}
+.track li.done{color:var(--ink)}
+.track li.done .d{background:var(--green);border-color:var(--green);color:#fff}
+.track li.done::before{background:var(--green)}
+.track li.now{color:var(--ink);font-weight:800}
+.track li.now .d{border-color:var(--red);background:var(--red);color:#fff}
+.track small{display:block;font-weight:500;color:var(--muted)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* modal, drawer, toast, notif */
+.scrim{position:fixed;inset:0;background:rgba(5,5,6,.6);z-index:80;display:none;align-items:center;justify-content:center;padding:16px}
+.scrim.open{display:flex}
+.modal{background:var(--surface);color:var(--ink);border-radius:18px;width:100%;max-width:480px;max-height:calc(100vh - 32px);overflow:auto;padding:24px;display:flex;flex-direction:column;gap:14px;position:relative}
+.modal h2{font-size:26px;font-weight:900;padding-right:30px}
+.modal .x{position:absolute;right:14px;top:14px;background:var(--surface-2);border:0;width:34px;height:34px;border-radius:50%;font-size:18px}
+.modal .acts{display:flex;gap:10px}
+.modal .acts .btn{flex:1}
+.sumrow{display:grid;grid-template-columns:1fr auto;gap:8px 14px;background:var(--surface-2);border-radius:12px;padding:14px 16px;font-size:15px}
+.sumrow .t{font-weight:800;border-top:1px solid var(--line);padding-top:8px}
+.notif{position:absolute;right:0;top:48px;width:min(380px,92vw);background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.25);display:none;z-index:60;overflow:hidden}
+.notif.open{display:block}
+.notif h4{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.notif ul{list-style:none;margin:0;padding:0;max-height:380px;overflow:auto}
+.notif li{padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px;display:flex;gap:10px}
+.notif li.unread{background:var(--red-soft)}
+.notif li time{display:block;font-size:12px;color:var(--muted)}
+.notif li button{background:none;border:0;padding:0;color:var(--red);font-weight:700;font-size:13px}
+.usermenu{position:absolute;right:0;top:48px;width:250px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.25);display:none;z-index:60;padding:6px}
+.usermenu.open{display:block}
+.usermenu button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 12px;border-radius:8px;font-weight:600}
+.usermenu button:hover{background:var(--surface-2)}
+.drawer{position:fixed;inset:0;z-index:90;display:none}
+.drawer.open{display:block}
+.drawer .bg{position:absolute;inset:0;background:rgba(5,5,6,.6)}
+.drawer .pn{position:absolute;right:0;top:0;bottom:0;width:min(340px,88vw);background:var(--black);color:var(--on-dark);padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:4px;overflow:auto}
+.drawer .pn button.it{background:none;border:0;color:var(--on-dark);text-align:left;padding:12px 10px;border-radius:9px;font-weight:700;font-size:17px}
+.drawer .pn button.it:hover{background:#1d1f23}
+.toasts{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:100;display:flex;flex-direction:column;gap:8px;max-width:min(380px,calc(100vw - 32px))}
+.toast{background:var(--ink);color:var(--bg);border-radius:12px;padding:12px 14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.25);display:flex;gap:12px;align-items:center;justify-content:space-between;animation:tin .2s}
+.toast.red{background:var(--red);color:#fff}
+.toast.green{background:var(--green);color:#fff}
+.toast button{background:rgba(255,255,255,.18);border:0;color:inherit;font-weight:800;font-size:12px;padding:6px 9px;border-radius:7px;white-space:nowrap}
+@keyframes tin{from{transform:translateY(8px);opacity:0}}
+
+@media (max-width:1240px){nav.main{display:none}.burger{display:grid}.cats{grid-template-columns:repeat(4,1fr)}.how{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:860px){
+ .top .hide-m{display:none!important}
+ .hero .wrap{grid-template-columns:1fr;padding-top:34px;padding-bottom:58px}
+ .collage{height:260px}
+ .cats{grid-template-columns:repeat(3,1fr)}
+ .browse,.lotpage,.panel,.trust,.desmob{grid-template-columns:1fr}
+ .filters{display:none;position:fixed;inset:0;top:0;z-index:85;border-radius:0;max-height:none;padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(90px + env(safe-area-inset-bottom,0px))}
+ .filters.open{display:flex}
+ .fbtn{display:inline-flex}
+ .bidpanel,.side,.filters{position:static}
+ .filters.open{position:fixed}
+ .side{display:flex;overflow-x:auto;gap:4px;padding:6px}
+ .side .who{display:none}
+ .side button{white-space:nowrap;width:auto}
+ .brands-row,.levels{grid-template-columns:1fr 1fr}
+ .trust ul{grid-template-columns:1fr}
+ .form,.types{grid-template-columns:1fr 1fr}
+ .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--black);color:#fff;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));gap:12px;align-items:center;justify-content:space-between}
+ .mbar small{display:block;font-size:11px;color:var(--on-dark-muted)}
+ .mbar b{font-family:var(--display);font-size:20px}
+ .mbar .timer{color:#FF4A40;font-size:14px}
+ body.has-mbar{padding-bottom:84px}
+ body.has-mbar .toasts{bottom:calc(90px + env(safe-area-inset-bottom,0px))}
+ .opp,.calc{grid-template-columns:1fr}
+ .desmob .nums{grid-template-columns:1fr 1fr}
+ .specs{grid-template-columns:1fr}.specs div:nth-child(odd){border-right:0}
+}
+@media (max-width:560px){
+ .cats{grid-template-columns:repeat(2,1fr)}.how,.form,.types,.brands-row,.levels{grid-template-columns:1fr}
+ .searchbox form{flex-direction:column}.searchbox .btn{height:48px}
+ .logo .wm{font-size:22px}.top .wrap{gap:10px}
+ .desmob .l{padding:24px}
+ .sellcta{padding:26px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+
+.top a.btn{text-decoration:none}
+.ill-wrap .il{letter-spacing:.06em}
+</style>
+</head>
+<body>
+<header class="top" id="hdr"></header>
+<main id="app"></main>
+<footer class="ft"><div class="wrap"><div><b>FIT BID</b><br>Leilões e venda direta de equipamentos profissionais.<br>Pagamento e entrega combinados pelo WhatsApp.</div><div>Lances são compromissos de compra. Preços de referência são indicativos.<br><button onclick="go('how')">Como funciona</button><button onclick="adminLogin()">Área do administrador</button></div></div></footer>
+<div class="scrim" id="scrim" onclick="if(event.target===this)closeModal()"></div>
+<div class="drawer" id="drawer"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>window.FITBID_CONFIG={supabaseUrl:"https://akvytzbynpxnslsuijub.supabase.co",supabaseAnonKey:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFrdnl0emJ5bnB4bnNsc3VpanViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE0MTUwNjYsImV4cCI6MjEwNjk5MTA2Nn0.706Ly7UlvMJTOEa6cYQx73iL1Px6SjW-O6ni6T4z3kk",whatsapp:"5522997322604",nomeLoja:"FIT BID"};</script>
+<script>
+/* FIT BID · versão operacional (venda direta) */
+const CFG=window.FITBID_CONFIG||{};
+const configured=CFG.supabaseUrl&&!/COLE_AQUI/.test(CFG.supabaseUrl)&&CFG.supabaseAnonKey&&!/COLE_AQUI/.test(CFG.supabaseAnonKey)&&window.supabase;
+const sb=configured?window.supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey):null;
+const LOJA=CFG.nomeLoja||"FIT BID";
+
+const SW='fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"';
+const ILL={
+ treadmill:`<svg viewBox="0 0 200 150" ${SW}><path d="M24 120h128l14-14H40z"/><circle cx="44" cy="113" r="4"/><circle cx="150" cy="113" r="4"/><path d="M150 106 162 40"/><rect x="138" y="26" width="40" height="16" rx="3"/><path d="M156 62h-34M18 128h150"/></svg>`,
+ bike:`<svg viewBox="0 0 200 150" ${SW}><circle cx="70" cy="96" r="24"/><circle cx="70" cy="96" r="5"/><path d="M70 96 100 54 128 96H70M100 54l-6-16h-20M128 96l16-46m-8 0h22M40 126h70m20 0h40M58 120l-8 6m86-6 8 6M104 96l-14 30m24-30 18 30"/></svg>`,
+ legpress:`<svg viewBox="0 0 200 150" ${SW}><path d="M20 126h160M40 126 150 28M60 126l100-88M150 28l12 10"/><rect x="104" y="52" width="26" height="30" rx="3" transform="rotate(-41 117 67)"/><path d="M30 100h44v-28M30 100v26M74 72l14-10"/></svg>`,
+ rack:`<svg viewBox="0 0 200 150" ${SW}><path d="M50 128V22M150 128V22M70 128V36M130 128V36M50 22h100M70 36h60M40 128h120"/><path d="M28 74h144"/><rect x="30" y="58" width="10" height="32" rx="2"/><rect x="160" y="58" width="10" height="32" rx="2"/></svg>`,
+ bench:`<svg viewBox="0 0 200 150" ${SW}><rect x="28" y="62" width="144" height="16" rx="6"/><path d="M50 78v40M150 78v40M36 118h28M136 118h28M100 78v26"/></svg>`,
+ dumbbell:`<svg viewBox="0 0 200 150" ${SW}><path d="M24 70h152M24 110h152M40 70v52M160 70v52"/><rect x="50" y="50" width="12" height="20" rx="3"/><rect x="88" y="50" width="12" height="20" rx="3"/><path d="M62 60h26"/><rect x="112" y="50" width="12" height="20" rx="3"/><rect x="146" y="50" width="12" height="20" rx="3"/><path d="M124 60h22"/></svg>`,
+ gym:`<svg viewBox="0 0 200 150" ${SW}><path d="M10 130h180"/><path d="M18 118h56l8-8H26z"/><path d="M74 110l8-40"/><rect x="72" y="62" width="20" height="10" rx="2"/><path d="M106 130V54M146 130V54M106 54h40M98 88h56"/><path d="M160 104h32M168 104v26M188 104v26"/></svg>`
+};
+const CATS=[["Musculação","M8 12h8M4 9v6M20 9v6M6 7v10M18 7v10","legpress"],["Cardio","M3 12h4l3-6 4 12 3-6h4","treadmill"],["Esteiras","M4 18h14l2-2H6zM18 16 20 6","treadmill"],["Bikes","M7 17a4 4 0 1 0 0-.01M17 17a4 4 0 1 0 0-.01M7 17l5-8 5 8M12 9l-1-3","bike"],["Bancos","M3 11h18M6 11v7M18 11v7","bench"],["Racks","M6 20V4M18 20V4M6 4h12M4 12h16","rack"],["Anilhas","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6z","dumbbell"],["Halteres","M3 12h18M6 8v8M18 8v8M3 10v4M21 10v4","dumbbell"],["Equipamentos funcionais","M12 4a3 3 0 0 1 3 3H9a3 3 0 0 1 3-3zM7 7h10l-1 13H8z","dumbbell"],["Academias completas","M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6","gym"],["Seminovos","M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4","legpress"],["Lotes empresariais","M4 7h16v13H4zM9 7V4h6v3M4 12h16","gym"]];
+const MAIN_CATS=CATS.map(c=>c[0]).filter(c=>c!=="Seminovos"&&c!=="Lotes empresariais");
+const UF="AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO".split(" ");
+const typeLabel={auction:"Leilão",auction_buy:"Leilão + Comprar agora",buy:"Comprar agora",offer:"Fazer oferta"};
+const SHIP={retirada:"Retirada no local",transportadora:"Transportadora",montagem:"Frete dedicado com montagem"};
+const ORDER_ST=["aguardando contato","pagamento combinado","pago","enviado","entregue","concluido","cancelado"];
+
+/* utilidades */
+const M=60e3,H=60*M,D=24*H;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>Number(v||0);
+const brl=v=>"R$ "+Math.round(num(v)).toLocaleString("pt-BR");
+const brl2=v=>num(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const pad=n=>String(n).padStart(2,"0");
+let SKEW=0;const now=()=>Date.now()+SKEW;
+function fmt(ms){if(ms<=0)return"ENCERRADO";const s=Math.floor(ms/1e3),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;return d>0?`${d}d ${pad(h)}h ${pad(m)}m`:`${pad(h)}h ${pad(m)}m ${pad(x)}s`}
+const hhmm=t=>new Date(t).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+const parseMoney=v=>{v=String(v||"").trim();if(!v)return 0;v=v.replace(/[^\d,\.]/g,"");if(v.includes(","))v=v.replace(/\./g,"").replace(",",".");else if((v.match(/\./g)||[]).length>1||/\.\d{3}$/.test(v))v=v.replace(/\./g,"");return Number(v)||0};
+const onlyDigits=v=>String(v||"").replace(/\D/g,"");
+const ts=v=>v?new Date(v).getTime():0;
+
+/* estado */
+const S={lots:[],bids:{},user:null,profile:null,admin:false,myBidLots:new Set(),autos:{},offers:[],orders:[],notifs:[],favs:[],loaded:false,
+ adm:{orders:[],offers:[],profiles:{},privates:{}}};
+try{S.favs=JSON.parse(localStorage.getItem("fitbid-favs")||"[]")}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem("fitbid-favs",JSON.stringify(S.favs))}catch(e){}};
+const V={view:"home",lot:null,img:0,tab:null,mode:"all",f:blankF(),edit:null,uploads:[]};
+function blankF(){return{q:"",cat:"",brands:[],uf:"",pmin:"",pmax:"",types:[],conds:[],today:false,sort:"end"}}
+
+/* regras */
+const getLot=id=>S.lots.find(l=>String(l.id)===String(id));
+const code=l=>l.code||String(l.id).padStart(3,"0");
+const isAuction=l=>l.type==="auction"||l.type==="auction_buy";
+const started=l=>!l.starts_at||ts(l.starts_at)<=now();
+const ended=l=>isAuction(l)&&(!l.ends_at||ts(l.ends_at)<=now());
+const live=l=>l.status==="active"&&isAuction(l)&&!ended(l)&&started(l);
+const meId=()=>S.user&&S.user.id;
+const iLead=l=>!!meId()&&l.leader===meId();
+const iBid=l=>S.myBidLots.has(l.id);
+const minBid=l=>l.bids_count>0?num(l.current_price)+num(l.increment):num(l.start_price);
+const price=l=>isAuction(l)&&l.status!=="sold"?num(l.current_price||l.start_price):isAuction(l)?num(l.current_price):num(l.buy_price);
+const won=l=>isAuction(l)&&ended(l)&&l.bids_count>0&&l.reserve_met;
+const cats=l=>[l.category,...(["Esteiras","Bikes"].includes(l.category)?["Cardio"]:["Bancos","Racks","Anilhas","Halteres"].includes(l.category)?["Musculação"]:[])];
+function status(l){
+ if(l.status==="hidden"||l.status==="draft")return["OCULTO","b-soft"];
+ if(l.status==="sold")return["VENDIDO","b-green"];
+ if(isAuction(l)){if(!started(l))return["EM BREVE","b-amber"];if(ended(l))return won(l)?["ARREMATADO","b-green"]:["ENCERRADO","b-soft"];return["EM LEILÃO","b-red"]}
+ return l.type==="offer"?["ACEITA OFERTAS","b-dark"]:["COMPRE AGORA","b-dark"];
+}
+const saving=l=>num(l.ref_price)&&price(l)<num(l.ref_price)?Math.round((1-price(l)/num(l.ref_price))*100):0;
+function catMatch(l,c){if(!c)return true;if(c==="Seminovos")return l.condition==="Seminovo";if(c==="Lotes empresariais")return num(l.qty)>1||l.category===c;return cats(l).includes(c)}
+function illKey(l){const c=CATS.find(x=>x[0]===l.category);return c?c[2]:"legpress"}
+function media(l,cls="",i=0){const p=(l.photos||[])[i];if(p)return `<img src="${esc(p)}" alt="${esc(l.title)}" class="${cls}" loading="lazy">`;return `<div class="ill-wrap ${cls}" role="img" aria-label="${esc(l.title)}">${ILL[illKey(l)]}<span class="il">FOTO EM BREVE</span></div>`}
+function waLink(text,to){return `https://wa.me/${onlyDigits(to||CFG.whatsapp)}?text=${encodeURIComponent(text)}`}
+function errMsg(e){const m=(e&&(e.message||e.error_description))||"Algo deu errado. Tente novamente.";return /JWT|fetch|Failed|network/i.test(m)?"Sem conexão com o servidor. Tente novamente.":m}
+/* ===== dados ===== */
+async function loadAll(){
+ try{const {data}=await sb.rpc("server_time");if(data)SKEW=new Date(data).getTime()-Date.now()}catch(e){}
+ const {data:s}=await sb.auth.getSession();S.user=s.session?s.session.user:null;
+ await loadLots();await loadMine();S.loaded=true;render();subscribe();
+}
+async function loadLots(){const {data,error}=await sb.from("lots").select("*").order("created_at",{ascending:false});if(error){toast(errMsg(error),"red");return}S.lots=data||[]}
+async function loadMine(){
+ S.profile=null;S.admin=false;S.myBidLots=new Set();S.autos={};S.offers=[];S.orders=[];
+ if(!S.user)return;
+ const [p,a,b,au,of,od]=await Promise.all([sb.from("profiles").select("*").eq("id",S.user.id).maybeSingle(),sb.rpc("is_admin"),sb.from("bids").select("lot_id").eq("user_id",S.user.id),sb.from("autobids").select("*").eq("user_id",S.user.id),sb.from("offers").select("*").eq("user_id",S.user.id).order("created_at",{ascending:false}),sb.from("orders").select("*").eq("user_id",S.user.id).order("created_at",{ascending:false})]);
+ S.profile=p.data||null;S.admin=!!a.data;(b.data||[]).forEach(x=>S.myBidLots.add(x.lot_id));(au.data||[]).forEach(x=>S.autos[x.lot_id]=num(x.max_amount));S.offers=of.data||[];S.orders=od.data||[];
+ if(S.admin)await loadAdmin();
+}
+async function loadAdmin(){
+ const [o,f,p,pr]=await Promise.all([sb.from("orders").select("*").order("created_at",{ascending:false}),sb.from("offers").select("*").order("created_at",{ascending:false}),sb.from("profiles").select("*").order("created_at",{ascending:false}),sb.from("lot_private").select("*")]);
+ S.adm.orders=o.data||[];S.adm.offers=f.data||[];S.adm.profiles={};(p.data||[]).forEach(x=>S.adm.profiles[x.id]=x);S.adm.privates={};(pr.data||[]).forEach(x=>S.adm.privates[x.lot_id]=x);
+}
+async function loadBids(id){const {data}=await sb.from("bids").select("id,lot_id,user_id,alias,amount,auto,created_at").eq("lot_id",id).order("id",{ascending:false}).limit(40);S.bids[id]=data||[]}
+let chan;
+function subscribe(){
+ if(chan)sb.removeChannel(chan);
+ chan=sb.channel("fitbid").on("postgres_changes",{event:"*",schema:"public",table:"lots"},p=>{
+   if(p.eventType==="DELETE"){S.lots=S.lots.filter(l=>l.id!==p.old.id);softRender();return}
+   const n=p.new;const i=S.lots.findIndex(l=>l.id===n.id);const old=i>=0?S.lots[i]:null;
+   if(i>=0)S.lots[i]=n;else S.lots.unshift(n);
+   if(old&&meId()&&old.leader===meId()&&n.leader&&n.leader!==meId()&&n.status==="active"){notify(`Você foi superado no lote #${code(n)}.`,n.id);toast(`Você foi superado no lote #${code(n)}.`,"red",n.id)}
+   refreshLot(n);
+ }).on("postgres_changes",{event:"INSERT",schema:"public",table:"bids"},p=>{const b=p.new;if(S.bids[b.lot_id]){S.bids[b.lot_id].unshift(b);const h=$("#hist");if(h&&V.view==="lot"&&String(V.lot)===String(b.lot_id))h.innerHTML=histRows(getLot(b.lot_id))}if(S.admin&&!b.auto)notify(`Novo lance de ${brl(b.amount)} no lote #${code(getLot(b.lot_id)||{id:b.lot_id})}.`,b.lot_id,true)})
+ .subscribe();
+}
+async function ensureBuyer(){
+ if(!sb){toast("Plataforma em configuração.","red");return false}
+ if(!S.user){const {data,error}=await sb.auth.signInAnonymously();if(error){toast("Não foi possível iniciar sua sessão: "+errMsg(error),"red");return false}S.user=data.user;await loadMine()}
+ if(S.profile&&S.profile.blocked){toast("Sua conta está bloqueada. Fale conosco pelo WhatsApp.","red");return false}
+ if(!S.profile){return await profileModal()}
+ return true;
+}
+function profileModal(){return new Promise(res=>{V.profileResolve=res;openModal(`<h2>Identifique-se</h2><p class="muted" style="margin:0">Usamos seu nome e WhatsApp para confirmar compras. Nos lances, você aparece apenas como “Comprador #número”.</p>
+ <div class="field"><label for="pn">Nome ou empresa *</label><input id="pn" autocomplete="name" value="${esc(S.profile?S.profile.name:"")}"></div>
+ <div class="field"><label for="pw">WhatsApp com DDD *</label><input id="pw" inputmode="tel" autocomplete="tel" placeholder="(21) 99999-9999" value="${esc(S.profile?S.profile.whatsapp:"")}"></div>
+ <div class="field"><label for="pc">Cidade/UF</label><input id="pc" value="${esc(S.profile?S.profile.city||"":"")}" placeholder="Rio de Janeiro/RJ"></div>
+ <button class="btn block" onclick="saveProfile()">CONTINUAR</button>`,()=>{if(V.profileResolve){V.profileResolve(false);V.profileResolve=null}})})}
+async function saveProfile(){
+ const name=$("#pn").value.trim(),wa=onlyDigits($("#pw").value),city=$("#pc").value.trim();
+ if(name.length<2){toast("Informe seu nome.","red");return}if(wa.length<10||wa.length>13){toast("Informe um WhatsApp válido com DDD.","red");return}
+ const row={id:S.user.id,name,whatsapp:wa,city};
+ const q=S.profile?sb.from("profiles").update({name,whatsapp:wa,city}).eq("id",S.user.id).select().single():sb.from("profiles").insert(row).select().single();
+ const {data,error}=await q;if(error){toast(errMsg(error),"red");return}
+ S.profile=data;const r=V.profileResolve;V.profileResolve=null;closeModal(true);toast("Cadastro salvo.","green");renderHeader();if(r)r(true);else render(true);
+}
+
+/* ===== header ===== */
+const NAVI=[["auctions","Leilões"],["buynow","Comprar agora"],["categories","Categorias"],["how","Como funciona"]];
+function curNav(k){return V.view==="browse"&&V.mode===k||V.view===k}
+function renderHeader(){
+ const unread=S.notifs.filter(n=>!n.read).length;
+ $("#hdr").innerHTML=`<div class="wrap">
+  <button class="logo" onclick="go('home')" aria-label="${esc(LOJA)}, página inicial"><span class="mk"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M14 4l6 6M11 7l6 6M13 5l-8 8 3 3 8-8M4 20h9"/></svg></span><span class="wm">FIT <b>BID</b></span></button>
+  <nav class="main" aria-label="Principal">${NAVI.map(([k,t])=>`<button aria-current="${curNav(k)}" onclick="${k==="auctions"||k==="buynow"?`go('browse',{mode:'${k}'})`:`go('${k}')`}">${t}</button>`).join("")}</nav>
+  <div class="right">
+   <button class="icon-btn" aria-label="Favoritos" onclick="go('account',{tab:'favs'})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>${S.favs.length?`<span class="cnt">${S.favs.length}</span>`:""}</button>
+   <div style="position:relative"><button class="icon-btn" aria-label="Notificações" onclick="toggleMenu('notif',event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg>${unread?`<span class="cnt">${unread}</span>`:""}</button>
+    <div class="notif" id="notif" onclick="event.stopPropagation()"><h4>Notificações <button class="link" style="font-size:13px" onclick="S.notifs.forEach(n=>n.read=true);renderHeader()">Marcar como lidas</button></h4><ul>${S.notifs.slice(0,20).map(n=>`<li class="${n.read?"":"unread"}"><div style="flex:1">${esc(n.text)}<time>${hhmm(n.t)}</time></div>${n.lotId?`<button onclick="go('lot',{lot:'${n.lotId}'})">VER LOTE</button>`:""}</li>`).join("")||"<li>Nenhuma notificação nesta visita.</li>"}</ul></div></div>
+   ${S.profile||S.admin?`<div style="position:relative"><button class="txt-btn" onclick="toggleMenu('um',event)">${esc(S.admin?"Admin":S.profile.name.split(" ")[0])} ▾</button><div class="usermenu" id="um"><button onclick="go('account',{tab:'bids'})">Minha conta</button>${S.admin?`<button onclick="go('admin',{tab:'lots'})">Gestão da loja</button>`:""}<button onclick="logout()">Sair</button></div></div>`
+    :`<button class="txt-btn hide-m" onclick="go('account',{tab:'bids'})">Minha conta</button>`}
+   ${S.admin?`<button class="btn sm hide-m" onclick="editLot()">+ CADASTRAR LOTE</button>`:`<a class="btn sm hide-m" href="${waLink("Olá! Vim pelo site "+LOJA+" e tenho uma dúvida.")}" target="_blank" rel="noopener">WHATSAPP</a>`}
+   <button class="icon-btn burger" aria-label="Abrir menu" onclick="openDrawer()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  </div></div>`;
+}
+function toggleMenu(id,e){e.stopPropagation();const el=document.getElementById(id);const o=el.classList.contains("open");document.querySelectorAll(".notif,.usermenu").forEach(x=>x.classList.remove("open"));if(!o)el.classList.add("open")}
+document.addEventListener("click",()=>document.querySelectorAll(".notif,.usermenu").forEach(x=>x.classList.remove("open")));
+function openDrawer(){const d=$("#drawer");d.innerHTML=`<div class="bg" onclick="closeDrawer()"></div><div class="pn" role="dialog" aria-label="Menu">
+ <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="logo"><span class="wm">FIT <b>BID</b></span></span><button class="icon-btn" aria-label="Fechar menu" onclick="closeDrawer()">✕</button></div>
+ <button class="it" onclick="closeDrawer();go('home')">Início</button>
+ ${NAVI.map(([k,t])=>`<button class="it" onclick="closeDrawer();${k==="auctions"||k==="buynow"?`go('browse',{mode:'${k}'})`:`go('${k}')`}">${t}</button>`).join("")}
+ <button class="it" onclick="closeDrawer();go('account',{tab:'favs'})">Favoritos (${S.favs.length})</button>
+ <button class="it" onclick="closeDrawer();go('account',{tab:'bids'})">Minha conta</button>
+ ${S.admin?`<button class="it" onclick="closeDrawer();go('admin',{tab:'lots'})">Gestão da loja</button><button class="btn" style="margin-top:12px" onclick="closeDrawer();editLot()">+ CADASTRAR LOTE</button>`:`<a class="btn" style="margin-top:12px" href="${waLink("Olá! Vim pelo site "+LOJA+" e tenho uma dúvida.")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a>`}
+ ${S.user?`<button class="it" onclick="closeDrawer();logout()">Sair</button>`:""}</div>`;d.classList.add("open")}
+function closeDrawer(){$("#drawer").classList.remove("open")}
+async function logout(){await sb.auth.signOut();S.user=null;await loadMine();go("home");toast("Você saiu da conta.")}
+
+/* ===== cards ===== */
+function heart(l){const on=S.favs.includes(l.id);return `<button class="heart" aria-label="${on?"Remover dos":"Adicionar aos"} favoritos" aria-pressed="${on}" onclick="event.stopPropagation();toggleFav(${l.id})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></button>`}
+function timerEl(l){if(!started(l))return `<span class="timer">Começa ${hhmm(l.starts_at)}</span>`;const ms=ts(l.ends_at)-now();return `<span class="timer ${ms<=0?"ended":ms<H?"soon":""}" data-end="${l.id}">${fmt(ms)}</span>`}
+function card(l){
+ const [st,sc]=status(l),auc=isAuction(l),sv=saving(l),open=l.status==="active";
+ const tags=[`<span class="badge ${sc}">${st}</span>`];if(sv>=20&&open&&!ended(l))tags.push(`<span class="badge b-dark">OPORTUNIDADE −${sv}%</span>`);
+ const act=!open?`<button class="btn sm line" onclick="event.stopPropagation();go('lot',{lot:${l.id}})">VER</button>`:auc?(live(l)?`<button class="btn sm" onclick="event.stopPropagation();go('lot',{lot:${l.id}})">DAR LANCE</button>`:`<button class="btn sm line" onclick="event.stopPropagation();go('lot',{lot:${l.id}})">VER</button>`)
+  :`${l.type==="buy"?`<button class="btn sm" onclick="event.stopPropagation();buyNow(${l.id})">COMPRAR</button>`:""}<button class="btn sm ${l.type==="buy"?"line":""}" onclick="event.stopPropagation();openOffer(${l.id})">OFERTA</button>`;
+ return `<div class="lc" onclick="go('lot',{lot:${l.id}})">
+  <div class="md">${media(l,"ill")}<div class="tl">${tags.join("")}</div>${heart(l)}</div>
+  <div class="bd"><div class="lotno">Lote #${esc(code(l))}${l.brand?" · "+esc(l.brand):""}</div><h3>${esc(l.title)}</h3>
+   <div class="meta">${esc(l.condition||"")}${l.city?` · ${esc(l.city)}/${esc(l.uf||"")}`:""}${num(l.qty)>1?` · ${l.qty} un.`:""}</div>
+   <div class="pr"><div><small>${auc?(ended(l)?"Lance final":l.bids_count?"Lance atual":"Lance inicial"):"Preço"}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div>${auc?`<span class="meta" data-nb="${l.id}">${l.bids_count} lances</span>`:""}</div>
+   ${l.type==="auction_buy"&&live(l)&&l.buy_price?`<button class="link" style="text-align:left;font-size:14px" onclick="event.stopPropagation();buyNow(${l.id})">ou compre agora por ${brl(l.buy_price)} ›</button>`:""}
+   <div class="ft">${auc?timerEl(l):`<span class="meta">${typeLabel[l.type]}</span>`}<div class="acts">${act}</div></div></div></div>`;
+}
+const visible=()=>S.lots.filter(l=>l.status==="active"||l.status==="sold");
+
+/* ===== home ===== */
+function renderHome(){
+ const vis=visible(),act=vis.filter(l=>l.status==="active");
+ const feat=act.filter(l=>l.featured);const featured=(feat.length?feat:act.filter(isAuction)).slice(0,6);
+ const soon=act.filter(live).sort((a,b)=>ts(a.ends_at)-ts(b.ends_at)).slice(0,4);
+ const buys=act.filter(l=>!isAuction(l)).slice(0,4);
+ const pics=act.filter(l=>(l.photos||[]).length).slice(0,3);
+ const desmob=act.find(l=>l.category==="Academias completas");
+ return `<section class="hero"><div class="wrap" ${pics.length?"":'style="grid-template-columns:1fr"'}>
+  <div><div class="eyebrow">Leilões e venda direta ${esc(LOJA)}</div>
+   <h1>Equipamentos profissionais.<br><span>Novas oportunidades.</span></h1>
+   <p>Compre equipamentos profissionais em leilão, com preço fixo ou fazendo sua oferta. Estoque, showroom, seminovos e lotes completos, vendidos diretamente pela ${esc(LOJA)}.</p>
+   <div class="ctas"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LEILÕES</button><button class="btn on-dark" onclick="go('browse',{mode:'buynow'})">COMPRAR AGORA</button></div>
+   <p style="font-size:14px;margin:22px 0 0">Pagamento e entrega combinados diretamente pelo WhatsApp.</p></div>
+  ${pics.length?`<div class="collage" aria-hidden="true">${pics.map((l,i)=>`<div class="t"><img src="${esc(l.photos[0])}" alt=""><span class="cap">Lote #${esc(code(l))}${i===0?` · <b data-cur="${l.id}">${brl(price(l))}</b>`:""}</span></div>`).join("")}</div>`:""}</div></section>
+ <div class="wrap">
+  <div class="searchbox"><form onsubmit="event.preventDefault();V.f=Object.assign(blankF(),{q:this.q.value});go('browse',{mode:'all',keep:true})" role="search">
+   <svg class="ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+   <input name="q" aria-label="Buscar" placeholder="Busque por equipamento, marca ou categoria…"><button class="btn" style="height:54px;padding:0 26px">Pesquisar</button></form></div>
+  ${!act.length?`<section class="blk"><div class="empty"><h2 style="font-size:26px;margin-bottom:8px">Novos lotes em breve</h2>Estamos preparando os próximos equipamentos. Fale com a gente pelo WhatsApp para saber em primeira mão.<br><a class="btn" style="margin-top:14px" href="${waLink("Olá! Quero ser avisado dos próximos lotes da "+LOJA+".")}" target="_blank" rel="noopener">AVISE-ME PELO WHATSAPP</a></div></section>`:""}
+  ${act.length?`<section class="blk"><div class="sh"><div><h2>Categorias</h2></div><button class="link" onclick="go('categories')">Ver todas ›</button></div>
+   <div class="cats">${CATS.filter(c=>vis.some(l=>catMatch(l,c[0]))).map(catBtn).join("")}</div></section>`:""}
+  ${featured.length?`<section class="blk"><div class="sh"><div><h2>Leilões em destaque</h2><p>Lotes selecionados e verificados pela ${esc(LOJA)}.</p></div><button class="link" onclick="go('browse',{mode:'auctions'})">Ver todos ›</button></div><div class="grid big">${featured.map(card).join("")}</div></section>`:""}
+  ${soon.length?`<section class="blk"><div class="sh"><div><h2>⏰ Encerrando em breve</h2><p>Lances nos 2 minutos finais estendem o prazo em 2 minutos.</p></div></div><div class="grid">${soon.map(card).join("")}</div></section>`:""}
+  ${desmob?`<section class="blk"><div class="desmob"><div class="l"><span class="badge b-red" style="align-self:flex-start">DESMOBILIZAÇÃO DE ACADEMIA</span><h2>${esc(desmob.title)}</h2><p style="color:var(--on-dark-muted);margin:0">${num(desmob.qty)>1?desmob.qty+" equipamentos · ":""}${esc(desmob.city||"")}${desmob.uf?"/"+esc(desmob.uf):""}</p>
+   <div class="nums">${num(desmob.ref_price)?`<div><small>Valor estimado</small><b>${brl(desmob.ref_price)}</b></div>`:""}<div><small>${isAuction(desmob)?"Lance atual":"Preço"}</small><b data-cur="${desmob.id}">${brl(price(desmob))}</b></div></div>
+   <div><button class="btn" onclick="go('lot',{lot:${desmob.id}})">VER LOTE COMPLETO</button></div></div><div class="r">${media(desmob,"ill")}</div></div></section>`:""}
+  ${buys.length?`<section class="blk"><div class="sh"><div><h2>Compre agora</h2><p>Preço fixo ou faça sua oferta.</p></div><button class="link" onclick="go('browse',{mode:'buynow'})">Ver todos ›</button></div><div class="grid">${buys.map(card).join("")}</div></section>`:""}
+  <section class="blk"><div class="trust"><div><h2>Compre com segurança.</h2><p class="muted">Leilão, preço fixo ou oferta, direto com a ${esc(LOJA)}.</p></div>
+   <ul>${["Venda direta, sem intermediários","Equipamentos verificados","Lotes detalhados","Histórico de lances","Nota fiscal quando informada","Entrega para todo o Brasil","Atendimento pelo WhatsApp"].map(x=>`<li><i>✓</i>${x}</li>`).join("")}</ul></div></section>
+ </div>`;
+}
+function catBtn([c,p]){return `<button class="cat" onclick="V.f=Object.assign(blankF(),{cat:'${c}'});go('browse',{mode:'all',keep:true})"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${p}"/></svg><b>${c}</b><span>${visible().filter(l=>l.status==="active"&&catMatch(l,c)).length} disponíveis</span></button>`}
+function renderCategories(){return `<div class="wrap"><div class="page-h"><h1>Categorias</h1></div><div class="cats">${CATS.map(catBtn).join("")}</div></div>`}
+
+/* ===== explorar ===== */
+function filtered(){
+ const f=V.f,q=f.q.trim().toLowerCase(),eod=new Date(now());eod.setHours(23,59,59,999);
+ let r=visible();if(V.mode==="auctions")r=r.filter(isAuction);if(V.mode==="buynow")r=r.filter(l=>!isAuction(l));
+ r=r.filter(l=>(!q||[l.title,l.brand,l.category,l.condition,l.description].join(" ").toLowerCase().includes(q))&&catMatch(l,f.cat)&&(!f.brands.length||f.brands.includes(l.brand))&&(!f.uf||l.uf===f.uf)&&(!f.pmin||price(l)>=+f.pmin)&&(!f.pmax||price(l)<=+f.pmax)&&(!f.types.length||f.types.includes(l.type))&&(!f.conds.length||f.conds.includes(l.condition))&&(!f.today||(live(l)&&ts(l.ends_at)<=eod.getTime())));
+ const s=f.sort,act=l=>l.status==="active"&&!ended(l)?1:0;
+ r.sort(s==="new"?(a,b)=>ts(b.created_at)-ts(a.created_at):s==="low"?(a,b)=>price(a)-price(b):s==="high"?(a,b)=>price(b)-price(a):s==="bids"?(a,b)=>b.bids_count-a.bids_count:(a,b)=>(act(b)-act(a))||((isAuction(a)?ts(a.ends_at):9e15)-(isAuction(b)?ts(b.ends_at):9e15)));
+ return r;
+}
+function renderBrowse(){
+ const t=V.mode==="auctions"?["Leilões","Lances ao vivo, com cronômetro e histórico transparente."]:V.mode==="buynow"?["Comprar agora","Preço fixo ou faça uma oferta."]:["Resultados",""];
+ const f=V.f,brands=[...new Set(visible().map(l=>l.brand).filter(Boolean))].sort();
+ const ck=(arr,v,lbl)=>`<label class="ck"><input type="checkbox" ${f[arr].includes(v)?"checked":""} onchange="togF('${arr}','${esc(v)}',this.checked)">${esc(lbl||v)}</label>`;
+ return `<div class="wrap"><div class="page-h"><h1>${t[0]}</h1>${t[1]?`<p>${t[1]}</p>`:""}</div>
+ <div class="browse"><aside class="filters" id="filters" aria-label="Filtros">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="font-size:20px">Filtros</h3><button class="link" onclick="V.f=Object.assign(blankF(),{sort:V.f.sort});render()">Limpar</button></div>
+  <div class="fg"><h4>Buscar</h4><input type="text" value="${esc(f.q)}" placeholder="Equipamento ou marca" oninput="V.f.q=this.value;results()"></div>
+  <div class="fg"><h4>Categoria</h4><select onchange="V.f.cat=this.value;results()"><option value="">Todas</option>${CATS.map(([c])=>`<option ${f.cat===c?"selected":""}>${c}</option>`).join("")}</select></div>
+  ${brands.length?`<div class="fg"><h4>Marca</h4>${brands.map(b=>ck("brands",b)).join("")}</div>`:""}
+  <div class="fg"><h4>Estado</h4><select onchange="V.f.uf=this.value;results()"><option value="">Todos</option>${UF.map(u=>`<option ${f.uf===u?"selected":""}>${u}</option>`).join("")}</select></div>
+  <div class="fg"><h4>Preço (R$)</h4><div class="two"><input type="number" min="0" value="${esc(f.pmin)}" placeholder="Mín." aria-label="Preço mínimo" oninput="V.f.pmin=this.value;results()"><input type="number" min="0" value="${esc(f.pmax)}" placeholder="Máx." aria-label="Preço máximo" oninput="V.f.pmax=this.value;results()"></div></div>
+  <div class="fg"><h4>Tipo de venda</h4>${Object.entries(typeLabel).map(([k,v])=>ck("types",k,v)).join("")}</div>
+  <div class="fg"><h4>Condição</h4>${["Novo","Seminovo","Showroom","Usado","Devolução"].map(c=>ck("conds",c)).join("")}</div>
+  <div class="fg"><label class="ck" style="font-weight:700"><input type="checkbox" ${f.today?"checked":""} onchange="V.f.today=this.checked;results()">Encerrando hoje</label></div>
+  <button class="btn fbtn" style="position:fixed;left:18px;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px))" onclick="$('#filters').classList.remove('open')">VER RESULTADOS</button>
+ </aside>
+ <div><div class="toolbar"><div style="display:flex;gap:10px;align-items:center"><button class="btn sm line fbtn" onclick="$('#filters').classList.add('open')">Filtros</button><span class="muted" id="rc"></span></div>
+  <label>Ordenar: <select onchange="V.f.sort=this.value;results()">${[["new","Mais recentes"],["low","Menor preço"],["high","Maior preço"],["end","Encerrando primeiro"],["bids","Mais lances"]].map(([k,v])=>`<option value="${k}" ${f.sort===k?"selected":""}>${v}</option>`).join("")}</select></label></div>
+  <div class="grid" id="results"></div></div></div></div>`;
+}
+function togF(arr,v,on){const a=V.f[arr];const i=a.indexOf(v);if(on&&i<0)a.push(v);if(!on&&i>=0)a.splice(i,1);results()}
+function results(){const el=$("#results");if(!el)return;const r=filtered();el.innerHTML=r.map(card).join("")||'<div class="empty">Nenhum equipamento encontrado.</div>';$("#rc").textContent=`${r.length} ${r.length===1?"resultado":"resultados"}`}
+/* ===== página do lote ===== */
+function renderLot(){
+ const l=getLot(V.lot);if(!l)return `<div class="wrap"><div class="empty" style="margin-top:30px">Lote não encontrado.<br><button class="btn sm" style="margin-top:12px" onclick="go('home')">VOLTAR</button></div></div>`;
+ if(!S.bids[l.id]&&isAuction(l)){loadBids(l.id).then(()=>{const h=$("#hist");if(h)h.innerHTML=histRows(l)})}
+ const auc=isAuction(l),[st,sc]=status(l),sv=saving(l),photos=l.photos||[];
+ const specs=[["Marca",l.brand],["Condição",l.condition],["Localização",l.city?`${l.city}/${l.uf||""}`:""],["Nota fiscal",l.nf?"Sim":"Não"],["Garantia",l.warranty],["Número do lote","#"+code(l)],["Quantidade",num(l.qty)>1?l.qty+" unidades":"1 unidade"],["Ano",l.year],["Tipo de venda",typeLabel[l.type]],["Peso estimado",l.kg?`${num(l.kg).toLocaleString("pt-BR")} kg`:""]].filter(x=>x[1]);
+ const cur=photos[V.img]||photos[0];
+ return `<div class="wrap"><div class="crumbs"><button onclick="go('home')">Início</button> / <button onclick="go('browse',{mode:'${auc?"auctions":"buynow"}'})">${auc?"Leilões":"Comprar agora"}</button> / <span>Lote #${esc(code(l))}</span></div>
+ <div class="lotpage"><div>
+  <div class="gal"><div class="main">${cur?`<img src="${esc(cur)}" alt="${esc(l.title)}">`:media(l)}${heart(l)}</div>
+   ${photos.length>1?`<div class="thumbs">${photos.map((p,i)=>`<button aria-label="Foto ${i+1}" aria-pressed="${(V.img||0)===i}" onclick="V.img=${i};render(true)"><img src="${esc(p)}" alt=""></button>`).join("")}</div>`:""}</div>
+  <div class="box lt" style="margin-top:16px"><div class="vers"><span class="badge ${sc}">${st}</span><span class="badge b-ver">✓ VENDA DIRETA ${esc(LOJA)}</span>${l.nf?'<span class="badge b-ver">✓ NOTA FISCAL</span>':""}</div>
+   <h1>${esc(l.title)}</h1><div class="muted">Lote #${esc(code(l))}${l.brand?" · "+esc(l.brand):""}${l.condition?" · "+esc(l.condition):""}${l.city?` · ${esc(l.city)}/${esc(l.uf||"")}`:""}</div></div>
+  ${num(l.ref_price)&&sv>0?`<div class="box"><div class="opp"><span class="badge b-red tag">OPORTUNIDADE</span><div><small>Preço de referência</small><b class="num">${brl(l.ref_price)}</b></div><div><small>${auc?"Lance atual":"Preço"}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div><div class="sv"><small>Economia potencial</small><b class="num">${sv}%</b></div></div><p class="muted" style="font-size:13px;margin:10px 0 0">Preço de referência meramente indicativo.</p></div>`:""}
+  <div class="box"><h3>Informações do lote</h3><dl class="specs">${specs.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>${l.description?`<p style="margin:14px 0 0;white-space:pre-line">${esc(l.description)}</p>`:""}</div>
+  <div class="box"><h3>LOGÍSTICA</h3><div class="logi"><div><b>${l.logistics==="retirada"?"Retirada por conta do comprador":"Entrega combinada após a compra"}</b><div class="muted" style="font-size:14px">${l.city?`Saída de ${esc(l.city)}/${esc(l.uf||"")}`:""}${l.kg?` · peso estimado ${num(l.kg).toLocaleString("pt-BR")} kg`:""}</div></div><button class="btn line" onclick="openShip(${l.id})">CALCULAR TRANSPORTE</button></div></div>
+  ${auc?`<div class="box"><h3>Histórico de lances</h3><div class="tblw"><table class="tbl"><thead><tr><th>Horário</th><th>Comprador</th><th>Lance</th></tr></thead><tbody id="hist">${histRows(l)}</tbody></table></div><p class="muted" style="font-size:13px;margin:10px 0 0">Compradores identificados apenas por número.</p></div>`:""}
+ </div>
+ <aside>${auc?bidPanel(l):buyPanel(l)}
+  ${S.admin?`<div class="box"><b>Administrador</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm dark" onclick="editLot(${l.id})">EDITAR LOTE</button><button class="btn sm line" onclick="go('admin',{tab:'lots'})">GESTÃO</button></div></div>`:""}
+  <div class="box"><h3 style="font-size:16px">Dúvidas sobre este lote?</h3><a class="btn line block" href="${waLink(`Olá! Tenho uma dúvida sobre o lote #${code(l)} – ${l.title}.`)}" target="_blank" rel="noopener">PERGUNTAR NO WHATSAPP</a></div>
+ </aside></div></div>${mobileBar(l)}`;
+}
+function histRows(l){const b=S.bids[l.id];if(!b)return '<tr><td colspan="3" class="muted">Carregando…</td></tr>';return b.map(x=>`<tr class="${x.user_id===meId()?"me":""}"><td class="num">${hhmm(x.created_at)}</td><td>${x.user_id===meId()?"Você (Comprador #"+x.alias+")":"Comprador #"+esc(x.alias)}${x.auto?' <span class="muted" style="font-size:12px">(auto)</span>':""}</td><td class="num">${brl(x.amount)}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">Nenhum lance ainda. Seja o primeiro.</td></tr>'}
+function bidPanel(l){
+ const lv=live(l),mn=minBid(l),auto=S.autos[l.id],ord=S.orders.find(o=>o.lot_id===l.id);
+ const pos=iBid(l)||iLead(l)?(iLead(l)?(lv?`<div class="pos win">Você está na frente.</div>`:won(l)?`<div class="pos win">Você venceu este lote!</div>`:`<div class="pos lose">Leilão encerrado sem atingir o valor mínimo de venda.</div>`):(lv?`<div class="pos lose">Você foi superado. Dê um novo lance.</div>`:`<div class="pos lose">Leilão encerrado. Outro comprador venceu.</div>`)):"";
+ let body="";
+ if(l.status==="sold")body=iLead(l)||ord?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:`<p style="margin:0;font-weight:700">Equipamento vendido.</p>`;
+ else if(lv)body=`<div class="minrow"><span>${l.bids_count?"Próximo lance mínimo":"Lance inicial"}</span><b class="num" data-min="${l.id}">${brl2(mn)}</b></div>
+  ${iLead(l)?"":`<div class="field"><label for="bidv">Seu lance (opcional, acima do mínimo)</label><div class="money"><span>R$</span><input id="bidv" class="num" inputmode="decimal" placeholder="${Math.round(mn).toLocaleString("pt-BR")}"></div></div>
+  <button class="btn block" style="padding:16px;font-size:16px" onclick="askBid(${l.id})">DAR LANCE</button>`}
+  ${l.type==="auction_buy"&&l.buy_price?`<button class="btn block dark" onclick="buyNow(${l.id})">COMPRAR AGORA POR ${brl(l.buy_price)}</button>`:""}
+  <div class="autob"><h4>Definir lance máximo</h4><p>Informe o valor máximo que você aceita pagar. A plataforma cobre outros lances por você, sempre com o mínimo necessário, até esse limite.</p>
+  ${auto?`<div class="auto-on"><div><small class="muted">Lance automático até</small><div style="font-family:var(--display);font-weight:900;font-size:22px">${brl(auto)}</div></div><button class="btn sm line" onclick="cancelAuto(${l.id})">CANCELAR</button></div>`:`<div class="money"><span>R$</span><input id="autov" class="num" inputmode="decimal" placeholder="______" aria-label="Lance máximo"></div><button class="btn block line" onclick="askAuto(${l.id})">DEFINIR AUTO-LANCE</button>`}</div>
+  <p class="muted" style="font-size:12px;margin:0">Lances são compromissos de compra. Lances nos 2 minutos finais estendem o leilão em 2 minutos.</p>`;
+ else if(!started(l))body=`<p class="muted" style="margin:0">Este leilão começa em ${new Date(l.starts_at).toLocaleString("pt-BR")}.</p>`;
+ else body=`<p style="margin:0;font-weight:700">Leilão encerrado.</p>${iLead(l)&&won(l)?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:""}<button class="btn block line" onclick="go('browse',{mode:'auctions'})">VER OUTROS LEILÕES</button>`;
+ return `<div class="bidpanel"><div class="bp-top"><div><small>${l.bids_count?"Lance atual":"Lance inicial"}</small><div class="cur num" data-cur2="${l.id}">${brl2(l.bids_count?l.current_price:l.start_price)}</div><small style="margin-top:6px" data-nb2="${l.id}">${l.bids_count} lances</small></div><div style="text-align:right"><small>${lv?"Encerra em":"Status"}</small>${timerEl(l)}</div></div><div class="bp-body">${pos}${body}</div></div>`;
+}
+function buyPanel(l){
+ const mine=l.status==="sold"&&l.sold_to===meId(),acc=S.offers.find(o=>o.lot_id===l.id&&["aceita","contraproposta"].includes(o.status));
+ return `<div class="bidpanel"><div class="bp-top"><div><small>${l.type==="offer"?"Preço anunciado":"Preço"}</small><div class="cur num">${brl2(l.buy_price)}</div></div><div style="text-align:right"><small>Modalidade</small><b style="color:#fff">${typeLabel[l.type]}</b></div></div>
+ <div class="bp-body">${l.status==="sold"?(mine?`<div class="pos win">Você comprou este equipamento.</div><button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:`<p style="margin:0;font-weight:700">Equipamento vendido.</p>`)
+ :acc?`<div class="pos win">Sua oferta ${acc.status==="aceita"?"foi aceita":"recebeu contraproposta de "+brl(acc.counter)}.</div><button class="btn block green" onclick="finishWA(${l.id})">FECHAR PELO WHATSAPP</button>`
+ :`${l.type==="buy"?`<button class="btn block" style="padding:16px;font-size:16px" onclick="buyNow(${l.id})">COMPRAR AGORA</button>`:""}<button class="btn block ${l.type==="buy"?"line":""}" style="padding:14px" onclick="openOffer(${l.id})">FAZER OFERTA</button><p class="muted" style="font-size:13px;margin:0">Pagamento e entrega são combinados diretamente com a ${esc(LOJA)} pelo WhatsApp.</p>`}</div></div>`;
+}
+function mobileBar(l){
+ if(live(l)&&!iLead(l))return `<div class="mbar"><div><small>Lance atual · ${timerEl(l)}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div><button class="btn" onclick="document.getElementById('bidv')?document.getElementById('bidv').scrollIntoView({block:'center'}):askBid(${l.id})">DAR LANCE</button></div>`;
+ if(!isAuction(l)&&l.status==="active")return `<div class="mbar"><div><small>${typeLabel[l.type]}</small><b class="num">${brl(l.buy_price)}</b></div><button class="btn" onclick="${l.type==="buy"?`buyNow(${l.id})`:`openOffer(${l.id})`}">${l.type==="buy"?"COMPRAR":"FAZER OFERTA"}</button></div>`;
+ return "";
+}
+
+/* ===== modais ===== */
+function openModal(h,onClose){V.modalClose=onClose||null;$("#scrim").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><button class="x" aria-label="Fechar" onclick="closeModal()">✕</button>${h}</div>`;$("#scrim").classList.add("open");const f=$("#scrim .modal input,#scrim .modal .btn");f&&f.focus()}
+function closeModal(silent){$("#scrim").classList.remove("open");const c=V.modalClose;V.modalClose=null;if(!silent&&c)c()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closeDrawer();$("#filters")&&$("#filters").classList.remove("open")}});
+function busyBtn(b,on){if(!b)return;b.disabled=on;if(on){b.dataset.t=b.textContent;b.textContent="AGUARDE…"}else if(b.dataset.t)b.textContent=b.dataset.t}
+
+async function askBid(id){const l=getLot(id);const inp=$("#bidv");const typed=parseMoney(inp&&inp.value);if(!await ensureBuyer())return;const mn=minBid(l);const v=typed||mn;
+ if(!live(l)){toast("Este leilão está encerrado.","red");return}if(v<mn){toast(`O lance mínimo é ${brl2(mn)}.`,"red");return}
+ openModal(`<h2>Confirmar lance</h2><p style="margin:0;font-size:17px">Você está oferecendo <b class="num">${brl2(v)}</b> neste lote.</p><div class="sumrow"><span>Lote</span><span>#${esc(code(l))}</span><span>Equipamento</span><span style="text-align:right">${esc(l.title)}</span></div><p class="muted" style="font-size:13px;margin:0">O lance é um compromisso de compra caso você vença.</p><div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn" id="cb" onclick="placeBid(${id},${v})">CONFIRMAR LANCE</button></div>`)}
+async function placeBid(id,v){const b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("place_bid",{p_lot:id,p_amount:v});busyBtn(b,false);
+ if(error){toast(errMsg(error),"red");return}closeModal();mergeLot(data);S.myBidLots.add(id);await loadBids(id);toast(iLead(getLot(id))?"✓ Lance registrado. Você está na frente.":"Lance registrado, mas outro comprador tinha lance automático maior.",iLead(getLot(id))?"green":"red");render(true)}
+async function askAuto(id){const l=getLot(id);const v=parseMoney($("#autov")&&$("#autov").value);if(!await ensureBuyer())return;const mn=minBid(l);if(!v||(v<mn&&!iLead(l))){toast(`Informe um valor a partir de ${brl2(mn)}.`,"red");return}
+ openModal(`<h2>Definir lance automático</h2><p style="margin:0">A plataforma dará lances por você, sempre o mínimo necessário, até <b>${brl2(v)}</b>. Ninguém vê o seu limite.</p><div class="sumrow"><span>Lance atual</span><span class="num">${brl(price(l))}</span><span>${iLead(l)?"Você já lidera":"Seu primeiro lance agora"}</span><span class="num">${iLead(l)?"—":brl(Math.min(v,mn))}</span></div><div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn" id="cb" onclick="setAuto(${id},${v})">CONFIRMAR</button></div>`)}
+async function setAuto(id,v){const b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("set_autobid",{p_lot:id,p_max:v});busyBtn(b,false);if(error){toast(errMsg(error),"red");return}closeModal();mergeLot(data);S.autos[id]=v;S.myBidLots.add(id);await loadBids(id);toast(iLead(getLot(id))?"Lance automático ativo. Você está na frente.":"Lance automático ativo, mas outro comprador tem limite maior.",iLead(getLot(id))?"green":"red");render(true)}
+async function cancelAuto(id){const {error}=await sb.rpc("cancel_autobid",{p_lot:id});if(error){toast(errMsg(error),"red");return}delete S.autos[id];toast("Lance automático cancelado.");render(true)}
+function mergeLot(n){if(!n)return;const i=S.lots.findIndex(l=>l.id===n.id);if(i>=0)S.lots[i]=n;else S.lots.unshift(n)}
+
+function shipFields(l){return `<div class="field"><label>Entrega</label>${Object.entries(SHIP).map(([k,v],i)=>`<label class="ck" style="display:flex;gap:10px;align-items:center;padding:6px 0"><input type="radio" name="shp" value="${k}" ${(l.logistics==="retirada"?k==="retirada":i===1)?"checked":""}> ${v}</label>`).join("")}</div><div class="field"><label for="shcep">CEP de entrega (se não for retirar)</label><input id="shcep" inputmode="numeric" placeholder="00000-000" oninput="this.value=maskCep(this.value)"></div>`}
+function readShip(){const k=(document.querySelector('input[name="shp"]:checked')||{}).value||"retirada";const c=$("#shcep")?$("#shcep").value:"";return SHIP[k]+(k!=="retirada"&&c?` · CEP ${c}`:"")}
+async function buyNow(id){const l=getLot(id);if(!await ensureBuyer())return;if(l.status!=="active"||(isAuction(l)&&!live(l))){toast("Este equipamento não está mais disponível.","red");return}
+ openModal(`<h2>Comprar agora</h2><p style="margin:0">${esc(l.title)} · Lote #${esc(code(l))}</p><div class="sumrow"><span>Preço</span><b class="num">${brl2(l.buy_price)}</b></div>${shipFields(l)}<p class="muted" style="font-size:13px;margin:0">Ao confirmar, o equipamento fica reservado para você e abrimos o WhatsApp para combinar pagamento e entrega.</p><div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn" id="cb" onclick="confirmBuy(${id})">CONFIRMAR COMPRA</button></div>`)}
+async function confirmBuy(id){const ship=readShip(),b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("buy_now",{p_lot:id,p_shipping:ship});busyBtn(b,false);if(error){toast(errMsg(error),"red");return}
+ const l=getLot(id);l.status="sold";l.sold_to=meId();await loadMine();notify(`Compra reservada: ${l.title}.`,id);waDone(l,"compra",l.buy_price,ship,data)}
+async function finishWA(id){const l=getLot(id);if(!await ensureBuyer())return;const ord=S.orders.find(o=>o.lot_id===id);
+ if(ord){waDone(l,ord.kind,ord.amount,ord.shipping||"a combinar",ord.id);return}
+ openModal(`<h2>Finalizar compra</h2><p style="margin:0">${esc(l.title)} · Lote #${esc(code(l))}</p>${shipFields(l)}<div class="acts"><button class="btn line" onclick="closeModal()">CANCELAR</button><button class="btn green" id="cb" onclick="confirmClaim(${id})">CONTINUAR</button></div>`)}
+async function confirmClaim(id){const ship=readShip(),b=$("#cb");busyBtn(b,true);const {data,error}=await sb.rpc("claim_order",{p_lot:id,p_shipping:ship});busyBtn(b,false);if(error){toast(errMsg(error),"red");return}await loadMine();await loadLots();const o=S.orders.find(x=>x.id===data)||{kind:"leilao",amount:getLot(id).current_price};waDone(getLot(id),o.kind,o.amount,ship,data)}
+function waDone(l,kind,amount,ship,orderId){
+ const k={leilao:"leilão (arrematado)",compra:"compra imediata",oferta:"oferta aceita"}[kind]||kind;
+ const msg=`Olá! Sou ${S.profile.name} (Comprador #${S.profile.alias}).\nQuero finalizar a compra:\n• Lote #${code(l)} – ${l.title}\n• Valor: ${brl2(amount)}\n• Modalidade: ${k}\n• Entrega: ${ship}\n• Pedido nº ${orderId}`;
+ openModal(`<div class="success"><div class="ok">✓</div><h2 style="padding:0">Pedido nº ${orderId} registrado</h2><p class="muted" style="margin:0">Agora é só abrir o WhatsApp e enviar a mensagem pronta para combinar pagamento e entrega.</p><a class="btn green block" href="${waLink(msg)}" target="_blank" rel="noopener">ABRIR WHATSAPP</a><button class="btn line" onclick="closeModal()">FECHAR</button></div>`);render(true)}
+
+async function openOffer(id){const l=getLot(id);if(!await ensureBuyer())return;openModal(`<h2>Faça uma oferta</h2><div class="sumrow"><span>Preço anunciado</span><b class="num">${brl2(l.buy_price)}</b></div>
+ <div class="field"><label for="ofv">Minha oferta</label><div class="money"><span>R$</span><input id="ofv" class="num" inputmode="decimal"></div></div>
+ <div class="field"><label for="ofm">Mensagem (opcional)</label><textarea id="ofm" rows="3" placeholder="Ex.: retiro na próxima semana"></textarea></div><button class="btn block" id="cb" onclick="sendOffer(${id})">ENVIAR OFERTA</button>`)}
+async function sendOffer(id){const v=parseMoney($("#ofv").value);if(!v){toast("Informe o valor da oferta.","red");return}const b=$("#cb");busyBtn(b,true);
+ const {data,error}=await sb.from("offers").insert({lot_id:id,amount:v,message:$("#ofm").value.trim()||null}).select().single();busyBtn(b,false);if(error){toast(errMsg(error),"red");return}
+ S.offers.unshift(data);$("#scrim .modal").innerHTML=`<div class="success"><div class="ok">✓</div><h2 style="padding:0">Oferta enviada.</h2><p class="muted" style="margin:0">Você ofereceu ${brl2(v)}. A resposta aparece em Minha conta → Ofertas.</p><button class="btn dark" onclick="closeModal()">FECHAR</button></div>`}
+
+/* transporte (estimativa) */
+const REG={0:[-23.5,-46.6],1:[-22.9,-47.1],2:[-22.9,-43.2],3:[-19.9,-43.9],4:[-12.9,-38.5],5:[-8.05,-34.9],6:[-3.7,-38.5],7:[-15.8,-47.9],8:[-25.4,-49.3],9:[-30,-51.2]};
+const UF_CEP={SP:"01310000",RJ:"20040000",MG:"30140000",ES:"29010000",PR:"80010000",SC:"88010000",RS:"90010000",GO:"74003000",DF:"70040000",BA:"40020000",PE:"50030000",CE:"60060000"};
+const maskCep=v=>{v=v.replace(/\D/g,"").slice(0,8);return v.length>5?v.slice(0,5)+"-"+v.slice(5):v};
+function km(a,b){const[p,q]=REG[a],[r,s]=REG[b],R=Math.PI/180;return Math.max(30,Math.acos(Math.min(1,Math.sin(p*R)*Math.sin(r*R)+Math.cos(p*R)*Math.cos(r*R)*Math.cos((q-s)*R)))*6371*1.25)}
+function openShip(id){const l=getLot(id);openModal(`<h2>Calcular transporte</h2><div class="form" style="grid-template-columns:1fr 1fr"><div class="field"><label for="c1">CEP origem</label><input id="c1" inputmode="numeric" value="${maskCep(UF_CEP[l.uf]||"20040000")}" oninput="this.value=maskCep(this.value)"></div><div class="field"><label for="c2">CEP destino</label><input id="c2" inputmode="numeric" placeholder="00000-000" oninput="this.value=maskCep(this.value)"></div>
+ <div class="field"><label for="c3">Quantidade</label><input id="c3" type="number" min="1" value="${num(l.qty)||1}"></div><div class="field"><label for="c4">Peso estimado (kg)</label><input id="c4" type="number" min="1" value="${num(l.kg)||150}"></div></div>
+ <button class="btn block" onclick="calcShip()">CALCULAR</button><div id="shipr"></div>`)}
+function calcShip(){const a=onlyDigits($("#c1").value),b=onlyDigits($("#c2").value);if(a.length<5||b.length<8){toast("Informe CEP de origem e destino.","red");return}
+ const kg=+$("#c4").value||100,d=km(+a[0],+b[0]),base=Math.round(150+kg*d*.0009+kg*.55),days=Math.ceil(2+d/400);
+ $("#shipr").innerHTML=`<div class="sumrow" style="margin-top:4px"><span>Distância aproximada</span><span class="num">${Math.round(d)} km</span><span>Transportadora</span><b class="num">${brl(base)} · ${days}–${days+3} dias</b><span>Frete dedicado com montagem</span><b class="num">${brl(base*1.6+400)}</b></div><p class="muted" style="font-size:13px;margin:8px 0 0">Valor estimado. A cotação final é confirmada pelo WhatsApp.</p>`}
+/* ===== minha conta ===== */
+function miniLot(l){if(!l)return "—";return `<div class="mini"><div class="th">${media(l)}</div><div><button class="link" style="color:var(--ink);text-align:left" onclick="go('lot',{lot:${l.id}})">${esc(l.title)}</button><div class="muted" style="font-size:12px">Lote #${esc(code(l))}</div></div></div>`}
+function sideMenu(title,sub,items,view){return `<aside class="side"><div class="who"><b>${title}</b><small>${sub}</small></div>${items.map(([k,t,c])=>`<button aria-current="${V.tab===k}" onclick="go('${view}',{tab:'${k}'})">${t}${c!=null?`<span>${c}</span>`:""}</button>`).join("")}</aside>`}
+const empty=(t,b,a)=>`<div class="empty">${t}${b?`<br><button class="btn sm" style="margin-top:12px" onclick="${a}">${b}</button>`:""}</div>`;
+const T=(h,rows)=>`<div class="tblw"><table class="tbl"><thead><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+function renderAccount(){
+ const tab=V.tab||"bids";const favs=S.favs.map(getLot).filter(Boolean);
+ if(!S.user||!S.profile){if(tab==="favs")return `<div class="wrap"><div class="page-h"><h1>Meus favoritos</h1></div>${favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.","VER LEILÕES","go('browse',{mode:'auctions'})")}</div>`;
+  return `<div class="wrap" style="max-width:640px"><div class="box" style="margin-top:30px;text-align:center"><h1 style="font-size:28px;font-weight:900">Minha conta</h1><p class="muted">Identifique-se com nome e WhatsApp para dar lances, comprar e acompanhar seus pedidos.</p><button class="btn" onclick="ensureBuyer().then(ok=>ok&&render())">ENTRAR / IDENTIFICAR-ME</button><p class="muted" style="font-size:13px;margin:14px 0 0">Seu acesso fica salvo neste aparelho. Se trocar de celular ou limpar o navegador, fale com a gente pelo WhatsApp.</p></div></div>`}
+ const bids=S.lots.filter(l=>S.myBidLots.has(l.id));const out=bids.filter(l=>live(l)&&!iLead(l));
+ let body="";
+ if(tab==="bids")body=bids.length?T(["Lote","Lance atual","Situação","Tempo",""],bids.map(l=>{const s=ended(l)||l.status==="sold"?(iLead(l)&&(won(l)||l.status==="sold")?["ARREMATADO","b-green"]:["ENCERRADO","b-soft"]):(iLead(l)?["NA FRENTE","b-green"]:["SUPERADO","b-red"]);return [miniLot(l),`<span class="num" data-cur="${l.id}">${brl(price(l))}</span>`,`<span class="badge ${s[1]}">${s[0]}</span>`,isAuction(l)?timerEl(l):"—",s[0]==="ARREMATADO"?`<button class="btn sm green" onclick="finishWA(${l.id})">FINALIZAR</button>`:`<button class="btn sm line" onclick="go('lot',{lot:${l.id}})">VER</button>`]})):empty("Você ainda não deu lances.","VER LEILÕES","go('browse',{mode:'auctions'})");
+ if(tab==="autos"){const a=Object.entries(S.autos).map(([id,v])=>[getLot(id),v]).filter(x=>x[0]);body=a.length?T(["Lote","Seu limite","Lance atual","Tempo",""],a.map(([l,v])=>[miniLot(l),brl(v),`<span data-cur="${l.id}">${brl(price(l))}</span>`,timerEl(l),live(l)?`<button class="btn sm line" onclick="cancelAuto(${l.id})">CANCELAR</button>`:""])):empty("Nenhum lance automático ativo.")}
+ if(tab==="favs")body=favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.");
+ if(tab==="offers")body=S.offers.length?T(["Equipamento","Sua oferta","Status",""],S.offers.map(o=>{const l=getLot(o.lot_id);return [miniLot(l),brl(o.amount),`<span class="badge ${o.status==="aceita"?"b-green":o.status==="contraproposta"?"b-amber":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.status==="contraproposta"?": "+brl(o.counter):""}</span>`,["aceita","contraproposta"].includes(o.status)&&l&&l.status==="active"?`<button class="btn sm green" onclick="finishWA(${o.lot_id})">FECHAR PELO WHATSAPP</button>`:""]})):empty("Nenhuma oferta enviada.","COMPRAR AGORA","go('browse',{mode:'buynow'})");
+ if(tab==="orders")body=S.orders.length?T(["Pedido","Equipamento","Valor","Status",""],S.orders.map(o=>{const l=getLot(o.lot_id);return ["nº "+o.id,miniLot(l),brl(o.amount),`<span class="badge ${o.status==="concluido"?"b-green":o.status==="cancelado"?"b-soft":"b-dark"}">${o.status}</span>`,l?`<button class="btn sm line" onclick="finishWA(${o.lot_id})">WHATSAPP</button>`:""]})):empty("Nenhum pedido ainda.");
+ if(tab==="profile")body=`<div class="sumrow"><span>Seu número de comprador</span><b>#${S.profile.alias}</b><span>Nome</span><span>${esc(S.profile.name)}</span><span>WhatsApp</span><span>${esc(S.profile.whatsapp)}</span><span>Cidade</span><span>${esc(S.profile.city||"—")}</span></div><button class="btn" style="margin-top:14px" onclick="profileModal()">EDITAR DADOS</button>`;
+ return `<div class="wrap"><div class="panel">${sideMenu("Minha conta","Comprador #"+S.profile.alias,[["bids","Meus lances",bids.length],["autos","Lances automáticos",Object.keys(S.autos).length],["favs","Favoritos",favs.length],["offers","Ofertas",S.offers.length],["orders","Pedidos",S.orders.length],["profile","Meus dados"]],"account")}
+ <div><div class="ph-h"><h1>Minha conta</h1></div>${out.length?`<div class="alert"><span>Você foi superado em um lote: ${esc(out[0].title)}</span><button class="btn sm" onclick="go('lot',{lot:${out[0].id}})">VER LOTE</button></div>`:""}<div class="box">${body}</div></div></div></div>`;
+}
+
+/* ===== gestão (admin) ===== */
+function adminLogin(){openModal(`<h2>Área do administrador</h2><div class="field"><label for="ae">E-mail</label><input id="ae" type="email" autocomplete="username"></div><div class="field"><label for="ap">Senha</label><input id="ap" type="password" autocomplete="current-password"></div><button class="btn block" id="cb" onclick="doAdminLogin()">ENTRAR</button>`)}
+async function doAdminLogin(){const b=$("#cb");busyBtn(b,true);if(S.user&&S.user.is_anonymous)await sb.auth.signOut();const {data,error}=await sb.auth.signInWithPassword({email:$("#ae").value.trim(),password:$("#ap").value});busyBtn(b,false);if(error){toast("E-mail ou senha incorretos.","red");return}S.user=data.user;await loadMine();await loadLots();closeModal(true);if(!S.admin){toast("Esta conta não é de administrador.","red");return}toast("Bem-vindo à gestão da loja.","green");go("admin",{tab:"lots"})}
+function renderAdmin(){
+ if(!S.admin)return `<div class="wrap" style="max-width:520px"><div class="box" style="margin-top:30px;text-align:center"><h1 style="font-size:26px;font-weight:900">Área restrita</h1><p class="muted">Somente o administrador da loja acessa esta página.</p><button class="btn" onclick="adminLogin()">ENTRAR COMO ADMINISTRADOR</button></div></div>`;
+ const tab=V.tab||"lots";if(tab==="edit")return `<div class="wrap"><div class="panel">${admSide()}<div>${lotForm()}</div></div></div>`;
+ const P=id=>S.adm.profiles[id];const wa=(p,txt)=>p?`<a class="btn sm green" href="${waLink(txt,"55"+onlyDigits(p.whatsapp).replace(/^55/,""))}" target="_blank" rel="noopener">WHATSAPP</a>`:"";
+ const act=S.lots.filter(l=>l.status==="active"),winners=S.lots.filter(l=>isAuction(l)&&ended(l)&&l.bids_count>0&&l.status!=="hidden");
+ let body="";
+ if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l),`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button><button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
+ if(tab==="winners")body=winners.length?T(["Lote","Equipamento","Valor final","Vencedor","Valor mínimo","Contato"],winners.map(l=>{const p=P(l.leader);return ["#"+esc(code(l)),miniLot(l),brl(l.current_price),p?`${esc(p.name)}<div class="muted" style="font-size:12px">Comprador #${p.alias}</div>`:"Comprador #"+l.leader_alias,l.reserve_met?'<span class="badge b-green">ATINGIDO</span>':'<span class="badge b-amber">NÃO ATINGIDO</span>',wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}. Você venceu o lote #${code(l)} – ${l.title} por ${brl2(l.current_price)}. Vamos combinar pagamento e entrega?`)]})):empty("Nenhum leilão encerrado com lances ainda.");
+ if(tab==="orders")body=S.adm.orders.length?T(["Pedido","Equipamento","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.");
+ if(tab==="offers")body=S.adm.offers.length?T(["Equipamento","Cliente","Oferta","Preço","Status","Ações"],S.adm.offers.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return [miniLot(l)+(o.message?`<div class="muted" style="font-size:12px;margin-top:4px">“${esc(o.message)}”</div>`:""),p?esc(p.name):"—",`<b>${brl(o.amount)}</b>`,l?brl(l.buy_price):"—",`<span class="badge ${o.status==="aceita"?"b-green":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.counter?": "+brl(o.counter):""}</span>`,o.status==="pendente"?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm green" onclick="respOffer(${o.id},'aceita')">ACEITAR</button><button class="btn sm line" onclick="counterOffer(${o.id})">CONTRAPROPOSTA</button><button class="btn sm line" onclick="respOffer(${o.id},'recusada')">RECUSAR</button></div>`:wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre sua oferta no lote #${l?code(l):""}.`)]})):empty("Nenhuma oferta recebida.");
+ if(tab==="clients"){const ps=Object.values(S.adm.profiles);body=ps.length?T(["Comprador","Nome","WhatsApp","Cidade","Desde",""],ps.map(p=>["#"+p.alias,esc(p.name),esc(p.whatsapp),esc(p.city||"—"),new Date(p.created_at).toLocaleDateString("pt-BR"),`<button class="btn sm line" onclick="toggleBlock('${p.id}')">${p.blocked?"DESBLOQUEAR":"BLOQUEAR"}</button>`])):empty("Nenhum cliente cadastrado ainda.")}
+ const vol=S.adm.orders.filter(o=>o.status!=="cancelado").reduce((s,o)=>s+num(o.amount),0);
+ return `<div class="wrap"><div class="panel">${admSide()}<div><div class="ph-h"><h1>Gestão da loja</h1><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div>
+ <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Leilões ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div></div>
+ <div class="box">${body}</div></div></div></div>`;
+}
+function admSide(){return sideMenu(LOJA,"Administrador",[["lots","Lotes",S.lots.length],["edit","Cadastrar lote"],["winners","Vencedores"],["orders","Pedidos",S.adm.orders.filter(o=>o.status==="aguardando contato").length],["offers","Ofertas",S.adm.offers.filter(o=>o.status==="pendente").length],["clients","Clientes"]],"admin")}
+async function admUpdate(id,patch,msg){const {data,error}=await sb.from("lots").update(patch).eq("id",id).select().single();if(error){toast(errMsg(error),"red");return}mergeLot(data);if(msg)toast(msg,"green");render(true)}
+function toggleHide(id){const l=getLot(id);admUpdate(id,{status:l.status==="hidden"?(l.sold_to?"sold":"active"):"hidden"},l.status==="hidden"?"Lote publicado.":"Lote ocultado.")}
+function endNow(id){if(confirm("Encerrar este leilão agora?"))admUpdate(id,{ends_at:new Date(now()).toISOString()},"Leilão encerrado.")}
+async function delLot(id){if(!confirm("Excluir este lote definitivamente? Lances e pedidos dele também serão apagados."))return;const {error}=await sb.from("lots").delete().eq("id",id);if(error){toast(errMsg(error),"red");return}S.lots=S.lots.filter(l=>l.id!==id);toast("Lote excluído.");render(true)}
+async function setOrder(id,st){const {error}=await sb.from("orders").update({status:st}).eq("id",id);if(error){toast(errMsg(error),"red");return}const o=S.adm.orders.find(x=>x.id===id);if(o)o.status=st;toast("Pedido atualizado.","green")}
+async function respOffer(id,st,counter){const patch={status:st};if(counter)patch.counter=counter;const {error}=await sb.from("offers").update(patch).eq("id",id);if(error){toast(errMsg(error),"red");return}Object.assign(S.adm.offers.find(o=>o.id===id),patch);toast("Oferta atualizada. Avise o cliente pelo WhatsApp.","green");render(true)}
+function counterOffer(id){const v=parseMoney(prompt("Valor da contraproposta (R$):"));if(v)respOffer(id,"contraproposta",v)}
+async function toggleBlock(uid){const p=S.adm.profiles[uid];const {error}=await sb.from("profiles").update({blocked:!p.blocked}).eq("id",uid);if(error){toast(errMsg(error),"red");return}p.blocked=!p.blocked;toast(p.blocked?"Cliente bloqueado.":"Cliente desbloqueado.");render(true)}
+
+/* cadastro / edição de lote */
+function dtl(t){const d=new Date(t-new Date().getTimezoneOffset()*6e4);return d.toISOString().slice(0,16)}
+function editLot(id){if(!S.admin){adminLogin();return}const l=id?getLot(id):null;const pv=l?S.adm.privates[l.id]||{}:{};
+ V.edit=l?{...l,reserve:pv.reserve||"",serial:pv.serial||"",notes:pv.notes||"",photos:[...(l.photos||[])]}:{type:"auction",qty:1,increment:100,nf:true,warranty:"Conforme condições do fabricante",logistics:"cotacao",photos:[],starts_at:null,ends_at:new Date(now()+3*D).toISOString(),condition:"Seminovo",category:"Musculação",uf:"RJ"};
+ go("admin",{tab:"edit"})}
+function fv(k){const e=V.edit[k];return e==null?"":esc(e)}
+function lotForm(){const e=V.edit;if(!e)return empty("Nenhum lote em edição.");const auc=e.type.startsWith("auction"),buy=e.type!=="auction";
+ const i=(k,lab,attrs="",full)=>`<div class="field ${full?"full":""}"><label for="e_${k}">${lab}</label><input id="e_${k}" value="${fv(k)}" oninput="V.edit.${k}=this.value" ${attrs}></div>`;
+ const m=(k,lab,hint)=>`<div class="field"><label for="e_${k}">${lab}</label><div class="money"><span>R$</span><input id="e_${k}" inputmode="decimal" value="${e[k]?Math.round(num(e[k])).toLocaleString("pt-BR"):""}" oninput="V.edit.${k}=parseMoney(this.value)"></div>${hint?`<span class="hint">${hint}</span>`:""}</div>`;
+ const sel=(k,lab,opts)=>`<div class="field"><label for="e_${k}">${lab}</label><select id="e_${k}" onchange="V.edit.${k}=this.value">${opts.map(o=>`<option ${String(e[k])===o?"selected":""}>${o}</option>`).join("")}</select></div>`;
+ return `<div class="box"><h1 style="font-size:30px;font-weight:900;margin-bottom:16px">${e.id?"Editar lote #"+esc(code(e)):"Cadastrar lote"}</h1><div class="form">
+  <div class="field full"><label>Tipo de venda</label><div class="types">${Object.entries(typeLabel).map(([k,v])=>`<label><input type="radio" name="tp" ${e.type===k?"checked":""} onchange="V.edit.type='${k}';render(true)">${v}</label>`).join("")}</div></div>
+  ${i("title","Nome do equipamento *","",true)}
+  ${i("brand","Marca")}${sel("category","Categoria",MAIN_CATS)}
+  ${sel("condition","Condição",["Novo","Seminovo","Showroom","Usado","Devolução"])}${i("qty","Quantidade",'type="number" min="1"')}
+  ${i("year","Ano",'type="number" min="1990" max="2030"')}${i("kg","Peso estimado (kg)",'type="number" min="1"')}
+  ${i("city","Cidade")}${sel("uf","UF",UF)}
+  ${m("ref_price","Preço de referência","Mostra a economia potencial. Opcional.")}
+  ${auc?m("start_price","Lance inicial *")+m("increment","Incremento mínimo *")+m("reserve","Valor mínimo de venda","Oculto para o público. Abaixo dele o leilão não fecha venda."):""}
+  ${buy?m("buy_price",e.type==="offer"?"Preço anunciado *":"Preço comprar agora *"):""}
+  ${auc?`<div class="field"><label for="e_s">Início (opcional)</label><input id="e_s" type="datetime-local" value="${e.starts_at?dtl(ts(e.starts_at)):""}" onchange="V.edit.starts_at=this.value?new Date(this.value).toISOString():null"></div>
+  <div class="field"><label for="e_e">Encerramento *</label><input id="e_e" type="datetime-local" value="${e.ends_at?dtl(ts(e.ends_at)):""}" onchange="V.edit.ends_at=this.value?new Date(this.value).toISOString():null"><div class="quick">${[["+1 dia",D],["+3 dias",3*D],["+7 dias",7*D]].map(([t,ms])=>`<button type="button" onclick="V.edit.ends_at=new Date(now()+${ms}).toISOString();render(true)">${t}</button>`).join("")}</div></div>`:""}
+  ${sel("logistics","Logística",["cotacao","retirada"]).replace(">cotacao<",">Entrega combinada<").replace(">retirada<",">Retirada pelo comprador<")}
+  <div class="field"><label for="e_nf">Nota fiscal</label><select id="e_nf" onchange="V.edit.nf=this.value==='1'"><option value="1" ${e.nf?"selected":""}>Sim</option><option value="0" ${e.nf?"":"selected"}>Não</option></select></div>
+  ${i("warranty","Garantia","",true)}
+  <div class="field full"><label for="e_d">Descrição</label><textarea id="e_d" rows="5" oninput="V.edit.description=this.value" placeholder="Tempo de uso, manutenções, defeitos, acessórios inclusos.">${fv("description")}</textarea></div>
+  ${i("serial","Número de série (privado)")}${i("notes","Observações internas (privado)")}
+  <div class="field full"><label><input type="checkbox" ${e.featured?"checked":""} onchange="V.edit.featured=this.checked"> Destacar na página inicial</label></div>
+  <div class="field full"><label>Fotos (a primeira é a capa)</label><label class="drop" for="e_img"><b style="color:var(--ink)">Toque para escolher fotos</b><br>JPG ou PNG. As fotos são reduzidas automaticamente antes do envio.</label><input id="e_img" type="file" accept="image/*" multiple hidden onchange="uploadPhotos(this.files)"><div id="upst" class="muted" style="font-size:13px;margin-top:6px"></div>
+   <div class="thumbsup">${e.photos.map((p,k)=>`<div style="position:relative"><img src="${esc(p)}" alt="Foto ${k+1}"><button type="button" aria-label="Remover foto" onclick="V.edit.photos.splice(${k},1);render(true)" style="position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:26px;height:26px;background:rgba(0,0,0,.7);color:#fff">✕</button>${k?`<button type="button" aria-label="Tornar capa" onclick="const p=V.edit.photos.splice(${k},1)[0];V.edit.photos.unshift(p);render(true)" style="position:absolute;left:4px;bottom:4px;border:0;border-radius:6px;padding:2px 6px;font-size:11px;background:rgba(0,0,0,.7);color:#fff">capa</button>`:""}</div>`).join("")}</div></div>
+ </div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap"><button class="btn line" onclick="V.edit=null;go('admin',{tab:'lots'})">CANCELAR</button><button class="btn" id="sv" onclick="saveLot()">${e.id?"SALVAR ALTERAÇÕES":"PUBLICAR LOTE"}</button></div></div>`;
+}
+function resizeImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(new Error("Imagem inválida")),"image/jpeg",.82)};img.onerror=()=>rej(new Error("Imagem inválida"));img.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
+async function uploadPhotos(files){const st=$("#upst");const list=[...files].slice(0,12);let n=0;
+ for(const f of list){try{st.textContent=`Enviando foto ${++n} de ${list.length}…`;const blob=await resizeImage(f);const path=`lotes/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;const {error}=await sb.storage.from("fotos").upload(path,blob,{contentType:"image/jpeg",cacheControl:"31536000"});if(error)throw error;V.edit.photos.push(sb.storage.from("fotos").getPublicUrl(path).data.publicUrl)}catch(e){toast("Falha ao enviar uma foto: "+errMsg(e),"red")}}
+ st.textContent="";render(true)}
+async function saveLot(){const e=V.edit,auc=e.type.startsWith("auction");
+ const miss=[];if(!String(e.title||"").trim())miss.push("nome");if(auc&&!num(e.start_price))miss.push("lance inicial");if(auc&&!num(e.increment))miss.push("incremento");if(auc&&!e.ends_at)miss.push("encerramento");if(e.type!=="auction"&&!num(e.buy_price))miss.push("preço");
+ if(auc&&e.ends_at&&ts(e.ends_at)<=now()&&!e.id)miss.push("encerramento no futuro");
+ if(miss.length){toast("Preencha: "+miss.join(", ")+".","red");return}
+ const row={title:e.title.trim(),brand:e.brand||null,category:e.category,condition:e.condition,city:e.city||null,uf:e.uf||null,type:e.type,qty:+e.qty||1,year:+e.year||null,kg:+e.kg||null,ref_price:num(e.ref_price)||null,
+  start_price:auc?num(e.start_price):null,increment:auc?num(e.increment):null,buy_price:e.type!=="auction"?num(e.buy_price):null,starts_at:auc?e.starts_at||null:null,ends_at:auc?e.ends_at:null,description:e.description||null,nf:!!e.nf,warranty:e.warranty||null,logistics:e.logistics||"cotacao",photos:e.photos,featured:!!e.featured};
+ if(!e.id||!e.bids_count)row.current_price=auc?row.start_price:row.buy_price;
+ const b=$("#sv");busyBtn(b,true);
+ let res=e.id?await sb.from("lots").update(row).eq("id",e.id).select().single():await sb.from("lots").insert({...row,status:"active"}).select().single();
+ if(res.error){busyBtn(b,false);toast(errMsg(res.error),"red");return}
+ let lot=res.data;if(!lot.code){const r2=await sb.from("lots").update({code:String(lot.id).padStart(3,"0")}).eq("id",lot.id).select().single();if(r2.data)lot=r2.data}
+ const pr={lot_id:lot.id,reserve:auc&&num(e.reserve)?num(e.reserve):null,serial:e.serial||null,notes:e.notes||null};
+ const r3=await sb.from("lot_private").upsert(pr);busyBtn(b,false);if(r3.error)toast("Lote salvo, mas o valor mínimo/dados privados falharam: "+errMsg(r3.error),"red");
+ S.adm.privates[lot.id]=pr;const r4=await sb.from("lots").select("*").eq("id",lot.id).single();mergeLot(r4.data||lot);V.edit=null;toast(e.id?"Lote atualizado.":"Lote publicado!","green");go("lot",{lot:lot.id})}
+
+/* ===== como funciona ===== */
+function renderHow(){const st=(n,t,p)=>`<div class="box" style="margin:0"><span class="n">${n}</span><h3>${t}</h3><p>${p}</p></div>`;
+ return `<div class="wrap"><div class="page-h"><h1>Como funciona</h1><p>Todos os equipamentos são selecionados e vendidos diretamente pela ${esc(LOJA)}.</p></div>
+ <div class="how">${st(1,"Identifique-se","Informe nome e WhatsApp uma única vez. Nos lances você aparece só como “Comprador #número”.")}${st(2,"Escolha como comprar","Dê lances no leilão, compre pelo preço fixo ou faça uma oferta.")}${st(3,"Venceu ou comprou?","Toque em “Finalizar pelo WhatsApp”: a mensagem já vai pronta com lote, valor e entrega.")}${st(4,"Pagamento e entrega","Combinados diretamente com a ${esc(LOJA)}: retirada, transportadora ou frete com montagem.")}</div>
+ <div class="box" style="margin-top:20px"><h3>Regras dos lances</h3><ul style="margin:0;padding-left:20px;color:var(--muted)"><li>Cada lance precisa superar o atual pelo incremento mínimo do lote.</li><li>O lance automático cobre outras ofertas por você até o limite escolhido.</li><li>Lances nos 2 minutos finais estendem o leilão em 2 minutos.</li><li>Alguns lotes têm valor mínimo de venda; se não for atingido, o leilão encerra sem venda.</li><li>Lances são compromissos de compra. Desistências podem levar ao bloqueio da conta.</li></ul></div>
+ <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LEILÕES</button><a class="btn line" href="${waLink("Olá! Tenho uma dúvida sobre como comprar na "+LOJA+".")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a></div></div>`}
+
+/* ===== notificações, favoritos, toasts ===== */
+function notify(text,lotId,quiet){S.notifs.unshift({text,lotId,t:Date.now(),read:false});S.notifs=S.notifs.slice(0,40);renderHeader()}
+function toggleFav(id){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);else S.favs.push(id);saveFavs();toast(i>=0?"Removido dos favoritos.":"Adicionado aos favoritos.");render(true)}
+function toast(msg,kind,lotId){const t=document.createElement("div");t.className="toast "+(kind||"");t.setAttribute("role","status");t.innerHTML=`<span>${esc(msg)}</span>${lotId?`<button onclick="go('lot',{lot:${lotId}})">VER LOTE</button>`:""}`;$("#toasts").appendChild(t);setTimeout(()=>t.remove(),lotId?6500:4000)}
+
+/* ===== motor ===== */
+function go(view,p={}){V.view=view;if(p.mode){V.mode=p.mode;if(view==="browse"&&!p.keep)V.f=blankF()}if(p.lot!=null){if(String(p.lot)!==String(V.lot))V.img=0;V.lot=p.lot}if(p.tab)V.tab=p.tab;closeModal(true);closeDrawer();render();scrollTo(0,0)}
+function render(keep){const y=scrollY;renderHeader();
+ if(!sb){$("#app").innerHTML=setupScreen();return}
+ if(!S.loaded){$("#app").innerHTML=`<div class="wrap"><div class="empty" style="margin-top:40px">Carregando…</div></div>`;return}
+ const r={home:renderHome,browse:renderBrowse,lot:renderLot,categories:renderCategories,account:renderAccount,admin:renderAdmin,how:renderHow}[V.view]||renderHome;$("#app").innerHTML=r();
+ if(V.view==="browse")results();document.body.classList.toggle("has-mbar",!!$("#app .mbar"));if(keep)scrollTo(0,y)}
+function busy(){const a=document.activeElement;return a&&["INPUT","TEXTAREA","SELECT"].includes(a.tagName)&&$("#app").contains(a)||$("#scrim").classList.contains("open")||V.view==="admin"&&V.tab==="edit"}
+let softT;function softRender(){clearTimeout(softT);softT=setTimeout(()=>{if(!busy())render(true)},250)}
+function refreshLot(l){
+ document.querySelectorAll(`[data-cur="${l.id}"]`).forEach(e=>e.textContent=brl(price(l)));document.querySelectorAll(`[data-cur2="${l.id}"]`).forEach(e=>e.textContent=brl2(l.bids_count?l.current_price:l.start_price));
+ document.querySelectorAll(`[data-nb="${l.id}"]`).forEach(e=>e.textContent=l.bids_count+(e.closest(".tbl")?"":" lances"));document.querySelectorAll(`[data-nb2="${l.id}"]`).forEach(e=>e.textContent=l.bids_count+" lances");
+ document.querySelectorAll(`[data-min="${l.id}"]`).forEach(e=>e.textContent=brl2(minBid(l)));
+ softRender();
+}
+const doneSet=new Set();
+function tick(){const t=now();
+ document.querySelectorAll("[data-end]").forEach(el=>{const l=getLot(el.dataset.end);if(!l)return;const ms=ts(l.ends_at)-t;el.textContent=fmt(ms);el.classList.toggle("ended",ms<=0);el.classList.toggle("soon",ms>0&&ms<H)});
+ S.lots.forEach(l=>{if(!isAuction(l)||!l.ends_at)return;const e=ts(l.ends_at)<=t;if(e&&!doneSet.has(l.id)){doneSet.add(l.id);if(S.loaded&&Date.now()-loadedAt>3000){if(iLead(l)&&won(l)){notify(`Você venceu o lote #${code(l)}! Finalize pelo WhatsApp.`,l.id);toast(`Você venceu o lote #${code(l)}!`,"green",l.id)}softRender()}}if(!e)doneSet.delete(l.id)});
+}
+function setupScreen(){return `<div class="wrap" style="max-width:720px"><div class="box" style="margin-top:30px"><h1 style="font-size:28px;font-weight:900">Quase pronto</h1><p>O site ainda não está conectado ao banco de dados. Abra o arquivo <b>config.js</b> e preencha <b>supabaseUrl</b> e <b>supabaseAnonKey</b> com os dados do seu projeto Supabase, como explicado no guia de instalação.</p>${!window.supabase?'<p class="muted">Também não foi possível carregar a biblioteca do Supabase. Verifique a conexão com a internet.</p>':""}</div></div>`}
+let loadedAt=0;
+async function init(){render();if(!sb)return;
+ sb.auth.onAuthStateChange((ev,session)=>{const u=session?session.user:null;if((u&&u.id)!==(S.user&&S.user.id)){S.user=u;loadMine().then(()=>render(true))}});
+ try{await loadAll()}catch(e){toast(errMsg(e),"red")}loadedAt=Date.now();
+ setInterval(tick,1000);
+ setInterval(async()=>{if(document.hidden)return;await loadLots();if(S.admin)await loadAdmin();softRender()},60000);
+ document.addEventListener("visibilitychange",async()=>{if(!document.hidden){try{const {data}=await sb.rpc("server_time");if(data)SKEW=new Date(data).getTime()-Date.now()}catch(e){}await loadLots();softRender()}});
+}
+init();
+
+</script>
+</body>
+</html>
