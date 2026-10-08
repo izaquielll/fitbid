@@ -681,6 +681,7 @@ function renderLot(){
  </div>
  <aside>${auc?bidPanel(l):buyPanel(l)}
   ${S.admin?`<div class="box"><b>Administrador</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm dark" onclick="editLot(${l.id})">EDITAR LOTE</button><button class="btn sm line" onclick="go('admin',{tab:'lots'})">GESTÃO</button></div></div>`:""}
+  <div class="box"><h3 style="font-size:16px">Compartilhar este lote</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn green" style="flex:1" href="${shareWA(l)}" target="_blank" rel="noopener">ENVIAR NO WHATSAPP</a><button class="btn line" style="flex:1" onclick="copyLink(${l.id})">COPIAR LINK</button></div></div>
   <div class="box"><h3 style="font-size:16px">Dúvidas sobre este lote?</h3><a class="btn line block" href="${waLink(`Olá! Tenho uma dúvida sobre o lote #${code(l)} – ${l.title}.`)}" target="_blank" rel="noopener">PERGUNTAR NO WHATSAPP</a></div>
  </aside></div></div>${mobileBar(l)}`;
 }
@@ -713,6 +714,23 @@ function mobileBar(l){
  if(!isAuction(l)&&l.status==="active")return `<div class="mbar"><div><small>${typeLabel[l.type]}</small><b class="num">${brl(l.buy_price)}</b></div><button class="btn" onclick="${l.type==="buy"?`buyNow(${l.id})`:`openOffer(${l.id})`}">${l.type==="buy"?"COMPRAR":"FAZER OFERTA"}</button></div>`;
  return "";
 }
+
+/* ===== links e compartilhamento ===== */
+function lotUrl(l){return location.origin+location.pathname+"#lote-"+l.id}
+function shareText(l){const auc=isAuction(l);let t=`🔥 *${l.title}*`+(l.condition?` (${l.condition})`:"")+"\n";
+ if(auc){t+=`${l.bids_count?"Lance atual":"Lances a partir de"}: *${brl(price(l))}*`;if(num(l.ref_price))t+=` (referência ${brl(l.ref_price)})`;t+="\n";if(l.type==="auction_buy"&&l.buy_price)t+=`Ou compre agora por ${brl(l.buy_price)}\n`;if(live(l))t+=`⏰ Encerra em ${fmt(ts(l.ends_at)-now()).replace(/ \d+s$/,"")}\n`}
+ else{t+=`Preço: *${brl(l.buy_price)}*`+(num(l.ref_price)?` (referência ${brl(l.ref_price)})`:"")+"\n"+(l.type==="offer"?"Aceita ofertas\n":"")}
+ return t+`\nVeja fotos e detalhes: ${lotUrl(l)}`}
+function siteUrl(){return location.origin+location.pathname}
+function vitrineText(){const act=S.lots.filter(l=>l.status==="active"&&(!isAuction(l)||live(l)||!started(l)));let t=`🔥 *FIT BID* · equipamentos profissionais com lances, preço fixo e ofertas\n\n`;
+ act.slice(0,15).forEach(l=>{t+=`• *${l.title}* – ${isAuction(l)?(l.bids_count?"lance atual ":"lances a partir de ")+brl(price(l)):brl(l.buy_price)}\n${lotUrl(l)}\n\n`});
+ return t+`Veja todos os equipamentos: ${siteUrl()}`}
+function shareSiteWA(){return `https://wa.me/?text=${encodeURIComponent(vitrineText())}`}
+async function copySite(){try{await navigator.clipboard.writeText(vitrineText());toast("Vitrine copiada. É só colar no WhatsApp.","green")}catch(e){prompt("Copie o link:",siteUrl())}}
+function shareWA(l){return `https://wa.me/?text=${encodeURIComponent(shareText(l))}`}
+async function copyLink(id){const l=getLot(id);try{await navigator.clipboard.writeText(shareText(l));toast("Texto e link copiados. É só colar no WhatsApp.","green")}catch(e){prompt("Copie o link:",lotUrl(l))}}
+function routeFromHash(){const m=location.hash.match(/^#lote-(\d+)/);if(m){V.view="lot";V.lot=+m[1];return true}return false}
+window.addEventListener("popstate",()=>{if(!routeFromHash()&&V.view==="lot")V.view="home";closeModal(true);render()});
 
 /* ===== modais ===== */
 function openModal(h,onClose){V.modalClose=onClose||null;$("#scrim").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><button class="x" aria-label="Fechar" onclick="closeModal()">✕</button>${h}</div>`;$("#scrim").classList.add("open");const f=$("#scrim .modal input,#scrim .modal .btn");f&&f.focus()}
@@ -794,13 +812,13 @@ function renderAdmin(){
  const P=id=>S.adm.profiles[id];const wa=(p,txt)=>p?`<a class="btn sm green" href="${waLink(txt,"55"+onlyDigits(p.whatsapp).replace(/^55/,""))}" target="_blank" rel="noopener">WHATSAPP</a>`:"";
  const act=S.lots.filter(l=>l.status==="active"),winners=S.lots.filter(l=>isAuction(l)&&ended(l)&&l.bids_count>0&&l.status!=="hidden");
  let body="";
- if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l),`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button><button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
+ if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l),`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button>${l.status==="active"?`<a class="btn sm green" href="${shareWA(l)}" target="_blank" rel="noopener">WHATSAPP</a>`:""}<button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
  if(tab==="winners")body=winners.length?T(["Lote","Equipamento","Valor final","Vencedor","Valor mínimo","Contato"],winners.map(l=>{const p=P(l.leader);return ["#"+esc(code(l)),miniLot(l),brl(l.current_price),p?`${esc(p.name)}<div class="muted" style="font-size:12px">Comprador #${p.alias}</div>`:"Comprador #"+l.leader_alias,l.reserve_met?'<span class="badge b-green">ATINGIDO</span>':'<span class="badge b-amber">NÃO ATINGIDO</span>',wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}. Você venceu o lote #${code(l)} – ${l.title} por ${brl2(l.current_price)}. Vamos combinar pagamento e entrega?`)]})):empty("Nenhuma disputa encerrada com lances ainda.");
  if(tab==="orders")body=S.adm.orders.length?T(["Pedido","Equipamento","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${({leilao:"por lances",compra:"compra direta",oferta:"oferta"})[o.kind]||o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.");
  if(tab==="offers")body=S.adm.offers.length?T(["Equipamento","Cliente","Oferta","Preço","Status","Ações"],S.adm.offers.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return [miniLot(l)+(o.message?`<div class="muted" style="font-size:12px;margin-top:4px">“${esc(o.message)}”</div>`:""),p?esc(p.name):"—",`<b>${brl(o.amount)}</b>`,l?brl(l.buy_price):"—",`<span class="badge ${o.status==="aceita"?"b-green":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.counter?": "+brl(o.counter):""}</span>`,o.status==="pendente"?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm green" onclick="respOffer(${o.id},'aceita')">ACEITAR</button><button class="btn sm line" onclick="counterOffer(${o.id})">CONTRAPROPOSTA</button><button class="btn sm line" onclick="respOffer(${o.id},'recusada')">RECUSAR</button></div>`:wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre sua oferta no lote #${l?code(l):""}.`)]})):empty("Nenhuma oferta recebida.");
  if(tab==="clients"){const ps=Object.values(S.adm.profiles);body=ps.length?T(["Comprador","Nome","WhatsApp","Cidade","Desde",""],ps.map(p=>["#"+p.alias,esc(p.name),esc(p.whatsapp),esc(p.city||"—"),new Date(p.created_at).toLocaleDateString("pt-BR"),`<button class="btn sm line" onclick="toggleBlock('${p.id}')">${p.blocked?"DESBLOQUEAR":"BLOQUEAR"}</button>`])):empty("Nenhum cliente cadastrado ainda.")}
  const vol=S.adm.orders.filter(o=>o.status!=="cancelado").reduce((s,o)=>s+num(o.amount),0);
- return `<div class="wrap"><div class="panel">${admSide()}<div><div class="ph-h"><h1>Gestão da loja</h1><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div>
+ return `<div class="wrap"><div class="panel">${admSide()}<div><div class="ph-h"><h1>Gestão da loja</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn green" href="${shareSiteWA()}" target="_blank" rel="noopener">DIVULGAR VITRINE NO WHATSAPP</a><button class="btn line" onclick="copySite()">COPIAR VITRINE</button><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div></div>
  <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Disputas ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div></div>
  <div class="box">${body}</div></div></div></div>`;
 }
@@ -878,7 +896,7 @@ function toggleFav(id){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);els
 function toast(msg,kind,lotId){const t=document.createElement("div");t.className="toast "+(kind||"");t.setAttribute("role","status");t.innerHTML=`<span>${esc(msg)}</span>${lotId?`<button onclick="go('lot',{lot:${lotId}})">VER LOTE</button>`:""}`;$("#toasts").appendChild(t);setTimeout(()=>t.remove(),lotId?6500:4000)}
 
 /* ===== motor ===== */
-function go(view,p={}){V.view=view;if(p.mode){V.mode=p.mode;if(view==="browse"&&!p.keep)V.f=blankF()}if(p.lot!=null){if(String(p.lot)!==String(V.lot))V.img=0;V.lot=p.lot}if(p.tab)V.tab=p.tab;closeModal(true);closeDrawer();render();scrollTo(0,0)}
+function go(view,p={}){V.view=view;if(p.mode){V.mode=p.mode;if(view==="browse"&&!p.keep)V.f=blankF()}if(p.lot!=null){if(String(p.lot)!==String(V.lot))V.img=0;V.lot=p.lot}if(p.tab)V.tab=p.tab;const h=view==="lot"?"#lote-"+V.lot:"";if(location.hash!==h){try{history.pushState(null,"",h||location.pathname+location.search)}catch(e){}}closeModal(true);closeDrawer();render();scrollTo(0,0)}
 function render(keep){const y=scrollY;renderHeader();
  if(!sb){$("#app").innerHTML=setupScreen();return}
  if(!S.loaded){$("#app").innerHTML=`<div class="wrap"><div class="empty" style="margin-top:40px">Carregando…</div></div>`;return}
@@ -899,7 +917,7 @@ function tick(){const t=now();
 }
 function setupScreen(){return `<div class="wrap" style="max-width:720px"><div class="box" style="margin-top:30px"><h1 style="font-size:28px;font-weight:900">Quase pronto</h1><p>O site ainda não está conectado ao banco de dados. Abra o arquivo <b>config.js</b> e preencha <b>supabaseUrl</b> e <b>supabaseAnonKey</b> com os dados do seu projeto Supabase, como explicado no guia de instalação.</p>${!window.supabase?'<p class="muted">Também não foi possível carregar a biblioteca do Supabase. Verifique a conexão com a internet.</p>':""}</div></div>`}
 let loadedAt=0;
-async function init(){render();if(!sb)return;
+async function init(){routeFromHash();render();if(!sb)return;
  sb.auth.onAuthStateChange((ev,session)=>{const u=session?session.user:null;if((u&&u.id)!==(S.user&&S.user.id)){S.user=u;loadMine().then(()=>render(true))}});
  try{await loadAll()}catch(e){toast(errMsg(e),"red")}loadedAt=Date.now();
  setInterval(tick,1000);
