@@ -397,12 +397,23 @@ footer.ft button{background:none;border:0;color:var(--on-dark-muted);padding:0 0
 
 .top a.btn{text-decoration:none}
 .ill-wrap .il{letter-spacing:.06em}
+
+@media (max-width:860px){
+ .lotpage{display:flex;flex-direction:column;gap:16px;align-items:stretch}
+ .lotpage>*,.lotpage>div:first-child>*{min-width:0;width:100%}
+ .lotpage>div:first-child{display:contents}
+ .lotpage>div:first-child>*{order:4;margin-top:0!important}
+ .lotpage>div:first-child>.gal{order:1}
+ .lotpage>div:first-child>.lt{order:2}
+ .lotpage>div:first-child>.ladder{order:3}
+ .lotpage>aside{order:3}
+}
 </style>
 </head>
 <body>
 <header class="top" id="hdr"></header>
 <main id="app"></main>
-<footer class="ft"><div class="wrap"><div><b>FIT BID</b><br>Venda por lances e preço fixo de equipamentos profissionais.<br>Pagamento e entrega combinados pelo WhatsApp.</div><div>Lances são compromissos de compra. Preços de referência são indicativos.<br><button onclick="go('how')">Como funciona</button><button onclick="adminLogin()">Área do administrador</button></div></div></footer>
+<footer class="ft"><div class="wrap"><div><b>FIT BID</b><br>Venda por lances e preço fixo de equipamentos profissionais.<br>Pagamento e entrega combinados pelo WhatsApp.</div><div>Lances são compromissos de compra. Preços de referência são indicativos.<br><button onclick="go('how')">Como funciona</button><button onclick="go('join')">Quero vender</button><button onclick="adminLogin()">Área do vendedor</button></div></div></footer>
 <div class="scrim" id="scrim" onclick="if(event.target===this)closeModal()"></div>
 <div class="drawer" id="drawer"></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
@@ -440,7 +451,7 @@ const ILL={
 const CATS=[["Musculação","M8 12h8M4 9v6M20 9v6M6 7v10M18 7v10","legpress"],["Cardio","M3 12h4l3-6 4 12 3-6h4","treadmill"],["Esteiras","M4 18h14l2-2H6zM18 16 20 6","treadmill"],["Bikes","M7 17a4 4 0 1 0 0-.01M17 17a4 4 0 1 0 0-.01M7 17l5-8 5 8M12 9l-1-3","bike"],["Bancos","M3 11h18M6 11v7M18 11v7","bench"],["Racks","M6 20V4M18 20V4M6 4h12M4 12h16","rack"],["Anilhas","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zm0 6a3 3 0 1 0 0 6 3 3 0 0 0 0-6z","dumbbell"],["Halteres","M3 12h18M6 8v8M18 8v8M3 10v4M21 10v4","dumbbell"],["Equipamentos funcionais","M12 4a3 3 0 0 1 3 3H9a3 3 0 0 1 3-3zM7 7h10l-1 13H8z","dumbbell"],["Academias completas","M3 20h18M5 20V9l7-5 7 5v11M9 20v-6h6v6","gym"],["Seminovos","M4 12a8 8 0 1 0 2.3-5.6M4 4v4h4","legpress"],["Lotes empresariais","M4 7h16v13H4zM9 7V4h6v3M4 12h16","gym"]];
 const MAIN_CATS=CATS.map(c=>c[0]).filter(c=>c!=="Seminovos"&&c!=="Lotes empresariais");
 const UF="AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO".split(" ");
-const typeLabel={auction:"Venda por lances",auction_buy:"Lances + Comprar agora",buy:"Comprar agora",offer:"Fazer oferta"};
+const typeLabel={auction:"Venda por lances",auction_buy:"Lances + preço sugerido",buy:"Preço fixo",offer:"Aceita ofertas"};
 const SHIP={retirada:"Retirada no local",transportadora:"Transportadora",montagem:"Frete dedicado com montagem"};
 const ORDER_ST=["aguardando contato","pagamento combinado","pago","enviado","entregue","concluido","cancelado"];
 
@@ -460,8 +471,8 @@ const onlyDigits=v=>String(v||"").replace(/\D/g,"");
 const ts=v=>v?new Date(v).getTime():0;
 
 /* estado */
-const S={lots:[],bids:{},user:null,profile:null,admin:false,myBidLots:new Set(),autos:{},offers:[],orders:[],notifs:[],favs:[],loaded:false,
- adm:{orders:[],offers:[],profiles:{},privates:{}}};
+const S={sellers:{},seller:null,interests:[],questions:{},sel:{orders:[],offers:[],profiles:{},questions:[]},lots:[],bids:{},user:null,profile:null,admin:false,myBidLots:new Set(),autos:{},offers:[],orders:[],notifs:[],favs:[],loaded:false,
+ adm:{orders:[],offers:[],profiles:{},privates:{},sellers:[],docs:{}}};
 try{S.favs=JSON.parse(localStorage.getItem("fitbid-favs")||"[]")}catch(e){}
 const saveFavs=()=>{try{localStorage.setItem("fitbid-favs",JSON.stringify(S.favs))}catch(e){}};
 const V={view:"home",lot:null,img:0,tab:null,mode:"all",f:blankF(),edit:null,uploads:[]};
@@ -491,7 +502,15 @@ const saving=l=>num(l.ref_price)&&price(l)<num(l.ref_price)?Math.round((1-price(
 function catMatch(l,c){if(!c)return true;if(c==="Seminovos")return l.condition==="Seminovo";if(c==="Lotes empresariais")return num(l.qty)>1||l.category===c;return cats(l).includes(c)}
 function illKey(l){const c=CATS.find(x=>x[0]===l.category);return c?c[2]:"legpress"}
 function media(l,cls="",i=0){const p=(l.photos||[])[i];if(p)return `<img src="${esc(p)}" alt="${esc(l.title)}" class="${cls}" loading="lazy">`;return `<div class="ill-wrap ${cls}" role="img" aria-label="${esc(l.title)}">${ILL[illKey(l)]}<span class="il">FOTO EM BREVE</span></div>`}
-function waLink(text,to){return `https://wa.me/${onlyDigits(to||CFG.whatsapp)}?text=${encodeURIComponent(text)}`}
+const isSeller=()=>!!(S.seller&&S.seller.status==="aprovado");
+const canManage=l=>!!l&&(S.admin||(isSeller()&&l.seller_id===meId()));
+const _sellerFetch={};
+function sellerOf(l){if(!l||!l.seller_id)return null;const v=S.sellers[l.seller_id];if(v)return v;
+ if(sb&&!_sellerFetch[l.seller_id]){_sellerFetch[l.seller_id]=1;sb.from("sellers").select("id,name,city,uf,whatsapp,bio,status,created_at").eq("id",l.seller_id).maybeSingle().then(r=>{if(r.data){S.sellers[r.data.id]=r.data;softRender()}})}
+ return null}
+function waNum(n){let d=onlyDigits(n);if(!d)return onlyDigits(CFG.whatsapp);if(d.length<=11)d="55"+d;return d}
+const waFor=l=>waNum((l&&l.wa_override)||(sellerOf(l)&&sellerOf(l).whatsapp)||CFG.whatsapp);
+function waLink(text,to){return `https://wa.me/${to?waNum(to):onlyDigits(CFG.whatsapp)}?text=${encodeURIComponent(text)}`}
 function errMsg(e){const m=((e&&(e.message||e.error_description))||"Algo deu errado. Tente novamente.").replace(/Este leilão/g,"Esta disputa").replace(/leilão/g,"disputa").replace("já foi encerrado","já foi encerrada");return /JWT|fetch|Failed|network/i.test(m)?"Sem conexão com o servidor. Tente novamente.":m}
 /* ===== dados ===== */
 async function loadAll(){
@@ -499,17 +518,29 @@ async function loadAll(){
  const {data:s}=await sb.auth.getSession();S.user=s.session?s.session.user:null;
  await loadLots();await loadMine();S.loaded=true;render();subscribe();
 }
-async function loadLots(){const {data,error}=await sb.from("lots").select("*").order("created_at",{ascending:false});if(error){toast(errMsg(error),"red");return}S.lots=data||[]}
+async function loadLots(){
+ const [r,v]=await Promise.all([sb.from("lots").select("*").order("created_at",{ascending:false}),sb.from("sellers").select("id,name,city,uf,whatsapp,bio,status,created_at")]);
+ if(r.error){toast(errMsg(r.error),"red");return}S.lots=r.data||[];S.sellers={};(v.data||[]).forEach(x=>S.sellers[x.id]=x);
+}
 async function loadMine(){
- S.profile=null;S.admin=false;S.myBidLots=new Set();S.autos={};S.offers=[];S.orders=[];
+ S.profile=null;S.admin=false;S.seller=null;S.interests=[];S.myBidLots=new Set();S.autos={};S.offers=[];S.orders=[];
  if(!S.user)return;
- const [p,a,b,au,of,od]=await Promise.all([sb.from("profiles").select("*").eq("id",S.user.id).maybeSingle(),sb.rpc("is_admin"),sb.from("bids").select("lot_id").eq("user_id",S.user.id),sb.from("autobids").select("*").eq("user_id",S.user.id),sb.from("offers").select("*").eq("user_id",S.user.id).order("created_at",{ascending:false}),sb.from("orders").select("*").eq("user_id",S.user.id).order("created_at",{ascending:false})]);
- S.profile=p.data||null;S.admin=!!a.data;(b.data||[]).forEach(x=>S.myBidLots.add(x.lot_id));(au.data||[]).forEach(x=>S.autos[x.lot_id]=num(x.max_amount));S.offers=of.data||[];S.orders=od.data||[];
- if(S.admin)await loadAdmin();
+ const uid=S.user.id;
+ const [p,a,b,au,of,od,se,it]=await Promise.all([sb.from("profiles").select("*").eq("id",uid).maybeSingle(),sb.rpc("is_admin"),sb.from("bids").select("lot_id").eq("user_id",uid),sb.from("autobids").select("*").eq("user_id",uid),sb.from("offers").select("*").eq("user_id",uid).order("created_at",{ascending:false}),sb.from("orders").select("*").eq("user_id",uid).order("created_at",{ascending:false}),sb.from("sellers").select("*").eq("id",uid).maybeSingle(),sb.from("interests").select("*").eq("user_id",uid).order("created_at",{ascending:false})]);
+ S.profile=p.data||null;S.admin=!!a.data;S.seller=se.data||null;if(S.seller&&S.seller.status==="aprovado")S.sellers[S.seller.id]=Object.assign(S.sellers[S.seller.id]||{},S.seller);S.interests=it.data||[];(b.data||[]).forEach(x=>S.myBidLots.add(x.lot_id));(au.data||[]).forEach(x=>S.autos[x.lot_id]=num(x.max_amount));S.offers=of.data||[];S.orders=od.data||[];
+ if(S.admin)await loadAdmin();if(isSeller())await loadSellerData();
 }
 async function loadAdmin(){
- const [o,f,p,pr]=await Promise.all([sb.from("orders").select("*").order("created_at",{ascending:false}),sb.from("offers").select("*").order("created_at",{ascending:false}),sb.from("profiles").select("*").order("created_at",{ascending:false}),sb.from("lot_private").select("*")]);
+ const [o,f,p,pr,sl,dc]=await Promise.all([sb.from("orders").select("*").order("created_at",{ascending:false}),sb.from("offers").select("*").order("created_at",{ascending:false}),sb.from("profiles").select("*").order("created_at",{ascending:false}),sb.from("lot_private").select("*"),sb.from("sellers").select("*").order("created_at",{ascending:false}),sb.from("seller_docs").select("*")]);
  S.adm.orders=o.data||[];S.adm.offers=f.data||[];S.adm.profiles={};(p.data||[]).forEach(x=>S.adm.profiles[x.id]=x);S.adm.privates={};(pr.data||[]).forEach(x=>S.adm.privates[x.lot_id]=x);
+ S.adm.sellers=sl.data||[];S.adm.docs={};(dc.data||[]).forEach(x=>S.adm.docs[x.seller_id]=x);(sl.data||[]).forEach(x=>{S.sellers[x.id]=Object.assign(S.sellers[x.id]||{},x)});
+}
+async function loadSellerData(){
+ const mine=S.lots.filter(l=>l.seller_id===meId()).map(l=>l.id);
+ const [o,f,p,pr,q]=await Promise.all([sb.from("orders").select("*").order("created_at",{ascending:false}),sb.from("offers").select("*").order("created_at",{ascending:false}),sb.from("profiles").select("*"),sb.from("lot_private").select("*"),mine.length?sb.from("questions").select("*").in("lot_id",mine).order("created_at",{ascending:false}):Promise.resolve({data:[]})]);
+ const own=x=>mine.includes(x.lot_id);
+ S.sel.orders=(o.data||[]).filter(own);S.sel.offers=(f.data||[]).filter(own);S.sel.profiles={};(p.data||[]).forEach(x=>S.sel.profiles[x.id]=x);S.sel.questions=q.data||[];
+ (pr.data||[]).forEach(x=>{if(own(x))S.adm.privates[x.lot_id]=x});
 }
 async function loadBids(id){const {data}=await sb.from("bids").select("id,lot_id,user_id,alias,amount,auto,created_at").eq("lot_id",id).order("id",{ascending:false}).limit(40);S.bids[id]=data||[]}
 let chan;
@@ -520,10 +551,36 @@ function subscribe(){
    const n=p.new;const i=S.lots.findIndex(l=>l.id===n.id);const old=i>=0?S.lots[i]:null;
    if(i>=0)S.lots[i]=n;else S.lots.unshift(n);
    if(old&&meId()&&old.leader===meId()&&n.leader&&n.leader!==meId()&&n.status==="active"){notify(`Você foi superado no lote #${code(n)}.`,n.id);toast(`Você foi superado no lote #${code(n)}.`,"red",n.id)}
+   if(!old&&n.status==="active")alertMatches([n],true);
+   if(old&&canManage(n)&&n.bids_count>old.bids_count&&n.leader!==meId()){notify(`Novo lance de ${brl(n.current_price)} no seu lote #${code(n)}.`,n.id)}
    refreshLot(n);
- }).on("postgres_changes",{event:"INSERT",schema:"public",table:"bids"},p=>{const b=p.new;if(S.bids[b.lot_id]){S.bids[b.lot_id].unshift(b);const h=$("#hist");if(h&&V.view==="lot"&&String(V.lot)===String(b.lot_id))h.innerHTML=histRows(getLot(b.lot_id))}if(S.admin&&!b.auto)notify(`Novo lance de ${brl(b.amount)} no lote #${code(getLot(b.lot_id)||{id:b.lot_id})}.`,b.lot_id,true)})
+ }).on("postgres_changes",{event:"INSERT",schema:"public",table:"bids"},p=>{const b=p.new;if(S.bids[b.lot_id]){S.bids[b.lot_id].unshift(b);const h=$("#hist");if(h&&V.view==="lot"&&String(V.lot)===String(b.lot_id))h.innerHTML=histRows(getLot(b.lot_id))}})
+ .on("postgres_changes",{event:"INSERT",schema:"public",table:"orders"},p=>onNewOrder(p.new))
  .subscribe();
 }
+function onNewOrder(o){
+ const l=getLot(o.lot_id)||{id:o.lot_id,title:"lote"};if(o.user_id===meId())return;
+ const mine=S.admin||canManage(l);if(!mine)return;
+ const sel=o.seller_id?S.sellers[o.seller_id]:null,buyer=(S.adm.profiles[o.user_id]||S.sel.profiles[o.user_id]);
+ const k={leilao:"por lances",compra:"compra direta",oferta:"oferta aceita"}[o.kind]||o.kind;
+ const txt=`💰 Nova venda: ${l.title} · ${brl(o.amount)} (${k})${S.admin?` · vendedor ${sel?sel.name:LOJA}`:""}${buyer?` · comprador ${buyer.name}`:""}`;
+ notify(txt,o.lot_id);toast(txt,"green",o.lot_id);beep();
+ if(S.admin){S.adm.orders.unshift(o);loadAdmin().then(()=>softRender())}else{S.sel.orders.unshift(o);loadSellerData().then(()=>softRender())}
+}
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[0,.18].forEach((d,i)=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=i?1320:880;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.0001,c.currentTime+d);g.gain.exponentialRampToValueAtTime(.25,c.currentTime+d+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d+.16);o.start(c.currentTime+d);o.stop(c.currentTime+d+.17)})}catch(e){}}
+/* alertas de interesse */
+const CAT_GROUP={Cardio:["Esteiras","Bikes","Cardio"],"Musculação":["Musculação","Bancos","Racks","Anilhas","Halteres"]};
+function interestMatch(i,l){if(!i.active)return false;const t=(l.title+" "+(l.brand||"")).toLowerCase();
+ if(i.keywords&&!t.includes(i.keywords.trim().toLowerCase()))return false;
+ if(i.category&&!(i.category===l.category||(CAT_GROUP[i.category]||[]).includes(l.category)))return false;
+ if(i.brand&&!(l.brand||"").toLowerCase().includes(i.brand.toLowerCase()))return false;
+ if(num(i.max_price)&&price(l)>num(i.max_price))return false;
+ if(i.uf&&i.uf!==l.uf)return false;return true}
+function interestText(i){return [i.keywords,i.category,i.brand,num(i.max_price)?"até "+brl(i.max_price):"",i.uf].filter(Boolean).join(" · ")||"Qualquer equipamento"}
+function alertMatches(lots,live){if(!S.interests.length)return;let seen=0;try{seen=+localStorage.getItem("fitbid-alert-seen")||0}catch(e){}
+ const hits=lots.filter(l=>l.status==="active"&&l.seller_id!==meId()&&(live||ts(l.created_at)>seen)&&S.interests.some(i=>interestMatch(i,l)&&ts(l.created_at)>=ts(i.created_at)-6e4));
+ hits.slice(0,5).forEach(l=>{notify(`🔔 Novo lote do que você procura: ${l.title} · ${brl(price(l))}`,l.id);if(live)toast(`🔔 Chegou o que você procura: ${l.title}`,"green",l.id)});
+ try{localStorage.setItem("fitbid-alert-seen",String(Date.now()))}catch(e){}}
 async function ensureBuyer(){
  if(!sb){toast("Plataforma em configuração.","red");return false}
  if(!S.user){const {data,error}=await sb.auth.signInAnonymously();if(error){toast("Não foi possível iniciar sua sessão: "+errMsg(error),"red");return false}S.user=data.user;await loadMine()}
@@ -557,9 +614,9 @@ function renderHeader(){
    <button class="icon-btn" aria-label="Favoritos" onclick="go('account',{tab:'favs'})"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>${S.favs.length?`<span class="cnt">${S.favs.length}</span>`:""}</button>
    <div style="position:relative"><button class="icon-btn" aria-label="Notificações" onclick="toggleMenu('notif',event)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg>${unread?`<span class="cnt">${unread}</span>`:""}</button>
     <div class="notif" id="notif" onclick="event.stopPropagation()"><h4>Notificações <button class="link" style="font-size:13px" onclick="S.notifs.forEach(n=>n.read=true);renderHeader()">Marcar como lidas</button></h4><ul>${S.notifs.slice(0,20).map(n=>`<li class="${n.read?"":"unread"}"><div style="flex:1">${esc(n.text)}<time>${hhmm(n.t)}</time></div>${n.lotId?`<button onclick="go('lot',{lot:'${n.lotId}'})">VER LOTE</button>`:""}</li>`).join("")||"<li>Nenhuma notificação nesta visita.</li>"}</ul></div></div>
-   ${S.profile||S.admin?`<div style="position:relative"><button class="txt-btn" onclick="toggleMenu('um',event)">${esc(S.admin?"Admin":S.profile.name.split(" ")[0])} ▾</button><div class="usermenu" id="um"><button onclick="go('account',{tab:'bids'})">Minha conta</button>${S.admin?`<button onclick="go('admin',{tab:'lots'})">Gestão da loja</button>`:""}<button onclick="logout()">Sair</button></div></div>`
+   ${S.profile||S.admin||S.seller?`<div style="position:relative"><button class="txt-btn" onclick="toggleMenu('um',event)">${esc(S.admin?"Admin":S.seller?S.seller.name.split(" ")[0]:S.profile.name.split(" ")[0])} ▾</button><div class="usermenu" id="um"><button onclick="go('account',{tab:'bids'})">Minha conta</button>${S.seller?`<button onclick="go('seller',{tab:'lots'})">Painel do vendedor</button>`:""}${S.admin?`<button onclick="go('admin',{tab:'lots'})">Gestão da loja</button>`:""}<button onclick="logout()">Sair</button></div></div>`
     :`<button class="txt-btn hide-m" onclick="go('account',{tab:'bids'})">Minha conta</button>`}
-   ${S.admin?`<button class="btn sm hide-m" onclick="editLot()">+ CADASTRAR LOTE</button>`:`<a class="btn sm hide-m" href="${waLink("Olá! Vim pelo site "+LOJA+" e tenho uma dúvida.")}" target="_blank" rel="noopener">WHATSAPP</a>`}
+   ${S.admin||isSeller()?`<button class="btn sm hide-m" onclick="editLot()">+ CADASTRAR LOTE</button>`:S.seller?`<button class="btn sm hide-m" onclick="go('seller',{tab:'lots'})">PAINEL DO VENDEDOR</button>`:`<button class="btn sm hide-m" onclick="go('join')">QUERO VENDER</button>`}
    <button class="icon-btn burger" aria-label="Abrir menu" onclick="openDrawer()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
   </div></div>`;
 }
@@ -571,7 +628,10 @@ function openDrawer(){const d=$("#drawer");d.innerHTML=`<div class="bg" onclick=
  ${NAVI.map(([k,t])=>`<button class="it" onclick="closeDrawer();${k==="auctions"||k==="buynow"?`go('browse',{mode:'${k}'})`:`go('${k}')`}">${t}</button>`).join("")}
  <button class="it" onclick="closeDrawer();go('account',{tab:'favs'})">Favoritos (${S.favs.length})</button>
  <button class="it" onclick="closeDrawer();go('account',{tab:'bids'})">Minha conta</button>
- ${S.admin?`<button class="it" onclick="closeDrawer();go('admin',{tab:'lots'})">Gestão da loja</button><button class="btn" style="margin-top:12px" onclick="closeDrawer();editLot()">+ CADASTRAR LOTE</button>`:`<a class="btn" style="margin-top:12px" href="${waLink("Olá! Vim pelo site "+LOJA+" e tenho uma dúvida.")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a>`}
+ <button class="it" onclick="closeDrawer();go('account',{tab:'alerts'})">Meus alertas</button>
+ ${S.seller?`<button class="it" onclick="closeDrawer();go('seller',{tab:'lots'})">Painel do vendedor</button>`:`<button class="it" onclick="closeDrawer();go('join')">Quero vender</button>`}
+ ${S.admin?`<button class="it" onclick="closeDrawer();go('admin',{tab:'lots'})">Gestão da loja</button>`:""}
+ ${S.admin||isSeller()?`<button class="btn" style="margin-top:12px" onclick="closeDrawer();editLot()">+ CADASTRAR LOTE</button>`:`<a class="btn" style="margin-top:12px" href="${waLink("Olá! Vim pelo site "+LOJA+" e tenho uma dúvida.")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a>`}
  ${S.user?`<button class="it" onclick="closeDrawer();logout()">Sair</button>`:""}</div>`;d.classList.add("open")}
 function closeDrawer(){$("#drawer").classList.remove("open")}
 async function logout(){await sb.auth.signOut();S.user=null;await loadMine();go("home");toast("Você saiu da conta.")}
@@ -586,10 +646,10 @@ function card(l){
   :`${l.type==="buy"?`<button class="btn sm" onclick="event.stopPropagation();buyNow(${l.id})">COMPRAR</button>`:""}<button class="btn sm ${l.type==="buy"?"line":""}" onclick="event.stopPropagation();openOffer(${l.id})">OFERTA</button>`;
  return `<div class="lc" onclick="go('lot',{lot:${l.id}})">
   <div class="md">${media(l,"ill")}<div class="tl">${tags.join("")}</div>${heart(l)}</div>
-  <div class="bd"><div class="lotno">Lote #${esc(code(l))}${l.brand?" · "+esc(l.brand):""}</div><h3>${esc(l.title)}</h3>
+  <div class="bd"><div class="lotno">Lote #${esc(code(l))}${l.brand?" · "+esc(l.brand):""}${sellerOf(l)?" · "+esc(sellerOf(l).name):""}</div><h3>${esc(l.title)}</h3>
    <div class="meta">${esc(l.condition||"")}${l.city?` · ${esc(l.city)}/${esc(l.uf||"")}`:""}${num(l.qty)>1?` · ${l.qty} un.`:""}</div>
-   <div class="pr"><div><small>${auc?(ended(l)?"Lance final":l.bids_count?"Lance atual":"Lance inicial"):"Preço"}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div>${auc?`<span class="meta" data-nb="${l.id}">${l.bids_count} lances</span>`:""}</div>
-   ${l.type==="auction_buy"&&live(l)&&l.buy_price?`<button class="link" style="text-align:left;font-size:14px" onclick="event.stopPropagation();buyNow(${l.id})">ou compre agora por ${brl(l.buy_price)} ›</button>`:""}
+   <div class="pr"><div><small>${auc?(ended(l)?"Lance final":l.bids_count?"Lance atual":"Lance de entrada"):"Preço"}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div>${auc?`<span class="meta" data-nb="${l.id}">${l.bids_count} lances</span>`:""}</div>
+   ${l.type==="auction_buy"&&live(l)&&l.buy_price?`<button class="link" style="text-align:left;font-size:14px" onclick="event.stopPropagation();buyNow(${l.id})">ou feche agora por ${brl(l.buy_price)} (preço sugerido) ›</button>`:""}
    <div class="ft">${auc?timerEl(l):`<span class="meta">${typeLabel[l.type]}</span>`}<div class="acts">${act}</div></div></div></div>`;
 }
 const visible=()=>S.lots.filter(l=>l.status==="active"||l.status==="sold");
@@ -605,9 +665,9 @@ function renderHome(){
  return `<section class="hero"><div class="wrap" ${pics.length?"":'style="grid-template-columns:1fr"'}>
   <div><div class="eyebrow">Venda por lances e preço fixo · ${esc(LOJA)}</div>
    <h1>Equipamentos profissionais.<br><span>Novas oportunidades.</span></h1>
-   <p>Compre equipamentos profissionais dando lances, pelo preço fixo ou fazendo sua oferta. Estoque, showroom, seminovos e lotes completos, vendidos diretamente pela ${esc(LOJA)}.</p>
+   <p>Compre equipamentos profissionais dando lances, pelo preço sugerido ou fazendo sua oferta. Estoque, showroom, seminovos e lotes completos, de vendedores verificados.</p>
    <div class="ctas"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LANCES ABERTOS</button><button class="btn on-dark" onclick="go('browse',{mode:'buynow'})">COMPRAR AGORA</button></div>
-   <p style="font-size:14px;margin:22px 0 0">Pagamento e entrega combinados diretamente pelo WhatsApp.</p></div>
+   <p style="font-size:14px;margin:22px 0 0">Pagamento e entrega combinados diretamente com o vendedor pelo WhatsApp. <button class="link" style="color:#fff" onclick="go('join')">Quer vender? ›</button></p></div>
   ${pics.length?`<div class="collage" aria-hidden="true">${pics.map((l,i)=>`<div class="t"><img src="${esc(l.photos[0])}" alt=""><span class="cap">Lote #${esc(code(l))}${i===0?` · <b data-cur="${l.id}">${brl(price(l))}</b>`:""}</span></div>`).join("")}</div>`:""}</div></section>
  <div class="wrap">
   <div class="searchbox"><form onsubmit="event.preventDefault();V.f=Object.assign(blankF(),{q:this.q.value});go('browse',{mode:'all',keep:true})" role="search">
@@ -622,8 +682,9 @@ function renderHome(){
    <div class="nums">${num(desmob.ref_price)?`<div><small>Valor estimado</small><b>${brl(desmob.ref_price)}</b></div>`:""}<div><small>${isAuction(desmob)?"Lance atual":"Preço"}</small><b data-cur="${desmob.id}">${brl(price(desmob))}</b></div></div>
    <div><button class="btn" onclick="go('lot',{lot:${desmob.id}})">VER LOTE COMPLETO</button></div></div><div class="r">${media(desmob,"ill")}</div></div></section>`:""}
   ${buys.length?`<section class="blk"><div class="sh"><div><h2>Compre agora</h2><p>Preço fixo ou faça sua oferta.</p></div><button class="link" onclick="go('browse',{mode:'buynow'})">Ver todos ›</button></div><div class="grid">${buys.map(card).join("")}</div></section>`:""}
+  <section class="blk"><div class="sellcta" style="background:var(--ink);color:var(--bg)"><div><h2>Procurando um equipamento específico?</h2><p>Crie um alerta e seja avisado assim que entrar um lote do que você procura, como um Leg Press 45 até R$ 15 mil.</p></div><button class="btn" onclick="openAlert()">CRIAR ALERTA</button></div></section>
   <section class="blk"><div class="trust"><div><h2>Compre com segurança.</h2><p class="muted">Lances, preço fixo ou oferta, direto com a ${esc(LOJA)}.</p></div>
-   <ul>${["Venda direta, sem intermediários","Equipamentos verificados","Lotes detalhados","Histórico de lances","Nota fiscal quando informada","Entrega para todo o Brasil","Atendimento pelo WhatsApp"].map(x=>`<li><i>✓</i>${x}</li>`).join("")}</ul></div></section>
+   <ul>${["Vendedores verificados","Lotes detalhados com perguntas públicas","Histórico de lances transparente","Preço sugerido para fechar na hora","Nota fiscal quando informada","Entrega para todo o Brasil","Negociação direta pelo WhatsApp"].map(x=>`<li><i>✓</i>${x}</li>`).join("")}</ul></div></section>
  </div>`;
 }
 function catBtn([c,p]){return `<button class="cat" onclick="V.f=Object.assign(blankF(),{cat:'${c}'});go('browse',{mode:'all',keep:true})"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="${p}"/></svg><b>${c}</b><span>${visible().filter(l=>l.status==="active"&&catMatch(l,c)).length} disponíveis</span></button>`}
@@ -663,51 +724,92 @@ function togF(arr,v,on){const a=V.f[arr];const i=a.indexOf(v);if(on&&i<0)a.push(
 function results(){const el=$("#results");if(!el)return;const r=filtered();el.innerHTML=r.map(card).join("")||'<div class="empty">Nenhum equipamento encontrado.</div>';$("#rc").textContent=`${r.length} ${r.length===1?"resultado":"resultados"}`}
 /* ===== página do lote ===== */
 function renderLot(){
- const l=getLot(V.lot);if(!l)return `<div class="wrap"><div class="empty" style="margin-top:30px">Lote não encontrado.<br><button class="btn sm" style="margin-top:12px" onclick="go('home')">VOLTAR</button></div></div>`;
+ const l=getLot(V.lot);if(!l)return `<div class="wrap"><div class="empty" style="margin-top:30px">Lote não encontrado ou não está mais disponível.<br><button class="btn sm" style="margin-top:12px" onclick="go('home')">VER OUTROS EQUIPAMENTOS</button></div></div>`;
  if(!S.bids[l.id]&&isAuction(l)){loadBids(l.id).then(()=>{const h=$("#hist");if(h)h.innerHTML=histRows(l)})}
- const auc=isAuction(l),[st,sc]=status(l),sv=saving(l),photos=l.photos||[];
+ if(!S.questions[l.id]){S.questions[l.id]=[];loadQuestions(l.id)}
+ countView(l.id);
+ const auc=isAuction(l),[st,sc]=status(l),sv=saving(l),photos=l.photos||[],seller=sellerOf(l),mgr=canManage(l);
  const specs=[["Marca",l.brand],["Condição",l.condition],["Localização",l.city?`${l.city}/${l.uf||""}`:""],["Nota fiscal",l.nf?"Sim":"Não"],["Garantia",l.warranty],["Número do lote","#"+code(l)],["Quantidade",num(l.qty)>1?l.qty+" unidades":"1 unidade"],["Ano",l.year],["Tipo de venda",typeLabel[l.type]],["Peso estimado",l.kg?`${num(l.kg).toLocaleString("pt-BR")} kg`:""]].filter(x=>x[1]);
  const cur=photos[V.img]||photos[0];
  return `<div class="wrap"><div class="crumbs"><button onclick="go('home')">Início</button> / <button onclick="go('browse',{mode:'${auc?"auctions":"buynow"}'})">${auc?"Venda por lances":"Comprar agora"}</button> / <span>Lote #${esc(code(l))}</span></div>
  <div class="lotpage"><div>
   <div class="gal"><div class="main">${cur?`<img src="${esc(cur)}" alt="${esc(l.title)}">`:media(l)}${heart(l)}</div>
    ${photos.length>1?`<div class="thumbs">${photos.map((p,i)=>`<button aria-label="Foto ${i+1}" aria-pressed="${(V.img||0)===i}" onclick="V.img=${i};render(true)"><img src="${esc(p)}" alt=""></button>`).join("")}</div>`:""}</div>
-  <div class="box lt" style="margin-top:16px"><div class="vers"><span class="badge ${sc}">${st}</span><span class="badge b-ver">✓ VENDA DIRETA ${esc(LOJA)}</span>${l.nf?'<span class="badge b-ver">✓ NOTA FISCAL</span>':""}</div>
+  <div class="box lt" style="margin-top:16px"><div class="vers"><span class="badge ${sc}">${st}</span><span class="badge b-ver">✓ ${seller?"VENDEDOR VERIFICADO":"VENDA DIRETA "+esc(LOJA)}</span>${l.nf?'<span class="badge b-ver">✓ NOTA FISCAL</span>':""}</div>
    <h1>${esc(l.title)}</h1><div class="muted">Lote #${esc(code(l))}${l.brand?" · "+esc(l.brand):""}${l.condition?" · "+esc(l.condition):""}${l.city?` · ${esc(l.city)}/${esc(l.uf||"")}`:""}</div></div>
-  ${num(l.ref_price)&&sv>0?`<div class="box"><div class="opp"><span class="badge b-red tag">OPORTUNIDADE</span><div><small>Preço de referência</small><b class="num">${brl(l.ref_price)}</b></div><div><small>${auc?"Lance atual":"Preço"}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div><div class="sv"><small>Economia potencial</small><b class="num">${sv}%</b></div></div><p class="muted" style="font-size:13px;margin:10px 0 0">Preço de referência meramente indicativo.</p></div>`:""}
+  ${auc?priceLadder(l):num(l.ref_price)&&sv>0?`<div class="box ladder"><div class="opp"><span class="badge b-red tag">OPORTUNIDADE</span><div><small>Preço de referência</small><b class="num" style="text-decoration:line-through;opacity:.7">${brl(l.ref_price)}</b></div><div><small>Preço</small><b class="num">${brl(price(l))}</b></div><div class="sv"><small>Economia</small><b class="num">${sv}%</b></div></div></div>`:""}
   <div class="box"><h3>Informações do lote</h3><dl class="specs">${specs.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>${l.description?`<p style="margin:14px 0 0;white-space:pre-line">${esc(l.description)}</p>`:""}</div>
   <div class="box"><h3>LOGÍSTICA</h3><div class="logi"><div><b>${l.logistics==="retirada"?"Retirada por conta do comprador":"Entrega combinada após a compra"}</b><div class="muted" style="font-size:14px">${l.city?`Saída de ${esc(l.city)}/${esc(l.uf||"")}`:""}${l.kg?` · peso estimado ${num(l.kg).toLocaleString("pt-BR")} kg`:""}</div></div><button class="btn line" onclick="openShip(${l.id})">CALCULAR TRANSPORTE</button></div></div>
+  <div class="box" id="qbox">${questionsHTML(l)}</div>
   ${auc?`<div class="box"><h3>Histórico de lances</h3><div class="tblw"><table class="tbl"><thead><tr><th>Horário</th><th>Comprador</th><th>Lance</th></tr></thead><tbody id="hist">${histRows(l)}</tbody></table></div><p class="muted" style="font-size:13px;margin:10px 0 0">Compradores identificados apenas por número.</p></div>`:""}
  </div>
  <aside>${auc?bidPanel(l):buyPanel(l)}
-  ${S.admin?`<div class="box"><b>Administrador</b><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn sm dark" onclick="editLot(${l.id})">EDITAR LOTE</button>${l.status==="sold"||(isAuction(l)&&ended(l))?`<button class="btn sm" onclick="askReactivate(${l.id})">REATIVAR</button>`:""}<button class="btn sm line" onclick="go('admin',{tab:'lots'})">GESTÃO</button></div></div>`:""}
+  ${mgr?managerBox(l):""}
+  <div class="box"><h3 style="font-size:16px">Vendido por</h3><div class="mini"><div class="th" style="background:var(--ink);color:var(--bg);font-family:var(--display);font-weight:900;font-size:20px">${esc((seller?seller.name:LOJA)[0])}</div><div style="flex:1"><b>${esc(seller?seller.name:LOJA)}</b><div style="color:var(--green);font-weight:700;font-size:13px">✓ ${seller?"VENDEDOR VERIFICADO":"VENDA DIRETA"}</div>${seller&&seller.city?`<div class="muted" style="font-size:13px">${esc(seller.city)}${seller.uf?"/"+esc(seller.uf):""}</div>`:""}</div></div>
+   ${seller?`<button class="btn line block" style="margin-top:12px" onclick="go('vendor',{vendor:'${seller.id}'})">VER VITRINE DO VENDEDOR</button>`:""}
+   <a class="btn line block" style="margin-top:8px" href="${waLink(`Olá! Tenho uma dúvida sobre o lote #${code(l)} – ${l.title} (${lotUrl(l)}).`,waFor(l))}" target="_blank" rel="noopener">PERGUNTAR NO WHATSAPP</a></div>
   <div class="box"><h3 style="font-size:16px">Compartilhar este lote</h3><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn green" style="flex:1" href="${shareWA(l)}" target="_blank" rel="noopener">ENVIAR NO WHATSAPP</a><button class="btn line" style="flex:1" onclick="copyLink(${l.id})">COPIAR LINK</button></div></div>
-  <div class="box"><h3 style="font-size:16px">Dúvidas sobre este lote?</h3><a class="btn line block" href="${waLink(`Olá! Tenho uma dúvida sobre o lote #${code(l)} – ${l.title}.`)}" target="_blank" rel="noopener">PERGUNTAR NO WHATSAPP</a></div>
  </aside></div></div>${mobileBar(l)}`;
 }
+function priceLadder(l){
+ const entry=num(l.start_price),sug=l.type==="auction_buy"?num(l.buy_price):0,ref=num(l.ref_price),cur=l.bids_count?num(l.current_price):entry;
+ if(!ref&&!sug)return "";
+ const top=Math.max(ref,sug*1.12,cur*1.05,entry*1.2),pos=v=>Math.max(0,Math.min(100,(v-entry)/(top-entry)*100));
+ const col=(t,v,extra,st)=>`<div style="flex:1;min-width:110px"><small class="muted" style="font-weight:700;font-size:12px">${t}</small><div class="num" style="font-family:var(--display);font-weight:900;font-size:22px;${st||""}">${brl(v)}</div>${extra||""}</div>`;
+ return `<div class="box ladder"><div style="display:flex;gap:12px;flex-wrap:wrap">${col("Lance de entrada",entry)}${sug?col("Preço sugerido",sug,`<small style="color:var(--green);font-weight:700">para fechar agora</small>`,"color:var(--green)"):""}${ref?col("Preço de referência",ref,saving(l)>0?`<small style="color:var(--red);font-weight:700">economia de até ${Math.round((1-entry/ref)*100)}%</small>`:"","text-decoration:line-through;opacity:.65"):""}</div>
+  <div style="position:relative;height:42px;margin:18px 6px 4px" aria-hidden="true">
+   <div style="position:absolute;left:0;right:0;top:16px;height:8px;border-radius:4px;background:linear-gradient(90deg,var(--red),#f59e0b ${sug?pos(sug):70}%,var(--line) ${sug?pos(sug):70}%)"></div>
+   ${sug?`<div style="position:absolute;left:${pos(sug)}%;top:8px;width:3px;height:24px;background:var(--green);transform:translateX(-50%)"></div>`:""}
+   <div style="position:absolute;left:${pos(cur)}%;top:0;transform:translateX(-50%);text-align:center"><div style="width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--red);margin:9px auto 0"></div></div>
+  </div><p class="muted" style="font-size:13px;margin:4px 0 0">● ${l.bids_count?"Lance atual":"Lance de entrada"}: <b data-cur="${l.id}">${brl(cur)}</b>${sug?` · a linha verde marca o preço sugerido para fechar`:""}. Valores de referência indicativos.</p></div>`;
+}
+function managerBox(l){const ended_=l.status==="sold"||(isAuction(l)&&ended(l));
+ return `<div class="box"><b>${S.admin&&l.seller_id!==meId()?"Administrador":"Seu lote"}</b><div class="muted" style="font-size:13px;margin:4px 0 10px">👁 ${num(l.views)} visitas · ${l.bids_count||0} lances</div><div style="display:flex;gap:8px;flex-wrap:wrap">
+  <button class="btn sm dark" onclick="editLot(${l.id})">EDITAR</button>${ended_?`<button class="btn sm" onclick="askReactivate(${l.id})">REATIVAR</button>`:""}
+  <button class="btn sm green" onclick="makeArt(${l.id})">ARTE PARA STATUS</button><button class="btn sm line" onclick="showInterested(${l.id})">INTERESSADOS</button>
+  ${isAuction(l)&&l.bids_count?`<button class="btn sm line" onclick="showBidders(${l.id})">${ended_?"SEGUNDA CHANCE":"OFERTANTES"}</button>`:""}
+  <button class="btn sm line" onclick="go('${S.admin?"admin":"seller"}',{tab:'lots'})">PAINEL</button></div></div>`}
+/* perguntas públicas */
+async function loadQuestions(id){const {data}=await sb.from("questions").select("*").eq("lot_id",id).order("created_at",{ascending:false});S.questions[id]=data||[];const q=$("#qbox");if(q&&String(V.lot)===String(id))q.innerHTML=questionsHTML(getLot(id))}
+function questionsHTML(l){const qs=S.questions[l.id]||[],mgr=canManage(l);
+ return `<h3>Perguntas sobre este lote</h3>${qs.length?qs.map(q=>`<div style="border-bottom:1px solid var(--line);padding:10px 0"><div><b>P:</b> ${esc(q.question)} <span class="muted" style="font-size:12px">· Comprador #${esc(q.alias||"")} · ${hhmm(q.created_at)}</span></div>
+  ${q.answer?`<div style="margin-top:6px;padding-left:12px;border-left:3px solid var(--green)"><b>R:</b> ${esc(q.answer)}</div>`:mgr?`<div style="display:flex;gap:8px;margin-top:8px"><input id="ans${q.id}" placeholder="Escreva a resposta" style="flex:1;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px"><button class="btn sm" onclick="answerQ(${q.id},${l.id})">RESPONDER</button></div>`:`<div class="muted" style="font-size:13px;margin-top:4px">Aguardando resposta do vendedor.</div>`}</div>`).join(""):`<p class="muted" style="margin:0 0 8px">Nenhuma pergunta ainda. As respostas ficam visíveis para todos.</p>`}
+  ${l.status==="active"&&!mgr?`<div class="field" style="margin-top:12px"><label for="qtext">Faça uma pergunta pública</label><textarea id="qtext" rows="2" placeholder="Ex.: Aceita retirada em outra cidade?"></textarea></div><button class="btn sm line" style="margin-top:8px" onclick="askQ(${l.id})">ENVIAR PERGUNTA</button>`:""}`}
+async function askQ(id){const t=($("#qtext")&&$("#qtext").value||"").trim();if(t.length<3){toast("Escreva sua pergunta.","red");return}if(!await ensureBuyer())return;
+ const {error}=await sb.from("questions").insert({lot_id:id,question:t});if(error){toast(errMsg(error),"red");return}toast("Pergunta enviada. O vendedor foi avisado.","green");loadQuestions(id)}
+async function answerQ(qid,lid){const t=($("#ans"+qid)&&$("#ans"+qid).value||"").trim();if(!t){toast("Escreva a resposta.","red");return}
+ const {error}=await sb.from("questions").update({answer:t}).eq("id",qid);if(error){toast(errMsg(error),"red");return}toast("Resposta publicada.","green");await loadQuestions(lid);if(isSeller())loadSellerData().then(()=>{if(V.view==="seller")render(true)})}
+function countView(id){try{if(sessionStorage.getItem("fv"+id))return;sessionStorage.setItem("fv"+id,"1")}catch(e){}if(sb)sb.rpc("lot_view",{p_lot:id}).then(()=>{},()=>{})}
+/* interessados e segunda chance */
+async function showInterested(id){const l=getLot(id);const {data,error}=await sb.rpc("lot_interested",{p_lot:id});if(error){toast(errMsg(error),"red");return}
+ const rows=data||[];openModal(`<h2>Compradores interessados</h2><p class="muted" style="margin:0">Pessoas com alerta compatível com este lote e que aceitaram receber ofertas.</p>
+ ${rows.length?rows.map(r=>`<div class="mini" style="justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0"><div><b>${esc(r.name)}</b><div class="muted" style="font-size:12px">Procura: ${esc(r.what||"")}</div></div><a class="btn sm green" target="_blank" rel="noopener" href="${waLink(`Olá, ${r.name}! Aqui é ${sellerOf(l)?sellerOf(l).name:"da "+LOJA}. Entrou um equipamento que você procura:\n\n${shareText(l)}`,r.whatsapp)}">WHATSAPP</a></div>`).join(""):`<div class="empty">Ainda não há alertas compatíveis com este lote. Divulgue com o botão ARTE PARA STATUS e pelo WhatsApp.</div>`}`)}
+async function showBidders(id){const l=getLot(id);const {data,error}=await sb.rpc("lot_bidders",{p_lot:id});if(error){toast(errMsg(error),"red");return}const rows=data||[],ended_=ended(l)||l.status==="sold";
+ openModal(`<h2>${ended_?"Segunda chance":"Ofertantes"}</h2><p class="muted" style="margin:0">${ended_?"Se o vencedor desistir, ofereça o equipamento a quem também deu lance.":"Maiores lances neste lote."}</p>
+ ${rows.map((r,i)=>`<div class="mini" style="justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0"><div><b>${i+1}º · ${esc(r.name)}</b><div class="muted" style="font-size:12px">Maior lance: ${brl(r.max_bid)}${r.is_leader?" · vencedor":""}</div></div><a class="btn sm ${r.is_leader?"line":"green"}" target="_blank" rel="noopener" href="${waLink(r.is_leader?`Olá, ${r.name}! Você venceu o lote #${code(l)} – ${l.title} por ${brl(l.current_price)}. Vamos combinar pagamento e entrega?`:`Olá, ${r.name}! O lote #${code(l)} – ${l.title} ficou disponível novamente. Posso te oferecer pelo seu lance de ${brl(r.max_bid)}. Tem interesse?`,r.whatsapp)}">${r.is_leader?"CONTATAR":"OFERECER"}</a></div>`).join("")||'<div class="empty">Sem lances.</div>'}`)}
 function histRows(l){const b=S.bids[l.id];if(!b)return '<tr><td colspan="3" class="muted">Carregando…</td></tr>';return b.map(x=>`<tr class="${x.user_id===meId()?"me":""}"><td class="num">${hhmm(x.created_at)}</td><td>${x.user_id===meId()?"Você (Comprador #"+x.alias+")":"Comprador #"+esc(x.alias)}${x.auto?' <span class="muted" style="font-size:12px">(auto)</span>':""}</td><td class="num">${brl(x.amount)}</td></tr>`).join("")||'<tr><td colspan="3" class="muted">Nenhum lance ainda. Seja o primeiro.</td></tr>'}
 function bidPanel(l){
  const lv=live(l),mn=minBid(l),auto=S.autos[l.id],ord=S.orders.find(o=>o.lot_id===l.id);
  const pos=iBid(l)||iLead(l)?(iLead(l)?(lv?`<div class="pos win">Você está na frente.</div>`:won(l)?`<div class="pos win">Você venceu este lote!</div>`:`<div class="pos lose">Disputa encerrada sem atingir o valor mínimo de venda.</div>`):(lv?`<div class="pos lose">Você foi superado. Dê um novo lance.</div>`:`<div class="pos lose">Disputa encerrada. Outro comprador venceu.</div>`)):"";
  let body="";
  if(l.status==="sold")body=iLead(l)||ord?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:`<p style="margin:0;font-weight:700">Equipamento vendido.</p>`;
- else if(lv)body=`<div class="minrow"><span>${l.bids_count?"Próximo lance mínimo":"Lance inicial"}</span><b class="num" data-min="${l.id}">${brl2(mn)}</b></div>
+ else if(lv)body=`<div class="minrow"><span>${l.bids_count?"Próximo lance mínimo":"Lance de entrada"}</span><b class="num" data-min="${l.id}">${brl2(mn)}</b></div>
   ${iLead(l)?"":`<div class="field"><label for="bidv">Seu lance (opcional, acima do mínimo)</label><div class="money"><span>R$</span><input id="bidv" class="num" inputmode="decimal" placeholder="${Math.round(mn).toLocaleString("pt-BR")}"></div></div>
   <button class="btn block" style="padding:16px;font-size:16px" onclick="askBid(${l.id})">DAR LANCE</button>`}
-  ${l.type==="auction_buy"&&l.buy_price?`<button class="btn block dark" onclick="buyNow(${l.id})">COMPRAR AGORA POR ${brl(l.buy_price)}</button>`:""}
+  ${l.type==="auction_buy"&&l.buy_price?`<button class="btn block green" onclick="buyNow(${l.id})">FECHAR AGORA POR ${brl(l.buy_price)}</button><p class="muted" style="font-size:12px;margin:-6px 0 0;text-align:center">Preço sugerido: garante o equipamento sem esperar a disputa.</p>`:""}
   <div class="autob"><h4>Definir lance máximo</h4><p>Informe o valor máximo que você aceita pagar. A plataforma cobre outros lances por você, sempre com o mínimo necessário, até esse limite.</p>
   ${auto?`<div class="auto-on"><div><small class="muted">Lance automático até</small><div style="font-family:var(--display);font-weight:900;font-size:22px">${brl(auto)}</div></div><button class="btn sm line" onclick="cancelAuto(${l.id})">CANCELAR</button></div>`:`<div class="money"><span>R$</span><input id="autov" class="num" inputmode="decimal" placeholder="______" aria-label="Lance máximo"></div><button class="btn block line" onclick="askAuto(${l.id})">DEFINIR AUTO-LANCE</button>`}</div>
   <p class="muted" style="font-size:12px;margin:0">Lances são compromissos de compra. Lances nos 2 minutos finais estendem a disputa em 2 minutos.</p>`;
  else if(!started(l))body=`<p class="muted" style="margin:0">Os lances começam em ${new Date(l.starts_at).toLocaleString("pt-BR")}.</p>`;
  else body=`<p style="margin:0;font-weight:700">Disputa encerrada.</p>${iLead(l)&&won(l)?`<button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:""}<button class="btn block line" onclick="go('browse',{mode:'auctions'})">VER OUTROS LOTES</button>`;
- return `<div class="bidpanel"><div class="bp-top"><div><small>${l.bids_count?"Lance atual":"Lance inicial"}</small><div class="cur num" data-cur2="${l.id}">${brl2(l.bids_count?l.current_price:l.start_price)}</div><small style="margin-top:6px" data-nb2="${l.id}">${l.bids_count} lances</small></div><div style="text-align:right"><small>${lv?"Encerra em":"Status"}</small>${timerEl(l)}</div></div><div class="bp-body">${pos}${body}</div></div>`;
+ return `<div class="bidpanel"><div class="bp-top"><div><small>${l.bids_count?"Lance atual":"Lance de entrada"}</small><div class="cur num" data-cur2="${l.id}">${brl2(l.bids_count?l.current_price:l.start_price)}</div><small style="margin-top:6px" data-nb2="${l.id}">${l.bids_count} lances</small></div><div style="text-align:right"><small>${lv?"Encerra em":"Status"}</small>${timerEl(l)}</div></div><div class="bp-body">${pos}${body}</div></div>`;
 }
 function buyPanel(l){
  const mine=l.status==="sold"&&l.sold_to===meId(),acc=S.offers.find(o=>o.lot_id===l.id&&["aceita","contraproposta"].includes(o.status));
  return `<div class="bidpanel"><div class="bp-top"><div><small>${l.type==="offer"?"Preço anunciado":"Preço"}</small><div class="cur num">${brl2(l.buy_price)}</div></div><div style="text-align:right"><small>Modalidade</small><b style="color:#fff">${typeLabel[l.type]}</b></div></div>
  <div class="bp-body">${l.status==="sold"?(mine?`<div class="pos win">Você comprou este equipamento.</div><button class="btn block green" onclick="finishWA(${l.id})">FINALIZAR PELO WHATSAPP</button>`:`<p style="margin:0;font-weight:700">Equipamento vendido.</p>`)
  :acc?`<div class="pos win">Sua oferta ${acc.status==="aceita"?"foi aceita":"recebeu contraproposta de "+brl(acc.counter)}.</div><button class="btn block green" onclick="finishWA(${l.id})">FECHAR PELO WHATSAPP</button>`
- :`${l.type==="buy"?`<button class="btn block" style="padding:16px;font-size:16px" onclick="buyNow(${l.id})">COMPRAR AGORA</button>`:""}<button class="btn block ${l.type==="buy"?"line":""}" style="padding:14px" onclick="openOffer(${l.id})">FAZER OFERTA</button><p class="muted" style="font-size:13px;margin:0">Pagamento e entrega são combinados diretamente com a ${esc(LOJA)} pelo WhatsApp.</p>`}</div></div>`;
+ :`${l.type==="buy"?`<button class="btn block" style="padding:16px;font-size:16px" onclick="buyNow(${l.id})">COMPRAR AGORA</button>`:""}<button class="btn block ${l.type==="buy"?"line":""}" style="padding:14px" onclick="openOffer(${l.id})">FAZER OFERTA</button><p class="muted" style="font-size:13px;margin:0">Pagamento e entrega são combinados diretamente com ${esc(sellerOf(l)?sellerOf(l).name:"a "+LOJA)} pelo WhatsApp.</p>`}</div></div>`;
 }
 function mobileBar(l){
  if(live(l)&&!iLead(l))return `<div class="mbar"><div><small>Lance atual · ${timerEl(l)}</small><b class="num" data-cur="${l.id}">${brl(price(l))}</b></div><button class="btn" onclick="document.getElementById('bidv')?document.getElementById('bidv').scrollIntoView({block:'center'}):askBid(${l.id})">DAR LANCE</button></div>`;
@@ -716,22 +818,26 @@ function mobileBar(l){
 }
 
 /* ===== links e compartilhamento ===== */
-function lotUrl(l){return location.origin+location.pathname+"#lote-"+l.id}
+function lotUrl(l){return location.origin+location.pathname+"?lote="+l.id}
+function vendorUrl(id){return location.origin+location.pathname+"?vendedor="+id}
 function shareText(l){const auc=isAuction(l);let t=`🔥 *${l.title}*`+(l.condition?` (${l.condition})`:"")+"\n";
- if(auc){t+=`${l.bids_count?"Lance atual":"Lances a partir de"}: *${brl(price(l))}*`;if(num(l.ref_price))t+=` (referência ${brl(l.ref_price)})`;t+="\n";if(l.type==="auction_buy"&&l.buy_price)t+=`Ou compre agora por ${brl(l.buy_price)}\n`;if(live(l))t+=`⏰ Encerra em ${fmt(ts(l.ends_at)-now()).replace(/ \d+s$/,"")}\n`}
+ if(auc){t+=`${l.bids_count?"Lance atual":"Lance de entrada"}: *${brl(price(l))}*`;if(num(l.ref_price))t+=` (referência ${brl(l.ref_price)})`;t+="\n";if(l.type==="auction_buy"&&l.buy_price)t+=`✅ Preço sugerido para fechar agora: ${brl(l.buy_price)}\n`;if(live(l))t+=`⏰ Encerra em ${fmt(ts(l.ends_at)-now()).replace(/ \d+s$/,"")}\n`}
  else{t+=`Preço: *${brl(l.buy_price)}*`+(num(l.ref_price)?` (referência ${brl(l.ref_price)})`:"")+"\n"+(l.type==="offer"?"Aceita ofertas\n":"")}
  return t+`\nVeja fotos e detalhes: ${lotUrl(l)}`}
 function siteUrl(){return location.origin+location.pathname}
 function vitrineText(){const act=S.lots.filter(l=>l.status==="active"&&(!isAuction(l)||live(l)||!started(l)));let t=`🔥 *FIT BID* · equipamentos profissionais com lances, preço fixo e ofertas\n\n`;
- act.slice(0,15).forEach(l=>{t+=`• *${l.title}* – ${isAuction(l)?(l.bids_count?"lance atual ":"lances a partir de ")+brl(price(l)):brl(l.buy_price)}\n${lotUrl(l)}\n\n`});
+ act.slice(0,15).forEach(l=>{t+=`• *${l.title}* – ${isAuction(l)?(l.bids_count?"lance atual ":"lance de entrada ")+brl(price(l)):brl(l.buy_price)}\n${lotUrl(l)}\n\n`});
  return t+`Veja todos os equipamentos: ${siteUrl()}`}
 function shareSiteWA(){return `https://wa.me/?text=${encodeURIComponent(vitrineText())}`}
 async function copySite(){try{await navigator.clipboard.writeText(vitrineText());toast("Vitrine copiada. É só colar no WhatsApp.","green")}catch(e){prompt("Copie o link:",siteUrl())}}
 function shareWA(l){return `https://wa.me/?text=${encodeURIComponent(shareText(l))}`}
 async function copyLink(id){const l=getLot(id);try{await navigator.clipboard.writeText(shareText(l));toast("Texto e link copiados. É só colar no WhatsApp.","green")}catch(e){prompt("Copie o link:",lotUrl(l))}}
-function routeFromHash(){const m=location.hash.match(/^#lote-(\d+)/);if(m){V.view="lot";V.lot=+m[1];return true}return false}
-window.addEventListener("popstate",()=>{if(!routeFromHash()&&V.view==="lot")V.view="home";closeModal(true);render()});
-
+function routeFromHash(){const q=new URLSearchParams(location.search);
+ if(q.get("lote")){V.view="lot";V.lot=+q.get("lote");return true}
+ if(q.get("vendedor")){V.view="vendor";V.vendor=q.get("vendedor");return true}
+ if(q.get("vender")!==null){V.view="join";return true}
+ const m=location.hash.match(/^#lote-(\d+)/);if(m){V.view="lot";V.lot=+m[1];return true}return false}
+window.addEventListener("popstate",()=>{if(!routeFromHash()&&(V.view==="lot"||V.view==="vendor"))V.view="home";closeModal(true);render()});
 /* ===== modais ===== */
 function openModal(h,onClose){V.modalClose=onClose||null;$("#scrim").innerHTML=`<div class="modal" role="dialog" aria-modal="true"><button class="x" aria-label="Fechar" onclick="closeModal()">✕</button>${h}</div>`;$("#scrim").classList.add("open");const f=$("#scrim .modal input,#scrim .modal .btn");f&&f.focus()}
 function closeModal(silent){$("#scrim").classList.remove("open");const c=V.modalClose;V.modalClose=null;if(!silent&&c)c()}
@@ -762,7 +868,7 @@ async function confirmClaim(id){const ship=readShip(),b=$("#cb");busyBtn(b,true)
 function waDone(l,kind,amount,ship,orderId){
  const k={leilao:"venda por lances (oferta vencedora)",compra:"compra imediata",oferta:"oferta aceita"}[kind]||kind;
  const msg=`Olá! Sou ${S.profile.name} (Comprador #${S.profile.alias}).\nQuero finalizar a compra:\n• Lote #${code(l)} – ${l.title}\n• Valor: ${brl2(amount)}\n• Modalidade: ${k}\n• Entrega: ${ship}\n• Pedido nº ${orderId}`;
- openModal(`<div class="success"><div class="ok">✓</div><h2 style="padding:0">Pedido nº ${orderId} registrado</h2><p class="muted" style="margin:0">Agora é só abrir o WhatsApp e enviar a mensagem pronta para combinar pagamento e entrega.</p><a class="btn green block" href="${waLink(msg)}" target="_blank" rel="noopener">ABRIR WHATSAPP</a><button class="btn line" onclick="closeModal()">FECHAR</button></div>`);render(true)}
+ openModal(`<div class="success"><div class="ok">✓</div><h2 style="padding:0">Pedido nº ${orderId} registrado</h2><p class="muted" style="margin:0">Agora é só abrir o WhatsApp e enviar a mensagem pronta para combinar pagamento e entrega.</p><a class="btn green block" href="${waLink(msg,waFor(l))}" target="_blank" rel="noopener">ABRIR WHATSAPP ${sellerOf(l)?"DO VENDEDOR":""}</a>${sellerOf(l)?`<p class="muted" style="font-size:13px;margin:0">Você vai falar com <b>${esc(sellerOf(l).name)}</b>, vendedor verificado.</p>`:""}<button class="btn line" onclick="closeModal()">FECHAR</button></div>`);render(true)}
 
 async function openOffer(id){const l=getLot(id);if(!await ensureBuyer())return;openModal(`<h2>Faça uma oferta</h2><div class="sumrow"><span>Preço anunciado</span><b class="num">${brl2(l.buy_price)}</b></div>
  <div class="field"><label for="ofv">Minha oferta</label><div class="money"><span>R$</span><input id="ofv" class="num" inputmode="decimal"></div></div>
@@ -798,31 +904,41 @@ function renderAccount(){
  if(tab==="favs")body=favs.length?`<div class="grid">${favs.map(card).join("")}</div>`:empty("Toque no coração de qualquer lote para salvá-lo aqui.");
  if(tab==="offers")body=S.offers.length?T(["Equipamento","Sua oferta","Status",""],S.offers.map(o=>{const l=getLot(o.lot_id);return [miniLot(l),brl(o.amount),`<span class="badge ${o.status==="aceita"?"b-green":o.status==="contraproposta"?"b-amber":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.status==="contraproposta"?": "+brl(o.counter):""}</span>`,["aceita","contraproposta"].includes(o.status)&&l&&l.status==="active"?`<button class="btn sm green" onclick="finishWA(${o.lot_id})">FECHAR PELO WHATSAPP</button>`:""]})):empty("Nenhuma oferta enviada.","COMPRAR AGORA","go('browse',{mode:'buynow'})");
  if(tab==="orders")body=S.orders.length?T(["Pedido","Equipamento","Valor","Status",""],S.orders.map(o=>{const l=getLot(o.lot_id);return ["nº "+o.id,miniLot(l),brl(o.amount),`<span class="badge ${o.status==="concluido"?"b-green":o.status==="cancelado"?"b-soft":"b-dark"}">${o.status}</span>`,l?`<button class="btn sm line" onclick="finishWA(${o.lot_id})">WHATSAPP</button>`:""]})):empty("Nenhum pedido ainda.");
+ if(tab==="alerts")body=`<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px"><p class="muted" style="margin:0">Você é avisado aqui no site sempre que entrar um lote compatível. Os vendedores também podem te chamar no WhatsApp.</p><button class="btn sm" onclick="openAlert()">+ NOVO ALERTA</button></div>${S.interests.length?T(["Procurando","Criado em","Lotes agora",""],S.interests.map(i=>[`<b>${esc(interestText(i))}</b>${i.active?"":' <span class="badge b-soft">PAUSADO</span>'}`,new Date(i.created_at).toLocaleDateString("pt-BR"),`${S.lots.filter(l=>l.status==="active"&&interestMatch(i,l)).length} compatíveis${S.lots.some(l=>l.status==="active"&&interestMatch(i,l))?` <button class="link" onclick="V.f=Object.assign(blankF(),{q:'${esc((i.keywords||"").replace(/'/g,""))}',cat:'${esc(i.category||"")}'});go('browse',{mode:'all',keep:true})">ver</button>`:""}`,`<div style="display:flex;gap:6px"><button class="btn sm line" onclick="toggleAlert(${i.id})">${i.active?"PAUSAR":"ATIVAR"}</button><button class="btn sm line" onclick="delAlert(${i.id})">EXCLUIR</button></div>`])):empty("Nenhum alerta criado.","CRIAR ALERTA","openAlert()")}`;
  if(tab==="profile")body=`<div class="sumrow"><span>Seu número de comprador</span><b>#${S.profile.alias}</b><span>Nome</span><span>${esc(S.profile.name)}</span><span>WhatsApp</span><span>${esc(S.profile.whatsapp)}</span><span>Cidade</span><span>${esc(S.profile.city||"—")}</span></div><button class="btn" style="margin-top:14px" onclick="profileModal()">EDITAR DADOS</button>`;
- return `<div class="wrap"><div class="panel">${sideMenu("Minha conta","Comprador #"+S.profile.alias,[["bids","Meus lances",bids.length],["autos","Lances automáticos",Object.keys(S.autos).length],["favs","Favoritos",favs.length],["offers","Ofertas",S.offers.length],["orders","Pedidos",S.orders.length],["profile","Meus dados"]],"account")}
+ return `<div class="wrap"><div class="panel">${sideMenu("Minha conta","Comprador #"+S.profile.alias,[["bids","Meus lances",bids.length],["alerts","Alertas",S.interests.length],["autos","Lances automáticos",Object.keys(S.autos).length],["favs","Favoritos",favs.length],["offers","Ofertas",S.offers.length],["orders","Pedidos",S.orders.length],["profile","Meus dados"]],"account")}
  <div><div class="ph-h"><h1>Minha conta</h1></div>${out.length?`<div class="alert"><span>Você foi superado em um lote: ${esc(out[0].title)}</span><button class="btn sm" onclick="go('lot',{lot:${out[0].id}})">VER LOTE</button></div>`:""}<div class="box">${body}</div></div></div></div>`;
 }
 
 /* ===== gestão (admin) ===== */
-function adminLogin(){openModal(`<h2>Área do administrador</h2><div class="field"><label for="ae">E-mail</label><input id="ae" type="email" autocomplete="username"></div><div class="field"><label for="ap">Senha</label><input id="ap" type="password" autocomplete="current-password"></div><button class="btn block" id="cb" onclick="doAdminLogin()">ENTRAR</button>`)}
-async function doAdminLogin(){const b=$("#cb");busyBtn(b,true);if(S.user&&S.user.is_anonymous)await sb.auth.signOut();const {data,error}=await sb.auth.signInWithPassword({email:$("#ae").value.trim(),password:$("#ap").value});busyBtn(b,false);if(error){toast("E-mail ou senha incorretos.","red");return}S.user=data.user;await loadMine();await loadLots();closeModal(true);if(!S.admin){toast("Esta conta não é de administrador.","red");return}toast("Bem-vindo à gestão da loja.","green");go("admin",{tab:"lots"})}
+function adminLogin(){openModal(`<h2>Entrar como vendedor ou administrador</h2><div class="field"><label for="ae">E-mail</label><input id="ae" type="email" autocomplete="username"></div><div class="field"><label for="ap">Senha</label><input id="ap" type="password" autocomplete="current-password"></div><button class="btn block" id="cb" onclick="doAdminLogin()">ENTRAR</button><p class="muted" style="margin:0;font-size:14px">Ainda não vende na FIT BID? <button class="link" onclick="go('join')">Cadastre-se como vendedor</button></p>`)}
+async function doAdminLogin(){const b=$("#cb");busyBtn(b,true);if(S.user&&S.user.is_anonymous)await sb.auth.signOut();const {data,error}=await sb.auth.signInWithPassword({email:$("#ae").value.trim(),password:$("#ap").value});busyBtn(b,false);if(error){toast(/confirm/i.test(error.message)?"E-mail ainda não confirmado.":"E-mail ou senha incorretos.","red");return}S.user=data.user;await loadLots();await loadMine();closeModal(true);
+ if(S.admin){toast("Bem-vindo à gestão da loja.","green");go("admin",{tab:"lots"});return}
+ if(S.seller){toast(S.seller.status==="aprovado"?"Bem-vindo ao seu painel.":"Cadastro em análise.","green");go("seller",{tab:"lots"});return}
+ toast("Esta conta não tem cadastro de vendedor.","red");go("join")}
 function renderAdmin(){
  if(!S.admin)return `<div class="wrap" style="max-width:520px"><div class="box" style="margin-top:30px;text-align:center"><h1 style="font-size:26px;font-weight:900">Área restrita</h1><p class="muted">Somente o administrador da loja acessa esta página.</p><button class="btn" onclick="adminLogin()">ENTRAR COMO ADMINISTRADOR</button></div></div>`;
  const tab=V.tab||"lots";if(tab==="edit")return `<div class="wrap"><div class="panel">${admSide()}<div>${lotForm()}</div></div></div>`;
  const P=id=>S.adm.profiles[id];const wa=(p,txt)=>p?`<a class="btn sm green" href="${waLink(txt,"55"+onlyDigits(p.whatsapp).replace(/^55/,""))}" target="_blank" rel="noopener">WHATSAPP</a>`:"";
  const act=S.lots.filter(l=>l.status==="active"),winners=S.lots.filter(l=>isAuction(l)&&ended(l)&&l.bids_count>0&&l.status!=="hidden");
  let body="";
- if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l),`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button>${l.status==="active"?`<a class="btn sm green" href="${shareWA(l)}" target="_blank" rel="noopener">WHATSAPP</a>`:""}<button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}${l.status==="sold"||(isAuction(l)&&ended(l))?`<button class="btn sm" onclick="askReactivate(${l.id})">REATIVAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
+ if(tab==="lots")body=S.lots.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],S.lots.map(l=>{const[s,c]=status(l);return ["#"+esc(code(l)),miniLot(l)+`<div class="muted" style="font-size:12px;margin-top:4px">${sellerOf(l)?"Vendedor: "+esc(sellerOf(l).name):"Loja "+esc(LOJA)} · 👁 ${num(l.views)}</div>`,`<span class="badge ${c}">${s}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button>${l.status==="active"?`<a class="btn sm green" href="${shareWA(l)}" target="_blank" rel="noopener">WHATSAPP</a>`:""}<button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>${live(l)?`<button class="btn sm line" onclick="endNow(${l.id})">ENCERRAR</button>`:""}${l.status==="sold"||(isAuction(l)&&ended(l))?`<button class="btn sm" onclick="askReactivate(${l.id})">REATIVAR</button>`:""}<button class="btn sm line" onclick="delLot(${l.id})">EXCLUIR</button></div>`]})):empty("Nenhum lote cadastrado ainda.","+ CADASTRAR LOTE","editLot()");
  if(tab==="winners")body=winners.length?T(["Lote","Equipamento","Valor final","Vencedor","Valor mínimo","Contato"],winners.map(l=>{const p=P(l.leader);return ["#"+esc(code(l)),miniLot(l),brl(l.current_price),p?`${esc(p.name)}<div class="muted" style="font-size:12px">Comprador #${p.alias}</div>`:"Comprador #"+l.leader_alias,l.reserve_met?'<span class="badge b-green">ATINGIDO</span>':'<span class="badge b-amber">NÃO ATINGIDO</span>',wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}. Você venceu o lote #${code(l)} – ${l.title} por ${brl2(l.current_price)}. Vamos combinar pagamento e entrega?`)]})):empty("Nenhuma disputa encerrada com lances ainda.");
- if(tab==="orders")body=S.adm.orders.length?T(["Pedido","Equipamento","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${({leilao:"por lances",compra:"compra direta",oferta:"oferta"})[o.kind]||o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.");
+ if(tab==="orders"){if(S.adm.orders.some(o=>!o.seen_admin))setTimeout(markOrdersSeen,2500);body=S.adm.orders.length?T(["Pedido","Equipamento","Vendedor","Cliente","Valor","Entrega","Status","Contato"],S.adm.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id),sv=o.seller_id?S.sellers[o.seller_id]:null;return [(o.seen_admin?"":`<span class="badge b-red">NOVO</span><br>`)+"nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),sv?`${esc(sv.name)}<div style="margin-top:4px"><a class="btn sm line" target="_blank" rel="noopener" href="${waLink(`Olá, ${sv.name}! Aqui é da ${LOJA}. Vi a venda do lote #${l?code(l):o.lot_id} (pedido nº ${o.id}). Tudo certo com o comprador?`,sv.whatsapp)}">WHATSAPP</a></div>`:esc(LOJA),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${({leilao:"por lances",compra:"compra direta",oferta:"oferta"})[o.kind]||o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(s=>`<option ${o.status===s?"selected":""}>${s}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}).`)]})):empty("Nenhum pedido ainda.")}
+ if(tab==="sellers"){const vs=S.adm.sellers;body=vs.length?T(["Vendedor","Contato","Documento","Lotes","Vendido","Comissão 5%","Status","Ações"],vs.map(v=>{const d=S.adm.docs[v.id]||{},lots=S.lots.filter(l=>l.seller_id===v.id),sold=S.adm.orders.filter(o=>o.seller_id===v.id&&o.status!=="cancelado").reduce((a,o)=>a+num(o.amount),0);
+   return [`<b>${esc(v.name)}</b><div class="muted" style="font-size:12px">${esc(v.city||"")}${v.uf?"/"+esc(v.uf):""} · desde ${new Date(v.created_at).toLocaleDateString("pt-BR")}</div>`,`${esc(v.whatsapp)}<div class="muted" style="font-size:12px">${esc(d.email||"")}</div>`,esc(d.doc||"—"),`${lots.filter(l=>l.status==="active").length} ativos / ${lots.length}`,brl(sold),`<b>${brl(sold*.05)}</b>`,`<span class="badge ${v.status==="aprovado"?"b-green":v.status==="pendente"?"b-amber":"b-soft"}">${v.status}</span>`,
+   `<div style="display:flex;gap:6px;flex-wrap:wrap">${v.status!=="aprovado"?`<button class="btn sm green" onclick="setSeller('${v.id}','aprovado')">APROVAR</button>`:""}${v.status!=="bloqueado"?`<button class="btn sm line" onclick="setSeller('${v.id}','bloqueado')">BLOQUEAR</button>`:""}<a class="btn sm line" target="_blank" rel="noopener" href="${waLink(v.status==="pendente"?`Olá, ${v.name}! Aqui é da ${LOJA}. Recebemos seu cadastro de vendedor.`:`Olá, ${v.name}! Aqui é da ${LOJA}.`,v.whatsapp)}">WHATSAPP</a><button class="btn sm line" onclick="go('vendor',{vendor:'${v.id}'})">VITRINE</button></div>`]})):empty("Nenhum vendedor cadastrado ainda. Envie o link de cadastro: "+location.origin+location.pathname+"?vender")}
  if(tab==="offers")body=S.adm.offers.length?T(["Equipamento","Cliente","Oferta","Preço","Status","Ações"],S.adm.offers.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return [miniLot(l)+(o.message?`<div class="muted" style="font-size:12px;margin-top:4px">“${esc(o.message)}”</div>`:""),p?esc(p.name):"—",`<b>${brl(o.amount)}</b>`,l?brl(l.buy_price):"—",`<span class="badge ${o.status==="aceita"?"b-green":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.counter?": "+brl(o.counter):""}</span>`,o.status==="pendente"?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm green" onclick="respOffer(${o.id},'aceita')">ACEITAR</button><button class="btn sm line" onclick="counterOffer(${o.id})">CONTRAPROPOSTA</button><button class="btn sm line" onclick="respOffer(${o.id},'recusada')">RECUSAR</button></div>`:wa(p,`Olá, ${p?p.name:""}! Aqui é da ${LOJA}, sobre sua oferta no lote #${l?code(l):""}.`)]})):empty("Nenhuma oferta recebida.");
  if(tab==="clients"){const ps=Object.values(S.adm.profiles);body=ps.length?T(["Comprador","Nome","WhatsApp","Cidade","Desde",""],ps.map(p=>["#"+p.alias,esc(p.name),esc(p.whatsapp),esc(p.city||"—"),new Date(p.created_at).toLocaleDateString("pt-BR"),`<button class="btn sm line" onclick="toggleBlock('${p.id}')">${p.blocked?"DESBLOQUEAR":"BLOQUEAR"}</button>`])):empty("Nenhum cliente cadastrado ainda.")}
  const vol=S.adm.orders.filter(o=>o.status!=="cancelado").reduce((s,o)=>s+num(o.amount),0);
  return `<div class="wrap"><div class="panel">${admSide()}<div><div class="ph-h"><h1>Gestão da loja</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn green" href="${shareSiteWA()}" target="_blank" rel="noopener">DIVULGAR VITRINE NO WHATSAPP</a><button class="btn line" onclick="copySite()">COPIAR VITRINE</button><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div></div>
- <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Disputas ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div></div>
+ <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${act.length}</b></div><div class="kpi"><small>Disputas ao vivo</small><b>${S.lots.filter(live).length}</b></div><div class="kpi"><small>Pedidos</small><b>${S.adm.orders.length}</b></div><div class="kpi"><small>Volume em pedidos</small><b class="num">${brl(vol)}</b></div><div class="kpi"><small>Clientes</small><b>${Object.keys(S.adm.profiles).length}</b></div><div class="kpi"><small>Vendedores aprovados</small><b>${S.adm.sellers.filter(v=>v.status==="aprovado").length}</b></div><div class="kpi"><small>Comissões (5%)</small><b class="num">${brl(S.adm.orders.filter(o=>o.seller_id&&o.status!=="cancelado").reduce((a,o)=>a+num(o.amount),0)*.05)}</b></div></div>
+ ${S.adm.sellers.some(v=>v.status==="pendente")?`<div class="alert"><span>${S.adm.sellers.filter(v=>v.status==="pendente").length} vendedor(es) aguardando aprovação.</span><button class="btn sm" onclick="go('admin',{tab:'sellers'})">VER</button></div>`:""}
  <div class="box">${body}</div></div></div></div>`;
 }
-function admSide(){return sideMenu(LOJA,"Administrador",[["lots","Lotes",S.lots.length],["edit","Cadastrar lote"],["winners","Vencedores"],["orders","Pedidos",S.adm.orders.filter(o=>o.status==="aguardando contato").length],["offers","Ofertas",S.adm.offers.filter(o=>o.status==="pendente").length],["clients","Clientes"]],"admin")}
+function admSide(){return sideMenu(LOJA,"Administrador",[["lots","Lotes",S.lots.length],["edit","Cadastrar lote"],["sellers","Vendedores",S.adm.sellers.filter(v=>v.status==="pendente").length||null],["winners","Vencedores"],["orders","Pedidos",S.adm.orders.filter(o=>!o.seen_admin).length||null],["offers","Ofertas",S.adm.offers.filter(o=>o.status==="pendente").length],["clients","Clientes"]],"admin")}
+async function markOrdersSeen(){const ids=S.adm.orders.filter(o=>!o.seen_admin).map(o=>o.id);if(!ids.length)return;const {error}=await sb.from("orders").update({seen_admin:true}).in("id",ids);if(!error){S.adm.orders.forEach(o=>o.seen_admin=true);if(V.view==="admin")softRender()}}
+async function setSeller(id,st){const {error}=await sb.from("sellers").update({status:st}).eq("id",id);if(error){toast(errMsg(error),"red");return}const v=S.adm.sellers.find(x=>x.id===id);if(v)v.status=st;S.sellers[id]=Object.assign(S.sellers[id]||{},v||{},{status:st});toast(st==="aprovado"?"Vendedor aprovado. Avise pelo WhatsApp.":"Vendedor bloqueado.",st==="aprovado"?"green":"");render(true)}
 async function admUpdate(id,patch,msg){const {data,error}=await sb.from("lots").update(patch).eq("id",id).select().single();if(error){toast(errMsg(error),"red");return}mergeLot(data);if(msg)toast(msg,"green");render(true)}
 function askReactivate(id){const l=getLot(id),auc=isAuction(l);
  openModal(`<h2>Reativar lote</h2><p style="margin:0">${esc(l.title)} · Lote #${esc(code(l))}</p><p class="muted" style="margin:0;font-size:14px">O lote volta a ficar disponível como novo: lances, lances automáticos e pedidos pendentes deste lote são apagados, e ofertas em aberto são recusadas. Pedidos já pagos ou concluídos são mantidos.</p>
@@ -831,20 +947,20 @@ function askReactivate(id){const l=getLot(id),auc=isAuction(l);
 async function doReactivate(id){const l=getLot(id),b=$("#cb");busyBtn(b,true);const ends=isAuction(l)?new Date(now()+(V.reDays||7)*D).toISOString():null;
  const {data,error}=await sb.rpc("admin_reset_lot",{p_lot:id,p_ends_at:ends});busyBtn(b,false);
  if(error){toast(/admin_reset_lot|function/i.test(error.message)&&/not|find|exist|schema/i.test(error.message)?"Falta instalar a função de reativar no Supabase (veja as instruções).":errMsg(error),"red");return}
- closeModal(true);mergeLot(data);delete S.bids[id];await loadAdmin();toast("Lote reativado.","green");render(true)}
+ closeModal(true);mergeLot(data);delete S.bids[id];if(S.admin)await loadAdmin();else await loadSellerData();toast("Lote reativado.","green");render(true)}
 function toggleHide(id){const l=getLot(id);admUpdate(id,{status:l.status==="hidden"?(l.sold_to?"sold":"active"):"hidden"},l.status==="hidden"?"Lote publicado.":"Lote ocultado.")}
 function endNow(id){if(confirm("Encerrar esta disputa agora?"))admUpdate(id,{ends_at:new Date(now()).toISOString()},"Disputa encerrada.")}
 async function delLot(id){if(!confirm("Excluir este lote definitivamente? Lances e pedidos dele também serão apagados."))return;const {error}=await sb.from("lots").delete().eq("id",id);if(error){toast(errMsg(error),"red");return}S.lots=S.lots.filter(l=>l.id!==id);toast("Lote excluído.");render(true)}
-async function setOrder(id,st){const {error}=await sb.from("orders").update({status:st}).eq("id",id);if(error){toast(errMsg(error),"red");return}const o=S.adm.orders.find(x=>x.id===id);if(o)o.status=st;toast("Pedido atualizado.","green")}
-async function respOffer(id,st,counter){const patch={status:st};if(counter)patch.counter=counter;const {error}=await sb.from("offers").update(patch).eq("id",id);if(error){toast(errMsg(error),"red");return}Object.assign(S.adm.offers.find(o=>o.id===id),patch);toast("Oferta atualizada. Avise o cliente pelo WhatsApp.","green");render(true)}
+async function setOrder(id,st){const {error}=await sb.from("orders").update({status:st}).eq("id",id);if(error){toast(errMsg(error),"red");return}[S.adm.orders,S.sel.orders].forEach(a=>{const o=a.find(x=>x.id===id);if(o)o.status=st});toast("Pedido atualizado.","green")}
+async function respOffer(id,st,counter){const patch={status:st};if(counter)patch.counter=counter;const {error}=await sb.from("offers").update(patch).eq("id",id);if(error){toast(errMsg(error),"red");return}[S.adm.offers,S.sel.offers].forEach(a=>{const o=a.find(x=>x.id===id);if(o)Object.assign(o,patch)});toast("Oferta atualizada. Avise o cliente pelo WhatsApp.","green");render(true)}
 function counterOffer(id){const v=parseMoney(prompt("Valor da contraproposta (R$):"));if(v)respOffer(id,"contraproposta",v)}
 async function toggleBlock(uid){const p=S.adm.profiles[uid];const {error}=await sb.from("profiles").update({blocked:!p.blocked}).eq("id",uid);if(error){toast(errMsg(error),"red");return}p.blocked=!p.blocked;toast(p.blocked?"Cliente bloqueado.":"Cliente desbloqueado.");render(true)}
 
 /* cadastro / edição de lote */
 function dtl(t){const d=new Date(t-new Date().getTimezoneOffset()*6e4);return d.toISOString().slice(0,16)}
-function editLot(id){if(!S.admin){adminLogin();return}const l=id?getLot(id):null;const pv=l?S.adm.privates[l.id]||{}:{};
- V.edit=l?{...l,reserve:pv.reserve||"",serial:pv.serial||"",notes:pv.notes||"",photos:[...(l.photos||[])]}:{type:"auction",qty:1,increment:100,nf:true,warranty:"Conforme condições do fabricante",logistics:"cotacao",photos:[],starts_at:null,ends_at:new Date(now()+3*D).toISOString(),condition:"Seminovo",category:"Musculação",uf:"RJ"};
- go("admin",{tab:"edit"})}
+function editLot(id){if(!S.admin&&!isSeller()){if(S.seller){go("seller",{tab:"lots"});return}adminLogin();return}if(id&&!canManage(getLot(id))){toast("Você só pode editar os seus lotes.","red");return}const l=id?getLot(id):null;const pv=l?S.adm.privates[l.id]||{}:{};
+ V.edit=l?{...l,reserve:pv.reserve||"",serial:pv.serial||"",notes:pv.notes||"",photos:[...(l.photos||[])]}:{type:"auction",qty:1,increment:100,nf:true,warranty:"Conforme condições do fabricante",logistics:"cotacao",photos:[],starts_at:null,ends_at:new Date(now()+3*D).toISOString(),condition:"Seminovo",category:"Musculação",uf:(S.seller&&S.seller.uf)||"RJ",city:(S.seller&&S.seller.city)||""};
+ go(S.admin?"admin":"seller",{tab:"edit"})}
 function fv(k){const e=V.edit[k];return e==null?"":esc(e)}
 function lotForm(){const e=V.edit;if(!e)return empty("Nenhum lote em edição.");const auc=e.type.startsWith("auction"),buy=e.type!=="auction";
  const i=(k,lab,attrs="",full)=>`<div class="field ${full?"full":""}"><label for="e_${k}">${lab}</label><input id="e_${k}" value="${fv(k)}" oninput="V.edit.${k}=this.value" ${attrs}></div>`;
@@ -857,9 +973,9 @@ function lotForm(){const e=V.edit;if(!e)return empty("Nenhum lote em edição.")
   ${sel("condition","Condição",["Novo","Seminovo","Showroom","Usado","Devolução"])}${i("qty","Quantidade",'type="number" min="1"')}
   ${i("year","Ano",'type="number" min="1990" max="2030"')}${i("kg","Peso estimado (kg)",'type="number" min="1"')}
   ${i("city","Cidade")}${sel("uf","UF",UF)}
-  ${m("ref_price","Preço de referência","Mostra a economia potencial. Opcional.")}
-  ${auc?m("start_price","Lance inicial *")+m("increment","Incremento mínimo *")+m("reserve","Valor mínimo de venda","Oculto para o público. Abaixo dele a disputa encerra sem venda."):""}
-  ${buy?m("buy_price",e.type==="offer"?"Preço anunciado *":"Preço comprar agora *"):""}
+  ${m("ref_price","Preço de referência (valor alto)","Aparece riscado, como \"de\". Mostra a economia. Opcional.")}
+  ${auc?m("start_price","Lance de entrada (valor baixo) *","O valor que atrai o comprador para a disputa.")+m("increment","Incremento mínimo *")+m("reserve","Valor mínimo de venda","Oculto para o público. Abaixo dele a disputa encerra sem venda."):""}
+  ${buy?m("buy_price",e.type==="offer"?"Preço anunciado *":e.type==="auction_buy"?"Preço sugerido para fechar (valor médio) *":"Preço *",e.type==="auction_buy"?"Botão FECHAR AGORA: garante a venda sem esperar a disputa.":""):""}
   ${auc?`<div class="field"><label for="e_s">Início (opcional)</label><input id="e_s" type="datetime-local" value="${e.starts_at?dtl(ts(e.starts_at)):""}" onchange="V.edit.starts_at=this.value?new Date(this.value).toISOString():null"></div>
   <div class="field"><label for="e_e">Encerramento *</label><input id="e_e" type="datetime-local" value="${e.ends_at?dtl(ts(e.ends_at)):""}" onchange="V.edit.ends_at=this.value?new Date(this.value).toISOString():null"><div class="quick">${[["+1 dia",D],["+3 dias",3*D],["+7 dias",7*D]].map(([t,ms])=>`<button type="button" onclick="V.edit.ends_at=new Date(now()+${ms}).toISOString();render(true)">${t}</button>`).join("")}</div></div>`:""}
   ${sel("logistics","Logística",["cotacao","retirada"]).replace(">cotacao<",">Entrega combinada<").replace(">retirada<",">Retirada pelo comprador<")}
@@ -867,34 +983,159 @@ function lotForm(){const e=V.edit;if(!e)return empty("Nenhum lote em edição.")
   ${i("warranty","Garantia","",true)}
   <div class="field full"><label for="e_d">Descrição</label><textarea id="e_d" rows="5" oninput="V.edit.description=this.value" placeholder="Tempo de uso, manutenções, defeitos, acessórios inclusos.">${fv("description")}</textarea></div>
   ${i("serial","Número de série (privado)")}${i("notes","Observações internas (privado)")}
-  <div class="field full"><label><input type="checkbox" ${e.featured?"checked":""} onchange="V.edit.featured=this.checked"> Destacar na página inicial</label></div>
+  ${i("wa_override","WhatsApp deste lote (opcional)",'inputmode="tel" placeholder="Deixe em branco para usar o WhatsApp do cadastro"',true)}
+  ${S.admin?`<div class="field full"><label><input type="checkbox" ${e.featured?"checked":""} onchange="V.edit.featured=this.checked"> Destacar na página inicial</label></div>`:""}
   <div class="field full"><label>Fotos (a primeira é a capa)</label><label class="drop" for="e_img"><b style="color:var(--ink)">Toque para escolher fotos</b><br>JPG ou PNG. As fotos são reduzidas automaticamente antes do envio.</label><input id="e_img" type="file" accept="image/*" multiple hidden onchange="uploadPhotos(this.files)"><div id="upst" class="muted" style="font-size:13px;margin-top:6px"></div>
    <div class="thumbsup">${e.photos.map((p,k)=>`<div style="position:relative"><img src="${esc(p)}" alt="Foto ${k+1}"><button type="button" aria-label="Remover foto" onclick="V.edit.photos.splice(${k},1);render(true)" style="position:absolute;top:4px;right:4px;border:0;border-radius:50%;width:26px;height:26px;background:rgba(0,0,0,.7);color:#fff">✕</button>${k?`<button type="button" aria-label="Tornar capa" onclick="const p=V.edit.photos.splice(${k},1)[0];V.edit.photos.unshift(p);render(true)" style="position:absolute;left:4px;bottom:4px;border:0;border-radius:6px;padding:2px 6px;font-size:11px;background:rgba(0,0,0,.7);color:#fff">capa</button>`:""}</div>`).join("")}</div></div>
- </div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap"><button class="btn line" onclick="V.edit=null;go('admin',{tab:'lots'})">CANCELAR</button><button class="btn" id="sv" onclick="saveLot()">${e.id?"SALVAR ALTERAÇÕES":"PUBLICAR LOTE"}</button></div></div>`;
+ </div><div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap"><button class="btn line" onclick="V.edit=null;go(S.admin?'admin':'seller',{tab:'lots'})">CANCELAR</button><button class="btn" id="sv" onclick="saveLot()">${e.id?"SALVAR ALTERAÇÕES":"PUBLICAR LOTE"}</button></div></div>`;
 }
 function resizeImage(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement("canvas");c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext("2d").drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(new Error("Imagem inválida")),"image/jpeg",.82)};img.onerror=()=>rej(new Error("Imagem inválida"));img.src=r.result};r.onerror=rej;r.readAsDataURL(file)})}
 async function uploadPhotos(files){const st=$("#upst");const list=[...files].slice(0,12);let n=0;
- for(const f of list){try{st.textContent=`Enviando foto ${++n} de ${list.length}…`;const blob=await resizeImage(f);const path=`lotes/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;const {error}=await sb.storage.from("fotos").upload(path,blob,{contentType:"image/jpeg",cacheControl:"31536000"});if(error)throw error;V.edit.photos.push(sb.storage.from("fotos").getPublicUrl(path).data.publicUrl)}catch(e){toast("Falha ao enviar uma foto: "+errMsg(e),"red")}}
+ for(const f of list){try{st.textContent=`Enviando foto ${++n} de ${list.length}…`;const blob=await resizeImage(f);const path=`${S.admin?"lotes":"v/"+meId()}/${Date.now()}-${Math.random().toString(36).slice(2,8)}.jpg`;const {error}=await sb.storage.from("fotos").upload(path,blob,{contentType:"image/jpeg",cacheControl:"31536000"});if(error)throw error;V.edit.photos.push(sb.storage.from("fotos").getPublicUrl(path).data.publicUrl)}catch(e){toast("Falha ao enviar uma foto: "+errMsg(e),"red")}}
  st.textContent="";render(true)}
 async function saveLot(){const e=V.edit,auc=e.type.startsWith("auction");
  const miss=[];if(!String(e.title||"").trim())miss.push("nome");if(auc&&!num(e.start_price))miss.push("lance inicial");if(auc&&!num(e.increment))miss.push("incremento");if(auc&&!e.ends_at)miss.push("encerramento");if(e.type!=="auction"&&!num(e.buy_price))miss.push("preço");
  if(auc&&e.ends_at&&ts(e.ends_at)<=now()&&!e.id)miss.push("encerramento no futuro");
  if(miss.length){toast("Preencha: "+miss.join(", ")+".","red");return}
  const row={title:e.title.trim(),brand:e.brand||null,category:e.category,condition:e.condition,city:e.city||null,uf:e.uf||null,type:e.type,qty:+e.qty||1,year:+e.year||null,kg:+e.kg||null,ref_price:num(e.ref_price)||null,
-  start_price:auc?num(e.start_price):null,increment:auc?num(e.increment):null,buy_price:e.type!=="auction"?num(e.buy_price):null,starts_at:auc?e.starts_at||null:null,ends_at:auc?e.ends_at:null,description:e.description||null,nf:!!e.nf,warranty:e.warranty||null,logistics:e.logistics||"cotacao",photos:e.photos,featured:!!e.featured};
+  start_price:auc?num(e.start_price):null,increment:auc?num(e.increment):null,buy_price:e.type!=="auction"?num(e.buy_price):null,starts_at:auc?e.starts_at||null:null,ends_at:auc?e.ends_at:null,description:e.description||null,nf:!!e.nf,warranty:e.warranty||null,logistics:e.logistics||"cotacao",photos:e.photos,wa_override:onlyDigits(e.wa_override)||null};if(S.admin)row.featured=!!e.featured;
  if(!e.id||!e.bids_count)row.current_price=auc?row.start_price:row.buy_price;
  const b=$("#sv");busyBtn(b,true);
  let res=e.id?await sb.from("lots").update(row).eq("id",e.id).select().single():await sb.from("lots").insert({...row,status:"active"}).select().single();
  if(res.error){busyBtn(b,false);toast(errMsg(res.error),"red");return}
- let lot=res.data;if(!lot.code){const r2=await sb.from("lots").update({code:String(lot.id).padStart(3,"0")}).eq("id",lot.id).select().single();if(r2.data)lot=r2.data}
+ let lot=res.data;if(!lot.code&&S.admin){const r2=await sb.from("lots").update({code:String(lot.id).padStart(3,"0")}).eq("id",lot.id).select().single();if(r2.data)lot=r2.data}
  const pr={lot_id:lot.id,reserve:auc&&num(e.reserve)?num(e.reserve):null,serial:e.serial||null,notes:e.notes||null};
  const r3=await sb.from("lot_private").upsert(pr);busyBtn(b,false);if(r3.error)toast("Lote salvo, mas o valor mínimo/dados privados falharam: "+errMsg(r3.error),"red");
- S.adm.privates[lot.id]=pr;const r4=await sb.from("lots").select("*").eq("id",lot.id).single();mergeLot(r4.data||lot);V.edit=null;toast(e.id?"Lote atualizado.":"Lote publicado!","green");go("lot",{lot:lot.id})}
+ S.adm.privates[lot.id]=pr;const r4=await sb.from("lots").select("*").eq("id",lot.id).single();mergeLot(r4.data||lot);V.edit=null;if(isSeller()&&!S.admin)loadSellerData();toast(e.id?"Lote atualizado.":"Lote publicado! Use ARTE PARA STATUS e INTERESSADOS para divulgar.","green");go("lot",{lot:lot.id})}
+
+/* ===== alertas ===== */
+async function openAlert(){if(!await ensureBuyer())return;openModal(`<h2>Criar alerta</h2><p class="muted" style="margin:0">Avisaremos quando entrar um lote compatível. Preencha só o que importa.</p>
+ <div class="field"><label for="al_k">O que você procura</label><input id="al_k" placeholder="Ex.: Leg Press 45, esteira, anilhas"></div>
+ <div class="form" style="grid-template-columns:1fr 1fr"><div class="field"><label for="al_c">Categoria</label><select id="al_c"><option value="">Qualquer</option>${CATS.map(([c])=>`<option>${c}</option>`).join("")}</select></div>
+ <div class="field"><label for="al_b">Marca</label><input id="al_b" placeholder="Qualquer"></div>
+ <div class="field"><label for="al_p">Pagaria até</label><div class="money"><span>R$</span><input id="al_p" inputmode="decimal"></div></div>
+ <div class="field"><label for="al_u">Estado</label><select id="al_u"><option value="">Qualquer</option>${UF.map(u=>`<option>${u}</option>`).join("")}</select></div></div>
+ <label class="ck" style="display:flex;gap:10px;align-items:flex-start;font-size:14px"><input type="checkbox" id="al_ok" checked style="margin-top:3px">Aceito que vendedores me chamem no WhatsApp com lotes compatíveis.</label>
+ <button class="btn block" id="cb" onclick="saveAlert()">CRIAR ALERTA</button>`)}
+async function saveAlert(){const row={keywords:$("#al_k").value.trim()||null,category:$("#al_c").value||null,brand:$("#al_b").value.trim()||null,max_price:parseMoney($("#al_p").value)||null,uf:$("#al_u").value||null,consent:$("#al_ok").checked};
+ if(!row.keywords&&!row.category&&!row.brand){toast("Diga o que procura, a categoria ou a marca.","red");return}
+ const b=$("#cb");busyBtn(b,true);const {data,error}=await sb.from("interests").insert(row).select().single();busyBtn(b,false);if(error){toast(errMsg(error),"red");return}
+ S.interests.unshift(data);closeModal(true);const n=S.lots.filter(l=>l.status==="active"&&interestMatch(data,l)).length;toast(n?`Alerta criado. Já existem ${n} lote(s) compatíveis!`:"Alerta criado. Você será avisado quando entrar um lote compatível.","green");go("account",{tab:"alerts"})}
+async function toggleAlert(id){const i=S.interests.find(x=>x.id===id);const {error}=await sb.from("interests").update({active:!i.active}).eq("id",id);if(error){toast(errMsg(error),"red");return}i.active=!i.active;render(true)}
+async function delAlert(id){const {error}=await sb.from("interests").delete().eq("id",id);if(error){toast(errMsg(error),"red");return}S.interests=S.interests.filter(x=>x.id!==id);toast("Alerta excluído.");render(true)}
+
+/* ===== vendedores: cadastro ===== */
+function renderJoin(){
+ if(S.seller)return renderSeller();
+ const perk=(t,d)=>`<div class="way"><b>${t}</b><span>${d}</span></div>`;
+ return `<section class="hero"><div class="wrap" style="grid-template-columns:1fr"><div><div class="eyebrow">Para academias, lojas e fornecedores</div><h1>Venda seus equipamentos<br><span>com quem entende do assunto.</span></h1>
+  <p>Anuncie em minutos, receba lances e ofertas de compradores do setor fitness e feche a venda direto no seu WhatsApp. Você só paga quando vende.</p><a class="btn" href="#cad">QUERO VENDER</a></div></div></section>
+ <div class="wrap"><section class="blk"><div class="ways">${perk("SÓ 5% QUANDO VENDE","Sem mensalidade e sem taxa para anunciar. Marketplaces gerais cobram de 11% a 19%.")}${perk("VENDA NO SEU WHATSAPP","Quem compra fala direto com você. A FIT BID só organiza os lances e os pedidos.")}${perk("COMPRADORES DO SETOR","Academias, studios e personal trainers com alertas do que procuram: seu lote chega a quem quer comprar.")}${perk("LANCES QUE VALORIZAM","Lance de entrada que atrai, preço sugerido para fechar na hora e disputa que pode passar disso.")}${perk("DIVULGAÇÃO PRONTA","Arte automática para status e Instagram, link do lote e vitrine própria com todos os seus equipamentos.")}${perk("PAINEL COMPLETO","Visitas, lances, ofertas, perguntas e pedidos de cada lote, com dicas para vender mais rápido.")}</div></section>
+ <section class="blk" id="cad"><div class="box" style="max-width:760px;margin:0 auto"><h2 style="font-size:28px;font-weight:900;margin-bottom:6px">Cadastro de vendedor</h2><p class="muted" style="margin:0 0 16px">Após o envio, a equipe ${esc(LOJA)} confere seus dados e libera seu acesso, normalmente no mesmo dia.</p>
+ <div class="form"><div class="field full"><label for="j_n">Nome ou empresa *</label><input id="j_n" autocomplete="organization"></div>
+ <div class="field"><label for="j_d">CPF ou CNPJ *</label><input id="j_d" inputmode="numeric"></div><div class="field"><label for="j_w">WhatsApp de vendas *</label><input id="j_w" inputmode="tel" placeholder="(21) 99999-9999"></div>
+ <div class="field"><label for="j_c">Cidade *</label><input id="j_c"></div><div class="field"><label for="j_u">UF *</label><select id="j_u">${UF.map(u=>`<option ${u==="RJ"?"selected":""}>${u}</option>`).join("")}</select></div>
+ <div class="field full"><label for="j_b">Sobre você (aparece na sua vitrine)</label><textarea id="j_b" rows="2" placeholder="Ex.: Academia em Niterói renovando a sala de musculação."></textarea></div>
+ <div class="field"><label for="j_e">E-mail de acesso *</label><input id="j_e" type="email" autocomplete="username"></div><div class="field"><label for="j_p">Senha (mínimo 6 caracteres) *</label><input id="j_p" type="password" autocomplete="new-password"></div>
+ <label class="ck full" style="display:flex;gap:10px;align-items:flex-start;font-size:14px"><input type="checkbox" id="j_ok" style="margin-top:3px">Concordo em pagar 5% sobre cada venda concluída pela FIT BID, anunciar somente equipamentos que posso vender e descrever o estado real de cada um.</label></div>
+ <button class="btn block" style="margin-top:16px" id="cb" onclick="sellerSignup()">ENVIAR CADASTRO</button>
+ <p class="muted" style="font-size:14px;margin:12px 0 0;text-align:center">Já é vendedor? <button class="link" onclick="adminLogin()">Entrar</button></p></div></section></div>`;
+}
+async function sellerSignup(){
+ const g=id=>($("#"+id).value||"").trim();const f={name:g("j_n"),doc:onlyDigits(g("j_d")),whatsapp:onlyDigits(g("j_w")),city:g("j_c"),uf:$("#j_u").value,bio:g("j_b")||null,email:g("j_e"),password:$("#j_p").value};
+ const miss=[];if(f.name.length<2)miss.push("nome");if(f.doc.length!==11&&f.doc.length!==14)miss.push("CPF ou CNPJ válido");if(f.whatsapp.length<10||f.whatsapp.length>13)miss.push("WhatsApp com DDD");if(!f.city)miss.push("cidade");if(!/^\S+@\S+\.\S+$/.test(f.email))miss.push("e-mail");if(f.password.length<6)miss.push("senha com 6 caracteres");if(!$("#j_ok").checked)miss.push("aceite das condições");
+ if(miss.length){toast("Confira: "+miss.join(", ")+".","red");return}
+ const b=$("#cb");busyBtn(b,true);
+ if(S.user)await sb.auth.signOut();
+ const {data,error}=await sb.auth.signUp({email:f.email,password:f.password});
+ if(error){busyBtn(b,false);toast(/registered|exists/i.test(error.message)?"Este e-mail já tem cadastro. Use Entrar.":errMsg(error),"red");return}
+ if(!data.session){busyBtn(b,false);toast("Cadastro criado, mas o acesso depende de confirmar o e-mail. Fale com a FIT BID pelo WhatsApp.","red");return}
+ S.user=data.user;
+ const r1=await sb.from("sellers").insert({id:S.user.id,name:f.name,whatsapp:f.whatsapp,city:f.city,uf:f.uf,bio:f.bio});
+ if(r1.error){busyBtn(b,false);toast(errMsg(r1.error),"red");return}
+ await sb.from("seller_docs").insert({seller_id:S.user.id,doc:f.doc,email:f.email});
+ await loadMine();busyBtn(b,false);toast("Cadastro enviado! Avisaremos pelo WhatsApp quando for aprovado.","green");go("seller",{tab:"lots"});
+}
+
+/* ===== vendedores: painel ===== */
+function sellerSide(){const mine=S.lots.filter(l=>l.seller_id===meId());return sideMenu(esc(S.seller.name),"Vendedor verificado",[["lots","Meus lotes",mine.length],["edit","Cadastrar lote"],["orders","Pedidos",S.sel.orders.filter(o=>o.status==="aguardando contato").length||null],["offers","Ofertas",S.sel.offers.filter(o=>o.status==="pendente").length||null],["questions","Perguntas",S.sel.questions.filter(q=>!q.answer).length||null],["perf","Desempenho"],["profile","Meu perfil e vitrine"]],"seller")}
+function renderSeller(){
+ if(!S.seller)return renderJoin();
+ if(S.seller.status==="pendente")return `<div class="wrap" style="max-width:640px"><div class="box success" style="margin-top:30px"><div class="ok" style="background:var(--amber)">⏳</div><h1 style="font-size:26px;font-weight:900">Cadastro em análise</h1><p class="muted" style="margin:0">Obrigado, ${esc(S.seller.name)}! A equipe ${esc(LOJA)} está conferindo seus dados. Assim que aprovar, você poderá cadastrar seus equipamentos aqui mesmo.</p><a class="btn green" target="_blank" rel="noopener" href="${waLink(`Olá! Acabei de me cadastrar como vendedor na ${LOJA}: ${S.seller.name}.`)}">AVISAR A FIT BID NO WHATSAPP</a></div></div>`;
+ if(S.seller.status==="bloqueado")return `<div class="wrap" style="max-width:640px"><div class="box" style="margin-top:30px;text-align:center"><h1 style="font-size:26px;font-weight:900">Conta de vendedor suspensa</h1><p class="muted">Fale com a ${esc(LOJA)} pelo WhatsApp para entender o motivo.</p><a class="btn" target="_blank" rel="noopener" href="${waLink("Olá! Minha conta de vendedor está suspensa e gostaria de entender o motivo.")}">FALAR NO WHATSAPP</a></div></div>`;
+ const tab=V.tab||"lots";if(tab==="edit")return `<div class="wrap"><div class="panel">${sellerSide()}<div>${lotForm()}</div></div></div>`;
+ const mine=S.lots.filter(l=>l.seller_id===meId()),P=id=>S.sel.profiles[id];
+ const wa=(p,txt)=>p?`<a class="btn sm green" href="${waLink(txt,p.whatsapp)}" target="_blank" rel="noopener">WHATSAPP</a>`:"";
+ const sold=S.sel.orders.filter(o=>o.status!=="cancelado").reduce((a,o)=>a+num(o.amount),0);
+ let body="";
+ if(tab==="lots")body=mine.length?T(["Lote","Equipamento","Status","Valor","Lances","Tempo","Ações"],mine.map(l=>{const[st,c]=status(l);return ["#"+esc(code(l)),miniLot(l)+`<div class="muted" style="font-size:12px;margin-top:4px">👁 ${num(l.views)} visitas</div>`,`<span class="badge ${c}">${st}</span>`,`<span data-cur="${l.id}">${brl(price(l))}</span>`,isAuction(l)?`<span data-nb="${l.id}">${l.bids_count}</span>`:"—",isAuction(l)?timerEl(l):"—",
+  `<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm line" onclick="editLot(${l.id})">EDITAR</button>${l.status==="active"?`<button class="btn sm green" onclick="makeArt(${l.id})">ARTE</button><a class="btn sm green" href="${shareWA(l)}" target="_blank" rel="noopener">WHATSAPP</a><button class="btn sm line" onclick="showInterested(${l.id})">INTERESSADOS</button>`:""}${l.status==="sold"||(isAuction(l)&&ended(l))?`<button class="btn sm" onclick="askReactivate(${l.id})">REATIVAR</button>`:""}${l.status!=="sold"?`<button class="btn sm line" onclick="toggleHide(${l.id})">${l.status==="hidden"?"PUBLICAR":"OCULTAR"}</button>`:""}</div>`]})):empty("Você ainda não cadastrou equipamentos.","+ CADASTRAR LOTE","editLot()");
+ if(tab==="orders")body=S.sel.orders.length?T(["Pedido","Equipamento","Comprador","Valor","Entrega","Status","Contato"],S.sel.orders.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return ["nº "+o.id+`<div class="muted" style="font-size:12px">${hhmm(o.created_at)}</div>`,miniLot(l),p?`${esc(p.name)}<div class="muted" style="font-size:12px">${esc(p.whatsapp)}</div>`:"—",`${brl(o.amount)}<div class="muted" style="font-size:12px">${({leilao:"por lances",compra:"compra direta",oferta:"oferta"})[o.kind]||o.kind}</div>`,esc(o.shipping||"—"),`<select onchange="setOrder(${o.id},this.value)" aria-label="Status do pedido">${ORDER_ST.map(x=>`<option ${o.status===x?"selected":""}>${x}</option>`).join("")}</select>`,wa(p,`Olá, ${p?p.name:""}! Aqui é ${S.seller.name}, sobre o pedido nº ${o.id} (lote #${l?code(l):o.lot_id}) feito pela ${LOJA}.`)]})):empty("Nenhum pedido ainda. Divulgue seus lotes com a arte para status.");
+ if(tab==="offers")body=S.sel.offers.length?T(["Equipamento","Comprador","Oferta","Preço","Status","Ações"],S.sel.offers.map(o=>{const l=getLot(o.lot_id),p=P(o.user_id);return [miniLot(l)+(o.message?`<div class="muted" style="font-size:12px;margin-top:4px">“${esc(o.message)}”</div>`:""),p?esc(p.name):"—",`<b>${brl(o.amount)}</b>`,l?brl(l.buy_price):"—",`<span class="badge ${o.status==="aceita"?"b-green":o.status==="recusada"?"b-soft":"b-dark"}">${o.status}${o.counter?": "+brl(o.counter):""}</span>`,o.status==="pendente"?`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn sm green" onclick="respOffer(${o.id},'aceita')">ACEITAR</button><button class="btn sm line" onclick="counterOffer(${o.id})">CONTRAPROPOSTA</button><button class="btn sm line" onclick="respOffer(${o.id},'recusada')">RECUSAR</button></div>`:wa(p,`Olá, ${p?p.name:""}! Aqui é ${S.seller.name}, sobre sua oferta no lote #${l?code(l):""}.`)]})):empty("Nenhuma oferta recebida.");
+ if(tab==="questions"){const qs=[...S.sel.questions].sort((a,b)=>(!!a.answer)-(!!b.answer));body=qs.length?qs.map(q=>{const l=getLot(q.lot_id);return `<div style="border-bottom:1px solid var(--line);padding:12px 0"><div class="muted" style="font-size:12px">${l?esc(l.title):"Lote"} · Comprador #${esc(q.alias||"")} · ${hhmm(q.created_at)}</div><div style="margin-top:4px"><b>P:</b> ${esc(q.question)}</div>${q.answer?`<div style="margin-top:6px;padding-left:12px;border-left:3px solid var(--green)"><b>R:</b> ${esc(q.answer)}</div>`:`<div style="display:flex;gap:8px;margin-top:8px"><input id="ans${q.id}" placeholder="Sua resposta (fica pública)" style="flex:1;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:10px"><button class="btn sm" onclick="answerQ(${q.id},${q.lot_id})">RESPONDER</button></div>`}</div>`}).join(""):empty("Nenhuma pergunta ainda.")}
+ if(tab==="perf")body=mine.length?T(["Lote","Visitas","Lances","Ofertas","Perguntas","Dica"],mine.map(l=>{const of=S.sel.offers.filter(o=>o.lot_id===l.id),qs=S.sel.questions.filter(q=>q.lot_id===l.id);return [miniLot(l),num(l.views),isAuction(l)?l.bids_count:"—",of.length,qs.length,`<span style="font-size:13px">${perfTip(l,of,qs)}</span>`]})):empty("Cadastre um lote para acompanhar o desempenho.");
+ if(tab==="profile"){const v=S.seller;body=`<div class="form"><div class="field"><label for="sp_n">Nome ou empresa</label><input id="sp_n" value="${esc(v.name)}"></div><div class="field"><label for="sp_w">WhatsApp de vendas</label><input id="sp_w" inputmode="tel" value="${esc(v.whatsapp)}"></div><div class="field"><label for="sp_c">Cidade</label><input id="sp_c" value="${esc(v.city||"")}"></div><div class="field"><label for="sp_u">UF</label><select id="sp_u">${UF.map(u=>`<option ${u===v.uf?"selected":""}>${u}</option>`).join("")}</select></div><div class="field full"><label for="sp_b">Sobre você</label><textarea id="sp_b" rows="2">${esc(v.bio||"")}</textarea></div></div><button class="btn" style="margin-top:12px" onclick="saveSellerProfile()">SALVAR</button>
+  <div class="box" style="margin-top:18px;background:var(--surface-2)"><h3>Sua vitrine</h3><p class="muted" style="margin:0 0 10px">Uma página só com os seus equipamentos, para mandar aos seus clientes.</p><div class="code" style="word-break:break-all;font-size:13px;margin-bottom:10px">${esc(vendorUrl(v.id))}</div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn green" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(vendorText(v.id))}">DIVULGAR VITRINE NO WHATSAPP</a><button class="btn line" onclick="go('vendor',{vendor:'${v.id}'})">VER VITRINE</button></div></div>`}
+ return `<div class="wrap"><div class="panel">${sellerSide()}<div><div class="ph-h"><h1>Painel do vendedor</h1><button class="btn" onclick="editLot()">+ CADASTRAR LOTE</button></div>
+ <div class="kpis"><div class="kpi"><small>Lotes ativos</small><b>${mine.filter(l=>l.status==="active").length}</b></div><div class="kpi"><small>Visitas</small><b>${mine.reduce((a,l)=>a+num(l.views),0)}</b></div><div class="kpi"><small>Pedidos</small><b>${S.sel.orders.length}</b></div><div class="kpi"><small>Vendido</small><b class="num">${brl(sold)}</b></div><div class="kpi"><small>Comissão FIT BID (5%)</small><b class="num">${brl(sold*.05)}</b></div></div>
+ <div class="box">${body}</div></div></div></div>`;
+}
+function perfTip(l,of,qs){
+ if(l.status==="sold")return "✅ Vendido. Use REATIVAR se tiver outra unidade.";
+ if(isAuction(l)&&ended(l))return l.bids_count?"Disputa encerrada: confira o vencedor ou use a segunda chance.":"Encerrou sem lances: reative com lance de entrada menor.";
+ if(qs.some(q=>!q.answer))return "❗ Há perguntas sem resposta. Responder rápido aumenta a confiança.";
+ if(of.some(o=>o.status==="pendente"))return "❗ Há ofertas aguardando sua resposta.";
+ if(num(l.views)<10)return "Poucas visitas: divulgue com a ARTE no status e nos grupos.";
+ if(isAuction(l)&&!l.bids_count&&num(l.views)>=20)return "Muitas visitas e nenhum lance: considere baixar o lance de entrada.";
+ if(isAuction(l)&&l.bids_count&&l.type==="auction"&&!l.buy_price)return "Tem disputa! Um preço sugerido pode fechar a venda mais rápido.";
+ return "Tudo certo. Mostre o lote para os interessados.";}
+async function saveSellerProfile(){const g=id=>($("#"+id).value||"").trim();const row={name:g("sp_n"),whatsapp:onlyDigits(g("sp_w")),city:g("sp_c"),uf:$("#sp_u").value,bio:g("sp_b")||null};
+ if(row.name.length<2||row.whatsapp.length<10){toast("Confira nome e WhatsApp.","red");return}const {data,error}=await sb.from("sellers").update(row).eq("id",meId()).select().single();if(error){toast(errMsg(error),"red");return}S.seller=data;S.sellers[data.id]=Object.assign(S.sellers[data.id]||{},data);toast("Perfil salvo.","green");render(true)}
+
+/* ===== vitrine do vendedor ===== */
+function vendorText(id){const v=S.sellers[id]||{},act=S.lots.filter(l=>l.seller_id===id&&l.status==="active");let t=`🔥 *${v.name||"Vitrine"}* na FIT BID\n${act.length} equipamento(s) com lances e preço sugerido:\n\n`;act.slice(0,10).forEach(l=>{t+=`• *${l.title}* – ${isAuction(l)?"entrada "+brl(price(l)):brl(l.buy_price)}\n${lotUrl(l)}\n\n`});return t+`Veja tudo: ${vendorUrl(id)}`}
+function renderVendor(){const v=S.sellers[V.vendor];if(!v)return `<div class="wrap"><div class="empty" style="margin-top:30px">Vendedor não encontrado.<br><button class="btn sm" style="margin-top:12px" onclick="go('home')">VER EQUIPAMENTOS</button></div></div>`;
+ const ls=visible().filter(l=>l.seller_id===v.id),act=ls.filter(l=>l.status==="active"),sold=ls.filter(l=>l.status==="sold").length;
+ return `<div class="wrap"><div class="desmob" style="grid-template-columns:1fr;margin-top:20px"><div class="l"><span class="badge b-ver" style="align-self:flex-start">✓ VENDEDOR VERIFICADO</span><h2>${esc(v.name)}</h2><p style="margin:0;color:var(--on-dark-muted)">${esc(v.city||"")}${v.uf?"/"+esc(v.uf):""}${v.bio?" · "+esc(v.bio):""}</p>
+  <div class="nums"><div><small>Disponíveis</small><b>${act.length}</b></div><div><small>Vendidos</small><b>${sold}</b></div><div><small>Na FIT BID desde</small><b style="font-size:16px">${v.created_at?new Date(v.created_at).toLocaleDateString("pt-BR",{month:"short",year:"numeric"}):"—"}</b></div></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn green" target="_blank" rel="noopener" href="${waLink(`Olá, ${v.name}! Vi sua vitrine na ${LOJA}.`,v.whatsapp)}">FALAR COM O VENDEDOR</a><a class="btn on-dark" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(vendorText(v.id))}">COMPARTILHAR VITRINE</a></div></div></div>
+ <section class="blk"><div class="sh"><h2>Equipamentos disponíveis</h2></div><div class="grid">${act.map(card).join("")||'<div class="empty">Nenhum equipamento disponível no momento.</div>'}</div></section></div>`}
+
+/* ===== arte automática para status e Instagram ===== */
+function loadImg(src){return new Promise((res,rej)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=rej;i.src=src})}
+async function makeArt(id){const l=getLot(id);if(!l)return;toast("Gerando a arte…");
+ const W=1080,H=1350,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext&&c.getContext("2d");if(!x){toast("Seu navegador não conseguiu gerar a imagem.","red");return}
+ x.fillStyle="#0B0B0C";x.fillRect(0,0,W,H);
+ x.fillStyle="#E1251B";x.fillRect(60,64,64,64);x.fillStyle="#fff";x.font="900 54px Archivo, Arial, sans-serif";x.textBaseline="middle";x.fillText("FIT",146,98);x.fillStyle="#E1251B";x.fillText("BID",252,98);
+ x.fillStyle="#fff";x.font="700 30px Archivo, Arial, sans-serif";x.textAlign="right";x.fillText(isAuction(l)&&live(l)?"LANCES ABERTOS":l.type==="offer"?"ACEITA OFERTAS":"À VENDA",W-60,98);x.textAlign="left";
+ x.fillStyle="#fff";rr(x,60,170,W-120,640,28);x.fill();
+ const ph=(l.photos||[])[0];let drawn=false;if(ph){try{const im=await loadImg(ph);const k=Math.min((W-180)/im.width,580/im.height);const w=im.width*k,h=im.height*k;x.drawImage(im,(W-w)/2,170+(640-h)/2,w,h);drawn=true}catch(e){}}
+ if(!drawn){x.fillStyle="#ECEDEA";rr(x,60,170,W-120,640,28);x.fill();x.fillStyle="#2A2E35";x.font="900 64px Archivo, Arial, sans-serif";x.textAlign="center";x.fillText(l.category||"Equipamento",W/2,470);x.font="600 32px Archivo, Arial, sans-serif";x.fillText("fotos no link do lote",W/2,530);x.textAlign="left"}
+ x.fillStyle="#fff";x.font="900 60px Archivo, Arial, sans-serif";let y=wrap(x,l.title,60,880,W-120,66,2);
+ x.fillStyle="#A3A9B3";x.font="500 32px Archivo, Arial, sans-serif";x.fillText([l.condition,l.city?l.city+"/"+(l.uf||""):"",sellerOf(l)?sellerOf(l).name:""].filter(Boolean).join(" · "),60,y+20);
+ const by=y+90,auc=isAuction(l);const cols=[];
+ if(auc)cols.push([l.bids_count?"LANCE ATUAL":"LANCE DE ENTRADA",brl(price(l)),"#fff"]);else cols.push(["PREÇO",brl(l.buy_price),"#fff"]);
+ if(l.type==="auction_buy"&&l.buy_price)cols.push(["PREÇO SUGERIDO",brl(l.buy_price),"#22C55E"]);
+ if(num(l.ref_price))cols.push(["REFERÊNCIA",brl(l.ref_price),"#7b818b",true]);
+ const cw=(W-120)/cols.length;cols.forEach(([t,v,col,strike],i)=>{const cx=60+i*cw;x.fillStyle="#A3A9B3";x.font="700 26px Archivo, Arial, sans-serif";x.fillText(t,cx,by);x.fillStyle=col;x.font="900 52px Archivo, Arial, sans-serif";x.fillText(v,cx,by+56);if(strike){const tw=x.measureText(v).width;x.fillRect(cx,by+56,tw,4)}});
+ if(auc&&live(l)){x.fillStyle="#E1251B";rr(x,60,H-200,W-120,80,18);x.fill();x.fillStyle="#fff";x.font="900 38px Archivo, Arial, sans-serif";x.textAlign="center";x.fillText("⏰ ENCERRA EM "+fmt(ts(l.ends_at)-now()).replace(/ \d+s$/,""),W/2,H-160);x.textAlign="left"}
+ x.fillStyle="#A3A9B3";x.font="600 28px Archivo, Arial, sans-serif";x.textAlign="center";x.fillText(lotUrl(l).replace(/^https?:\/\//,""),W/2,H-70);x.textAlign="left";
+ let blob;try{blob=await new Promise(r=>c.toBlob(r,"image/jpeg",.9))}catch(e){}
+ const url=blob?URL.createObjectURL(blob):c.toDataURL("image/jpeg",.9);
+ const file=blob?new File([blob],`fitbid-lote-${code(l)}.jpg`,{type:"image/jpeg"}):null;
+ openModal(`<h2>Arte para status e Instagram</h2><img src="${url}" alt="Arte do lote" style="width:100%;border-radius:12px;border:1px solid var(--line)">
+  <div class="acts">${file&&navigator.canShare&&navigator.canShare({files:[file]})?`<button class="btn green" onclick="shareArt()">COMPARTILHAR</button>`:""}<a class="btn line" href="${url}" download="fitbid-lote-${code(l)}.jpg">BAIXAR IMAGEM</a></div>
+  <p class="muted" style="font-size:13px;margin:0">Poste no status do WhatsApp ou nos stories com o link do lote: ${esc(lotUrl(l))}</p>`);V.artFile=file;V.artLot=l.id}
+async function shareArt(){const l=getLot(V.artLot);try{await navigator.share({files:[V.artFile],text:shareText(l)})}catch(e){}}
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function wrap(x,t,a,b,w,lh,max){const ws=String(t).split(" ");let line="",n=0,y=b;for(const wd of ws){const tt=line?line+" "+wd:wd;if(x.measureText(tt).width>w&&line){x.fillText(line,a,y);y+=lh;n++;line=wd;if(n>=max-1){line=ws.slice(ws.indexOf(wd)).join(" ");while(x.measureText(line+"…").width>w&&line.length>3)line=line.slice(0,-1);if(line!==ws.slice(ws.indexOf(wd)).join(" "))line+="…";break}}else line=tt}x.fillText(line,a,y);return y+lh/2}
 
 /* ===== como funciona ===== */
 function renderHow(){const st=(n,t,p)=>`<div class="box" style="margin:0"><span class="n">${n}</span><h3>${t}</h3><p>${p}</p></div>`;
- return `<div class="wrap"><div class="page-h"><h1>Como funciona</h1><p>Todos os equipamentos são selecionados e vendidos diretamente pela ${esc(LOJA)}.</p></div>
- <div class="how">${st(1,"Identifique-se","Informe nome e WhatsApp uma única vez. Nos lances você aparece só como “Comprador #número”.")}${st(2,"Escolha como comprar","Dê lances, compre pelo preço fixo ou faça uma oferta.")}${st(3,"Venceu ou comprou?","Toque em “Finalizar pelo WhatsApp”: a mensagem já vai pronta com lote, valor e entrega.")}${st(4,"Pagamento e entrega","Combinados diretamente com a ${esc(LOJA)}: retirada, transportadora ou frete com montagem.")}</div>
+ return `<div class="wrap"><div class="page-h"><h1>Como funciona</h1><p>Equipamentos de vendedores verificados e da própria ${esc(LOJA)}, com lances, preço sugerido e ofertas.</p></div>
+ <div class="how">${st(1,"Identifique-se","Informe nome e WhatsApp uma única vez. Nos lances você aparece só como “Comprador #número”.")}${st(2,"Escolha como comprar","Dê lances, compre pelo preço fixo ou faça uma oferta.")}${st(3,"Venceu ou comprou?","Toque em “Finalizar pelo WhatsApp”: a mensagem já vai pronta com lote, valor e entrega.")}${st(4,"Pagamento e entrega","Combinados diretamente com o vendedor: retirada, transportadora ou frete com montagem.")}</div>
+ <h2 style="font-size:24px;margin:30px 0 12px">PARA VENDEDORES</h2><div class="how">${st(1,"Cadastre-se","Envie seus dados. A equipe confere e libera seu acesso.")}${st(2,"Anuncie em minutos","Fotos, ficha, lance de entrada, preço sugerido e preço de referência.")}${st(3,"Divulgue","Arte automática para status, link do lote, vitrine própria e aviso aos compradores interessados.")}${st(4,"Venda no seu WhatsApp","O comprador fala direto com você. Comissão de 5% só quando vende.")}</div>
+ <div style="margin-top:16px"><button class="btn dark" onclick="go('join')">QUERO VENDER</button></div>
  <div class="box" style="margin-top:20px"><h3>Regras dos lances</h3><ul style="margin:0;padding-left:20px;color:var(--muted)"><li>Cada lance precisa superar o atual pelo incremento mínimo do lote.</li><li>O lance automático cobre outras ofertas por você até o limite escolhido.</li><li>Lances nos 2 minutos finais estendem a disputa em 2 minutos.</li><li>Alguns lotes têm valor mínimo de venda; se não for atingido, a disputa encerra sem venda.</li><li>Lances são compromissos de compra. Desistências podem levar ao bloqueio da conta.</li></ul></div>
  <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap"><button class="btn" onclick="go('browse',{mode:'auctions'})">VER LOTES</button><a class="btn line" href="${waLink("Olá! Tenho uma dúvida sobre como comprar na "+LOJA+".")}" target="_blank" rel="noopener">FALAR NO WHATSAPP</a></div></div>`}
 
@@ -904,11 +1145,16 @@ function toggleFav(id){const i=S.favs.indexOf(id);if(i>=0)S.favs.splice(i,1);els
 function toast(msg,kind,lotId){const t=document.createElement("div");t.className="toast "+(kind||"");t.setAttribute("role","status");t.innerHTML=`<span>${esc(msg)}</span>${lotId?`<button onclick="go('lot',{lot:${lotId}})">VER LOTE</button>`:""}`;$("#toasts").appendChild(t);setTimeout(()=>t.remove(),lotId?6500:4000)}
 
 /* ===== motor ===== */
-function go(view,p={}){V.view=view;if(p.mode){V.mode=p.mode;if(view==="browse"&&!p.keep)V.f=blankF()}if(p.lot!=null){if(String(p.lot)!==String(V.lot))V.img=0;V.lot=p.lot}if(p.tab)V.tab=p.tab;const h=view==="lot"?"#lote-"+V.lot:"";if(location.hash!==h){try{history.pushState(null,"",h||location.pathname+location.search)}catch(e){}}closeModal(true);closeDrawer();render();scrollTo(0,0)}
+function go(view,p={}){V.view=view;if(p.mode){V.mode=p.mode;if(view==="browse"&&!p.keep)V.f=blankF()}if(p.lot!=null){if(String(p.lot)!==String(V.lot))V.img=0;V.lot=p.lot}if(p.vendor)V.vendor=p.vendor;if(p.tab)V.tab=p.tab;
+ const q=view==="lot"?"?lote="+V.lot:view==="vendor"?"?vendedor="+V.vendor:view==="join"?"?vender":"";if(location.search+location.hash!==q){try{history.pushState(null,"",location.pathname+q)}catch(e){}}
+ closeModal(true);closeDrawer();render();scrollTo(0,0)}
+function setMeta(){const l=V.view==="lot"&&getLot(V.lot),v=V.view==="vendor"&&S.sellers[V.vendor];
+ document.title=l?`${l.title} · ${isAuction(l)?"lances a partir de "+brl(l.start_price):brl(price(l))} · FIT BID`:v?`${v.name} · vitrine FIT BID`:"FIT BID · Venda por lances de equipamentos profissionais";
+ const d=document.querySelector('meta[name="description"]');if(d)d.setAttribute("content",l?`${l.title}${l.condition?" ("+l.condition+")":""}${l.city?" em "+l.city+"/"+(l.uf||""):""}. ${l.description?l.description.slice(0,120):"Equipamento profissional com lances, preço sugerido e oferta."}`:"Venda por lances, preço fixo e ofertas de equipamentos profissionais de academia.")}
 function render(keep){const y=scrollY;renderHeader();
  if(!sb){$("#app").innerHTML=setupScreen();return}
  if(!S.loaded){$("#app").innerHTML=`<div class="wrap"><div class="empty" style="margin-top:40px">Carregando…</div></div>`;return}
- const r={home:renderHome,browse:renderBrowse,lot:renderLot,categories:renderCategories,account:renderAccount,admin:renderAdmin,how:renderHow}[V.view]||renderHome;$("#app").innerHTML=r();
+ const r={home:renderHome,browse:renderBrowse,lot:renderLot,categories:renderCategories,account:renderAccount,admin:renderAdmin,how:renderHow,join:renderJoin,seller:renderSeller,vendor:renderVendor}[V.view]||renderHome;$("#app").innerHTML=r();setMeta();
  if(V.view==="browse")results();document.body.classList.toggle("has-mbar",!!$("#app .mbar"));if(keep)scrollTo(0,y)}
 function busy(){const a=document.activeElement;return a&&["INPUT","TEXTAREA","SELECT"].includes(a.tagName)&&$("#app").contains(a)||$("#scrim").classList.contains("open")||V.view==="admin"&&V.tab==="edit"}
 let softT;function softRender(){clearTimeout(softT);softT=setTimeout(()=>{if(!busy())render(true)},250)}
@@ -927,9 +1173,9 @@ function setupScreen(){return `<div class="wrap" style="max-width:720px"><div cl
 let loadedAt=0;
 async function init(){routeFromHash();render();if(!sb)return;
  sb.auth.onAuthStateChange((ev,session)=>{const u=session?session.user:null;if((u&&u.id)!==(S.user&&S.user.id)){S.user=u;loadMine().then(()=>render(true))}});
- try{await loadAll()}catch(e){toast(errMsg(e),"red")}loadedAt=Date.now();
+ try{await loadAll();alertMatches(S.lots,false)}catch(e){toast(errMsg(e),"red")}loadedAt=Date.now();
  setInterval(tick,1000);
- setInterval(async()=>{if(document.hidden)return;await loadLots();if(S.admin)await loadAdmin();softRender()},60000);
+ setInterval(async()=>{if(document.hidden)return;await loadLots();if(S.admin)await loadAdmin();if(isSeller())await loadSellerData();softRender()},60000);
  document.addEventListener("visibilitychange",async()=>{if(!document.hidden){try{const {data}=await sb.rpc("server_time");if(data)SKEW=new Date(data).getTime()-Date.now()}catch(e){}await loadLots();softRender()}});
 }
 init();
