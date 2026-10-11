@@ -408,6 +408,12 @@ footer.ft button{background:none;border:0;color:var(--on-dark-muted);padding:0 0
  .lotpage>div:first-child>.ladder{order:3}
  .lotpage>aside{order:3}
 }
+
+.accept{display:flex;gap:14px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:14px 16px;cursor:pointer;background:var(--surface-2);-webkit-tap-highlight-color:transparent}
+.accept input{width:28px;height:28px;min-width:28px;margin:0;accent-color:var(--green);cursor:pointer}
+.accept:has(input:checked){border-color:var(--green);background:var(--green-soft)}
+.accept.shake{animation:shk .5s;border-color:var(--red)}
+@keyframes shk{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
 </style>
 </head>
 <body>
@@ -1015,7 +1021,7 @@ async function openAlert(){if(!await ensureBuyer())return;openModal(`<h2>Criar a
  <div class="field"><label for="al_b">Marca</label><input id="al_b" placeholder="Qualquer"></div>
  <div class="field"><label for="al_p">Pagaria até</label><div class="money"><span>R$</span><input id="al_p" inputmode="decimal"></div></div>
  <div class="field"><label for="al_u">Estado</label><select id="al_u"><option value="">Qualquer</option>${UF.map(u=>`<option>${u}</option>`).join("")}</select></div></div>
- <label class="ck" style="display:flex;gap:10px;align-items:flex-start;font-size:14px"><input type="checkbox" id="al_ok" checked style="margin-top:3px">Aceito que vendedores me chamem no WhatsApp com lotes compatíveis.</label>
+ <label class="accept" for="al_ok"><input type="checkbox" id="al_ok" checked><span style="font-size:14px">Aceito que vendedores me chamem no WhatsApp com lotes compatíveis.</span></label>
  <button class="btn block" id="cb" onclick="saveAlert()">CRIAR ALERTA</button>`)}
 async function saveAlert(){const row={keywords:$("#al_k").value.trim()||null,category:$("#al_c").value||null,brand:$("#al_b").value.trim()||null,max_price:parseMoney($("#al_p").value)||null,uf:$("#al_u").value||null,consent:$("#al_ok").checked};
  if(!row.keywords&&!row.category&&!row.brand){toast("Diga o que procura, a categoria ou a marca.","red");return}
@@ -1037,14 +1043,14 @@ function renderJoin(){
  <div class="field"><label for="j_c">Cidade *</label><input id="j_c"></div><div class="field"><label for="j_u">UF *</label><select id="j_u">${UF.map(u=>`<option ${u==="RJ"?"selected":""}>${u}</option>`).join("")}</select></div>
  <div class="field full"><label for="j_b">Sobre você (aparece na sua vitrine)</label><textarea id="j_b" rows="2" placeholder="Ex.: Academia em Niterói renovando a sala de musculação."></textarea></div>
  <div class="field"><label for="j_e">E-mail de acesso *</label><input id="j_e" type="email" autocomplete="username"></div><div class="field"><label for="j_p">Senha (mínimo 6 caracteres) *</label><input id="j_p" type="password" autocomplete="new-password"></div>
- <label class="ck full" style="display:flex;gap:10px;align-items:flex-start;font-size:14px"><input type="checkbox" id="j_ok" style="margin-top:3px">Concordo em pagar 5% sobre cada venda concluída pela FIT BID, anunciar somente equipamentos que posso vender e descrever o estado real de cada um.</label></div>
+ <label class="accept full" for="j_ok"><input type="checkbox" id="j_ok"><span><b>Aceito as condições</b><br><span class="muted" style="font-size:14px">Pago 5% sobre cada venda concluída pela FIT BID, anuncio somente equipamentos que posso vender e descrevo o estado real de cada um.</span></span></label></div>
  <button class="btn block" style="margin-top:16px" id="cb" onclick="sellerSignup()">ENVIAR CADASTRO</button>
  <p class="muted" style="font-size:14px;margin:12px 0 0;text-align:center">Já é vendedor? <button class="link" onclick="adminLogin()">Entrar</button></p></div></section></div>`;
 }
 async function sellerSignup(){
  const g=id=>($("#"+id).value||"").trim();const f={name:g("j_n"),doc:onlyDigits(g("j_d")),whatsapp:onlyDigits(g("j_w")),city:g("j_c"),uf:$("#j_u").value,bio:g("j_b")||null,email:g("j_e"),password:$("#j_p").value};
  const miss=[];if(f.name.length<2)miss.push("nome");if(f.doc.length!==11&&f.doc.length!==14)miss.push("CPF ou CNPJ válido");if(f.whatsapp.length<10||f.whatsapp.length>13)miss.push("WhatsApp com DDD");if(!f.city)miss.push("cidade");if(!/^\S+@\S+\.\S+$/.test(f.email))miss.push("e-mail");if(f.password.length<6)miss.push("senha com 6 caracteres");if(!$("#j_ok").checked)miss.push("aceite das condições");
- if(miss.length){toast("Confira: "+miss.join(", ")+".","red");return}
+ if(miss.length){toast("Confira: "+miss.join(", ")+".","red");if(miss.length===1&&!$("#j_ok").checked){const a=document.querySelector(".accept");a.scrollIntoView({block:"center"});a.classList.add("shake");setTimeout(()=>a.classList.remove("shake"),700)}return}
  const b=$("#cb");busyBtn(b,true);
  if(S.user)await sb.auth.signOut();
  const {data,error}=await sb.auth.signUp({email:f.email,password:f.password});
